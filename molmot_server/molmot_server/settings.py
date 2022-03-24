@@ -84,10 +84,23 @@ WSGI_APPLICATION = 'molmot_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+import pymysql
+
+pymysql.install_as_MySQLdb()
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default' : {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'kosuda',		    
+        'USER': 'admin', 		      
+        'PASSWORD': 'kosudapass',     	     
+        'HOST': 'kosuda-mysql.cqcs5iidltf9.ap-northeast-2.rds.amazonaws.com', 	        
+        'PORT': '3306',
+        'OPTIONS' : {           
+            "charset": "utf8mb4",
+            'init_command': 'ALTER DATABASE kosuda CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci'
+        }
     }
 }
 

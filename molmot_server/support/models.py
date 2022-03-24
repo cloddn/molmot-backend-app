@@ -5,7 +5,7 @@ import uuid
 
 
 class Organization(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name=models.CharField(
         max_length=50,
         null=False,
@@ -23,7 +23,7 @@ class Organization(models.Model):
         return self.title
 
 class Supports(models.Model): 
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
     title=models.CharField(
         max_length=50,
         null=False,
