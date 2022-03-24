@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
             email = self.normalize_email(email),            
             first_name ="-",
             last_name="-",
-  
+            gender="N",
             birth="0000-00-00",
             password=password   
         )
