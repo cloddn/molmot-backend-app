@@ -1,9 +1,44 @@
+from operator import ge
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 import uuid
+
+class UserManager(BaseUserManager):    
+    
+    use_in_migrations = True    
+
+    #일반 유저생성 - 성별값 미포함
+    def create_user(self, email, first_name,last_name,birth,gender,password=None):        
+         
+        user = self.model(            
+            email = self.normalize_email(email),            
+            first_name =first_name,
+            last_name=last_name,
+            birth=birth,
+            gender=gender
+        )
+        user.set_password(password)        
+        user.save(using=self._db)        
+        return user
+    #슈퍼유저 생성  - 관리자페이지 게정
+    def create_superuser(self, email,password ):        
+       
+        user = self.create_user(            
+            email = self.normalize_email(email),            
+            first_name ="-",
+            last_name="-",
+  
+            birth="0000-00-00",
+            password=password   
+        )
+        user.is_staff=True
+        user.save(using=self._db)        
+        return user 
 
 
 class User(AbstractBaseUser):    
+
+    objects = UserManager()
     
     email = models.EmailField(        
         max_length=255,  
