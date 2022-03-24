@@ -6,7 +6,8 @@ import uuid
 class User(AbstractBaseUser):    
     
     email = models.EmailField(        
-        max_length=255,        
+        max_length=255,  
+        null=True,      
         unique=True,    
     )    
     username = models.CharField(
@@ -28,7 +29,7 @@ class User(AbstractBaseUser):
   
     gender = models.CharField(verbose_name='gender',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
     birth = models.CharField(verbose_name='birth', max_length=10,null=True,blank=True)
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_joined = models.DateTimeField(auto_now_add=True)  
     is_staff=models.BooleanField(('staff status'),default=False) 
     USERNAME_FIELD = 'email' 
