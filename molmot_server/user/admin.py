@@ -5,10 +5,10 @@ from django.contrib import admin
 @admin.register(models.User)
 class User(admin.ModelAdmin):
      list_display= (
-    'uuid',
+    'id',
     'email',
     'password',
-     'name',
+     'username',
      'birth',
      'age',
      'gender',
