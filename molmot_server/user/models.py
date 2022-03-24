@@ -8,12 +8,11 @@ class UserManager(BaseUserManager):
     use_in_migrations = True    
 
     #일반 유저생성 - 성별값 미포함
-    def create_user(self, email, first_name,last_name,birth,gender,password=None):        
+    def create_user(self, email, username,birth,gender,password=None):        
          
         user = self.model(            
             email = self.normalize_email(email),            
-            first_name =first_name,
-            last_name=last_name,
+            username=username,
             birth=birth,
             gender=gender
         )
@@ -25,8 +24,7 @@ class UserManager(BaseUserManager):
        
         user = self.create_user(            
             email = self.normalize_email(email),            
-            first_name ="-",
-            last_name="-",
+            username ="-",
             gender="N",
             birth="0000-00-00",
             password=password   
