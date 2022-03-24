@@ -31,18 +31,18 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 # 로그인 
 class UserLoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30)
+    email = serializers.CharField(max_length=30)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
-        username = data.get("username")
+        email = data.get("email")
         password = data.get("password", None)
         # 사용자 아이디와 비밀번호로 로그인 구현(<-> 사용자 아이디 대신 이메일로도 가능)
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is None:
-            return {'username': 'None'}
+            return {'email': 'None'}
         try:
             payload = JWT_PAYLOAD_HANDLER(user)
             jwt_token = JWT_ENCODE_HANDLER(payload)
@@ -53,7 +53,7 @@ class UserLoginSerializer(serializers.Serializer):
                 'User with given username and password does not exist'
             )
         return {
-            'username': user.username,
+            'email': user.email,
             'token': jwt_token
         }
         
@@ -61,4 +61,4 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'age', 'gender', 'birth')
+        fields = ('id', 'email', 'age', 'gender', 'birth')
