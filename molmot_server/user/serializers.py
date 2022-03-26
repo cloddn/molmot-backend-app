@@ -48,7 +48,7 @@ class UserLoginSerializer(serializers.Serializer):
             
             update_last_login(None, user)
 
-        except User.DoesNotExist:
+        except Member.DoesNotExist:
             raise serializers.ValidationError(
                 'User with given username and password does not exist'
             )
@@ -60,5 +60,5 @@ class UserLoginSerializer(serializers.Serializer):
 # 사용자 정보 추출
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Member
         fields = ('email', 'age', 'gender', 'birth')

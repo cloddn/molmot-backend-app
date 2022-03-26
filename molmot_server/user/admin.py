@@ -2,8 +2,8 @@ from user import models
 from django.contrib import admin
 
 # Register your models here.
-@admin.register(models.User)
-class User(admin.ModelAdmin):
+@admin.register(models.Member)
+class Member(admin.ModelAdmin):
      list_display= (
     'email',
     'password',

@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 import uuid
 
-class UserManager(BaseUserManager):    
+class MemberManager(BaseUserManager):    
     
     use_in_migrations = True    
 
@@ -35,9 +35,9 @@ class UserManager(BaseUserManager):
         return user 
 
 
-class User(AbstractBaseUser):    
+class Member(AbstractBaseUser):    
 
-    objects = UserManager()
+    objects = MemberManager()
     
     email = models.EmailField(        
         max_length=255,  
