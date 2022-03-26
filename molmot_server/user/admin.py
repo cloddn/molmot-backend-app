@@ -5,7 +5,6 @@ from django.contrib import admin
 @admin.register(models.User)
 class User(admin.ModelAdmin):
      list_display= (
-    'uuid',
     'email',
     'password',
      'username',
