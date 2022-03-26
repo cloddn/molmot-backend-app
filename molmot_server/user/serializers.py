@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from allauth.account.adapter import get_adapter
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import update_last_login
@@ -46,6 +45,7 @@ class UserLoginSerializer(serializers.Serializer):
         try:
             payload = JWT_PAYLOAD_HANDLER(user)
             jwt_token = JWT_ENCODE_HANDLER(payload)
+            
             update_last_login(None, user)
 
         except User.DoesNotExist:
@@ -57,3 +57,8 @@ class UserLoginSerializer(serializers.Serializer):
             'token': jwt_token
         }
         
+# 사용자 정보 추출
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'age', 'gender', 'birth')
