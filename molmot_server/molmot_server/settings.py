@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'molmot_server.urls'
-#AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'user.Member'
 
 TEMPLATES = [
     {
@@ -93,14 +93,14 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default' : {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'molt',		    
+        'NAME': 'molmot',		    
         'USER': 'admin', 		      
         'PASSWORD': 'molmotpass',     	     
-        'HOST': 'molmot-mysql.cqcs5iidltf9.ap-northeast-2.rds.amazonaws.com', 	        
+        'HOST': 'molmot-database.cqcs5iidltf9.ap-northeast-2.rds.amazonaws.com', 	        
         'PORT': '3306',
         'OPTIONS' : {           
             "charset": "utf8mb4",
-            'init_command': 'ALTER DATABASE molt CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci'
+            'init_command': 'ALTER DATABASE molmot CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci'
         }
     }
 }
