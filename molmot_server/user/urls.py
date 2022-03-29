@@ -10,5 +10,6 @@ urlpatterns = [
 
     path('create', Registration.as_view()),
     path('login', Login.as_view()),
-    
+    path('auth/',AuthSMSAPI.as_view()),
+    path('auth/?phone_number=<str:phone_number>&auth_number=<int:auth_number>',AuthSMSAPI.as_view()),
 ]

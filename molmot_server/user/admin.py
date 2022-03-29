@@ -15,3 +15,11 @@ class Member(admin.ModelAdmin):
     'last_login',
     'is_active'
      )
+
+
+@admin.register(models.AuthSMS)
+class AuthSMS(admin.ModelAdmin):
+     list_display= (
+    'phone_number',
+    'auth_number',
+     )

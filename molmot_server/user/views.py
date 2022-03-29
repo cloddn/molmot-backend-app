@@ -11,6 +11,8 @@ from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
 from .serializers import *
 from .models import *
+from rest_framework.views import APIView
+
 
 # 누구나 접근 가능
 @permission_classes([AllowAny]) 
@@ -58,3 +60,23 @@ class Login(generics.GenericAPIView):
                 "token": user['token']
             }
         )
+
+@permission_classes([AllowAny])
+class AuthSMSAPI(APIView):
+    def post(self, request):
+        try:
+            p_num = request.data['phone_number']
+        except KeyError:
+            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            AuthSMS.objects.update_or_create(phone_number=p_num)
+            return Response({'message': 'OK'})
+
+    def get(self,request):
+        try:
+            p_num=request.query_params['phone_number']
+            a_num=request.query_params['auth_number']
+            result=AuthSMS.check_auth_number(p_num,a_num)
+            return Response({'message': 'OK','result':result})
+        except KeyError:
+            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
