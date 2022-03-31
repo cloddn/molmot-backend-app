@@ -85,25 +85,26 @@ class AuthSMSAPI(APIView):
 @permission_classes([AllowAny])
 class IDPWCheckingAPI(APIView): #아이디 알려주기 
     def post(self, request):
-        try:
+        #try:
             p_num=request.query_params['phone_number']
             a_num=request.query_params['auth_number']
             email = request.data['email']
-            latest_pw=request.data['latest_pw']
-            result=AuthSMS.check_auth_number(p_num,a_num)
-            if (authenticate(email=email,password=latest_pw)):
-                Member.objects.filter(email=email).update(password=request.data['new_pw'])
+            member_obj=Member.objects.get(email=email)
+            member_obj.set_password(request.data['new_pw'])
+            member_obj.save()
+            #result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
+            #if (authenticate(email=email,password=latest_pw)):
             return Response({'message': 'OK'}, status=status.HTTP_200_OK)
-        except KeyError:
-            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+        #except KeyError:
+        #    return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self,request):
         try:
             p_num=request.query_params['phone_number']
             a_num=request.query_params['auth_number']
-            result=AuthSMS.check_auth_number(p_num,a_num)
+            result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
             memberid=Member.objects.get(phone_number=p_num)
-            return Response({'message': 'memberid.email','result':memberid.email})
+            return Response({'message': 'OK','result':memberid.email},status=status.HTTP_200_OK)
         except KeyError:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
