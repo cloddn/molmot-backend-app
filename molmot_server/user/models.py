@@ -8,6 +8,10 @@ import hmac
 import base64
 import hashlib
 import json
+import requests
+from random import randint
+import time
+
 
 class MemberManager(BaseUserManager):    
     
@@ -55,7 +59,12 @@ class Member(AbstractBaseUser):
         null=False,
         unique=False
     )   
-  
+    nickname=models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        unique=True
+    )   
     #생년월일에 맞춰서 자동기입
     age = models.IntegerField(
         null=True,
@@ -67,6 +76,9 @@ class Member(AbstractBaseUser):
         ('N', '어느쪽도 아님(None)')
     )
   
+    locatedin=models.CharField(verbose_name='학교 및 소재지', max_length=255,null=True,blank=True)
+    address=models.CharField(verbose_name='실거주지', max_length=255,null=True,blank=True)
+    zipcode=models.CharField(verbose_name='우편번호', max_length=10,null=True,blank=True)
     gender = models.CharField(verbose_name='gender',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
     birth = models.CharField(verbose_name='birth', max_length=10,null=True,blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -83,13 +95,6 @@ class Member(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return  True
 
-
-
-import requests
-from random import randint
-from django.db import models
-import time
-import datetime
 
 class TimeStampedModel(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
