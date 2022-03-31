@@ -1,6 +1,8 @@
 from pyexpat import model
 from django.db import models
 import uuid
+
+from user.models import Member
 # Create your models here.
 
 
@@ -38,3 +40,8 @@ class Supports(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Subscribe(models.Model):
+    organizer_id=models.ForeignKey(Organization,null=True,on_delete=models.CASCADE)
+    member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)

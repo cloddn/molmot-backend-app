@@ -12,4 +12,6 @@ urlpatterns = [
     path('login', Login.as_view()),
     path('auth/',AuthSMSAPI.as_view()),
     path('auth/?phone_number=<str:phone_number>&auth_number=<int:auth_number>',AuthSMSAPI.as_view()),
+    path('idpw-check/?phone_number=<str:phone_number>&auth_number=<int:auth_number>',IDPWCheckingAPI.as_view()),
+
 ]

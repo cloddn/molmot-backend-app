@@ -22,3 +22,10 @@ class Supports(admin.ModelAdmin):
      'end_date',
      'qualifications'
      )
+
+@admin.register(models.Subscribe)
+class Subscribe(admin.ModelAdmin):
+     list_display= (
+    'organizer_id',
+     'member_id'
+     )

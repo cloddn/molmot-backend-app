@@ -8,6 +8,10 @@ class Member(admin.ModelAdmin):
     'email',
     'password',
      'username',
+     'nickname',
+     'locatedin',
+     'address',
+     'zipcode'
      'birth',
      'age',
      'gender',
