@@ -82,6 +82,7 @@ class Member(AbstractBaseUser):
     gender = models.CharField(verbose_name='gender',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
     birth = models.CharField(verbose_name='birth', max_length=10,null=True,blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    phone_number=models.CharField(verbose_name='휴대폰 번호',blank=False,null=True,max_length=11)
     date_joined = models.DateTimeField(auto_now_add=True)  
     is_staff=models.BooleanField(('staff status'),default=False) 
     USERNAME_FIELD = 'email' 

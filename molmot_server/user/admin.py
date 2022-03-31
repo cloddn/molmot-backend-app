@@ -13,6 +13,7 @@ class Member(admin.ModelAdmin):
      'address',
      'zipcode',
      'birth',
+     'phone_number',
      'age',
      'gender',
      'date_joined',
