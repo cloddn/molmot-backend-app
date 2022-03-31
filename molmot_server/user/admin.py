@@ -11,7 +11,7 @@ class Member(admin.ModelAdmin):
      'nickname',
      'locatedin',
      'address',
-     'zipcode'
+     'zipcode',
      'birth',
      'age',
      'gender',
