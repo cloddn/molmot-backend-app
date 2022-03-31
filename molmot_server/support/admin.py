@@ -11,8 +11,8 @@ class Organization(admin.ModelAdmin):
      )
 
 
-@admin.register(models.Supports)
-class Supports(admin.ModelAdmin):
+@admin.register(models.Support)
+class Support(admin.ModelAdmin):
      list_display= (
     'title',
      'detail',
