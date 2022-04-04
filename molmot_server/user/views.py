@@ -70,14 +70,14 @@ class AuthSMSAPI(APIView):
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             AuthSMS.objects.update_or_create(phone_number=p_num)
-            return Response({'message': 'OK'})
+            return Response({'message': 'OK','timestamp':str(int(time.time() * 1000))})
 
     def get(self,request): #인증 완료 
         try:
             p_num=request.query_params['phone_number']
             a_num=request.query_params['auth_number']
             result=AuthSMS.check_auth_number(p_num,a_num)
-            return Response({'message': 'OK','result':result})
+            return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':result})
         except KeyError:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -94,7 +94,7 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
             member_obj.save()
             #result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
             #if (authenticate(email=email,password=latest_pw)):
-            return Response({'message': 'OK'}, status=status.HTTP_200_OK)
+            return Response({'message': 'OK','timestamp':str(int(time.time() * 1000))}, status=status.HTTP_200_OK)
         #except KeyError:
         #    return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -104,7 +104,7 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
             a_num=request.query_params['auth_number']
             result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
             memberid=Member.objects.get(phone_number=p_num)
-            return Response({'message': 'OK','result':memberid.email},status=status.HTTP_200_OK)
+            return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':memberid.email},status=status.HTTP_200_OK)
         except KeyError:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
