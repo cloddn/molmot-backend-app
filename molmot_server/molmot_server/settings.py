@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-7bpqi+04xxwesw7o0dq5%944qn18h*^xfk$7l7!+(x_o&0+r3n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-3-36-93-17.ap-northeast-2.compute.amazonaws.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -130,8 +130,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
+'''
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -139,7 +139,17 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+'''
 
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'Asia/Seoul'  # 한국 시간 적용 
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = False  # False 로 설정해야 DB에 변경 된 TIME_ZONE 이 반영 됨
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -173,3 +183,29 @@ JWT_AUTH = {
 
 REST_USE_JWT = True
 SITE_ID = 1
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+# 메일을 호스트하는 서버
+EMAIL_PORT = '587'
+# gmail과의 통신하는 포트
+EMAIL_HOST_USER = 'molmot.app@gmail.com'
+# 발신할 이메일
+EMAIL_HOST_PASSWORD = 'ombogebizgwkhgdk'
+# 발신할 메일의 비밀번호
+EMAIL_USE_TLS = True
+# TLS 보안 방법
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+
+import firebase_admin
+from firebase_admin import credentials
+
+cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
+cred = credentials.Certificate(cred_path)
+firebase_admin.initialize_app(cred)
