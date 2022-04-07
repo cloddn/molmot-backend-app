@@ -22,7 +22,7 @@ class Organization(models.Model):
     link=models.URLField(blank=True,null=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 class Support(models.Model): 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
