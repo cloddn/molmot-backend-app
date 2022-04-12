@@ -20,7 +20,12 @@ class Support(admin.ModelAdmin):
      'organizer',
      'start_date',
      'end_date',
-     'qualifications'
+     'qualifications',
+     'located_in',
+     'age',
+     'gender',
+     'number_of_households',
+     'income_ratio'
      )
 
 @admin.register(models.Subscribe)
