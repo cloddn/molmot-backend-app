@@ -78,14 +78,10 @@ class AuthSMSAPI(APIView):
             return Response({'message': 'OK','timestamp':str(int(time.time() * 1000))})
 
     def get(self,request): #인증 완료 
-        try:
-            p_num=request.query_params['phone_number']
-            a_num=request.query_params['auth_number']
-            result=AuthSMS.check_auth_number(p_num,a_num)
-            return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':result})
-        except KeyError:
-            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
-
+        p_num=request.query_params['phone_number']
+        a_num=request.query_params['auth_number']
+        result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
+        return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':result})
 
 @permission_classes([AllowAny])
 class IDPWCheckingAPI(APIView): #아이디 알려주기 

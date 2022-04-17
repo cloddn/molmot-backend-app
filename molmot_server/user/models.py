@@ -166,6 +166,7 @@ class AuthSMS(TimeStampedModel):
 
     def check_auth_number(self,p_num,a_num):
         if ( self.auth_number==a_num):
+        if ( self.auth_number==int(a_num)):
             return True
         else:
             return False
