@@ -114,7 +114,8 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@permission_classes([AllowAny])
+@authentication_classes([]) # Add this
+@permission_classes([]) # Maybe add this too
 class UserInfoView(APIView):
     @login_check
     def get(self,request,userid):

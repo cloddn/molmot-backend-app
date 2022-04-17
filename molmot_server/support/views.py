@@ -22,10 +22,11 @@ from .models import *
 from rest_framework.views import APIView
 from django.db.models import Q
 import json
-from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.decorators import method_decorator
 
 @permission_classes([AllowAny])
-class SupportFilterInfoView(generics.ListAPIView):
+class SupportFilterInfoView(APIView):
+    @login_check
     def get(self,request):
         located_in               = request.GET.getlist('located_in', None)
         gender              = request.GET.getlist('gender', None)
@@ -65,11 +66,18 @@ class SupportFilterInfoView(generics.ListAPIView):
         data = list(supports.values())
         return JsonResponse(data,safe=False)  
 
-
+@permission_classes([AllowAny])
 class SupportInfoView(generics.ListAPIView):
-    def post(self,request):
+    serializer_class=SupportSerializer
 
-        return Response({"list"})
+    @login_check
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        support_id=self.kwargs['support_id']
+        return Support.objects.filter(uuid=support_id)
+
 
 
 # Reading the CSV to the model DB

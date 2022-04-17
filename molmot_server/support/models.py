@@ -31,7 +31,7 @@ class Support(models.Model):
         ('N', '어느쪽도 아님(None)')
     )
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
     title=models.CharField(
         max_length=50,
         null=False,
@@ -40,6 +40,7 @@ class Support(models.Model):
     detail=models.TextField(verbose_name='상세 설명',)
     submit_link=models.URLField(blank=True,null=True,verbose_name='관련 링크',)
     organizer=models.CharField(
+        verbose_name='주관사',
         max_length=50,
         null=True
     )

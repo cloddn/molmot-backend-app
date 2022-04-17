@@ -25,7 +25,7 @@ STATIC_ROOT=os.path.join(BASE_DIR,"static")
 SECRET_KEY = 'django-insecure-7bpqi+04xxwesw7o0dq5%944qn18h*^xfk$7l7!+(x_o&0+r3n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount'
+    'allauth.socialaccount',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -164,11 +165,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        #'rest_framework.authentication.SessionAuthentication',
-        #'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
@@ -209,3 +213,33 @@ from firebase_admin import credentials
 cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
 cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
+
+
+FCM_DJANGO_SETTINGS = {
+     # default: _('FCM Django')
+    "APP_VERBOSE_NAME": "[string for AppConfig's verbose_name]",
+     # true if you want to have only one active device per registered user at a time
+     # default: False
+    "FCM_SERVER_KEY":"AAAAaNjliGQ:APA91bGqg4yvGhLVNJELsPc8OO-LgWbi6bDmTuQDudzwxR7kNuqrn6poD3X-7ssfApGBQSpQPE85OhAkGoaUAgKd7AHGkqGh5ItFMv4XwxQWb_Ug_hjx40DcDNW4qXlmRZjzRkqnw86C",
+    "ONE_DEVICE_PER_USER": False,
+     # devices to which notifications cannot be sent,
+     # are deleted upon receiving error response from FCM
+     # default: False
+    "DELETE_INACTIVE_DEVICES": False,
+}
+
+
+CELERY_ALWAYS_EAGER = True
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Seoul'
+
+
+SCHEDULE_MINUTE = 60
+SCHEDULE_HOUR = 60 * SCHEDULE_MINUTE
+SCHEDULE_DAY = 24 * SCHEDULE_HOUR
+SCHEDULE_WEEK = 7 * SCHEDULE_DAY
+SCHEDULE_MONTH = 30 * SCHEDULE_DAY

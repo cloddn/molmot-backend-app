@@ -14,6 +14,7 @@ class Organization(admin.ModelAdmin):
 @admin.register(models.Support)
 class Support(admin.ModelAdmin):
      list_display= (
+     'uuid',
     'title',
      'detail',
      'submit_link',
