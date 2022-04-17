@@ -1,5 +1,6 @@
 import csv
 import datetime
+from django.http import JsonResponse
 from requests import api
 from django.shortcuts import render
 from rest_framework.response import Response
@@ -14,12 +15,16 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
 from user.utils import login_check
+from django.core import serializers as core_serializers
 
 from .serializers import *
 from .models import *
 from rest_framework.views import APIView
 from django.db.models import Q
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
+@permission_classes([AllowAny])
 class SupportFilterInfoView(generics.ListAPIView):
     def get(self,request):
         located_in               = request.GET.getlist('located_in', None)
@@ -35,7 +40,7 @@ class SupportFilterInfoView(generics.ListAPIView):
         if gender:
             q &= Q(gender = gender)
         if number_of_households:
-            q &= Q(number_of_households__in = number_of_households)
+            q &= Q(number_of_households__in = int(number_of_households))
         if income_ratio:
             q &= Q(income_ratio__in=income_ratio)
             
@@ -44,9 +49,9 @@ class SupportFilterInfoView(generics.ListAPIView):
         supports = Support.objects.filter(q).order_by('-start_date')
 
         filter_options = {
-            'located_in'            : 'located_in__in',
-            'number_of_households'             : 'number_of_households__in',
-            'income_ratio':'income_ratio',
+            'located_in': 'located_in__in',
+            'number_of_households': 'number_of_households__in',
+            'income_ratio':'income_ratio__in',
             'gender':'gender',
             #'start_date_range_range': 'price__gte',
             #'price_upper_range': 'price__lte',
@@ -56,8 +61,9 @@ class SupportFilterInfoView(generics.ListAPIView):
             filter_options.get(key) : value for (key, value) in dict(request.GET).items() if filter_options.get(key)
         }
         
-        supports = Support.objects.filter(**filter_set).distinct() 
-        return Response(list(supports))
+        supports = Support.objects.filter(**filter_set).distinct()
+        data = list(supports.values())
+        return JsonResponse(data,safe=False)  
 
 
 class SupportInfoView(generics.ListAPIView):
