@@ -14,6 +14,11 @@ JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 # 회원가입
 class CustomRegisterSerializer(RegisterSerializer):
+    username= models.CharField(
+        max_length=50,
+        null=False,
+        unique=False
+    )  
     age = models.IntegerField(
         null=True,
         blank=True
