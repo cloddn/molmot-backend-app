@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, mixins
 from rest_framework import generics # generics class-based view 사용할 계획
+
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.decorators import permission_classes, authentication_classes
 
@@ -9,9 +10,12 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
+from user.utils import login_check
+
 from .serializers import *
 from .models import *
 from rest_framework.views import APIView
+
 
 
 # 누구나 접근 가능
@@ -49,6 +53,8 @@ class Login(generics.GenericAPIView):
 
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
+        Member.objects.filter(email=user['email']).update(is_authenticated=True)
+        print(request.user.is_authenticated)
         if user['email'] == "None":
             return Response({"message": "fail"}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -109,3 +115,18 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@permission_classes([IsAuthenticated])
+class UserInfoView(APIView):
+    @login_check
+    def get(self,request,userid):
+        try:
+            user_id = request.user.uuid
+            userinfo=UserSerializer(Member.objects.get(uuid=user_id))
+            return Response({'user_info':userinfo.data})
+        except:
+            return Response({'user_info':'fail'})
+    @login_check
+    def get(self,request):
+        user_id = request.user.uuid
+        userinfo=UserSerializer(Member.objects.get(uuid=user_id))
+        return Response({'user_info':userinfo.data})

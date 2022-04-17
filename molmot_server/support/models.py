@@ -39,7 +39,10 @@ class Support(models.Model):
     )   
     detail=models.TextField(verbose_name='상세 설명',)
     submit_link=models.URLField(blank=True,null=True,verbose_name='관련 링크',)
-    organizer=models.ForeignKey(Organization,verbose_name='주관사',null=True,on_delete=models.CASCADE)
+    organizer=models.CharField(
+        max_length=50,
+        null=True
+    )
     start_date=models.DateTimeField(verbose_name='시작 날짜')
     end_date=models.DateTimeField(verbose_name='마감 날짜')
     qualifications=models.TextField(verbose_name='지원자격',null=True)

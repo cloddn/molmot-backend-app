@@ -8,6 +8,7 @@ from rest_auth.registration.serializers import RegisterSerializer
 from user.models import *
 
 # JWT 사용을 위한 설정
+JWT_DECODE_HANDLER=api_settings.JWT_DECODE_HANDLER
 JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
 JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
