@@ -53,7 +53,6 @@ class Login(generics.GenericAPIView):
 
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        Member.objects.filter(email=user['email']).update(is_authenticated=True)
     
         if user['email'] == "None":
             return Response({"message": "fail"}, status=status.HTTP_401_UNAUTHORIZED)
