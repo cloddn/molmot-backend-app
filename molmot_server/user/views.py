@@ -1,3 +1,4 @@
+from xxlimited import Null
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, mixins
@@ -57,14 +58,17 @@ class Login(generics.GenericAPIView):
         if user['email'] == "None":
             return Response({"message": "fail"}, status=status.HTTP_401_UNAUTHORIZED)
         
+    
         return Response(
             {
                 "user": UserSerializer(
                     user, context=self.get_serializer_context()
                 ).data, 
-                "token": user['token']
+                "token": user['token'],
+                "logined":user['logined']
             }
         )
+
 
 @permission_classes([AllowAny])
 class AuthSMSAPI(APIView):

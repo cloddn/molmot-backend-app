@@ -1,3 +1,4 @@
+from ssl import MemoryBIO
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
@@ -44,23 +45,33 @@ class UserLoginSerializer(serializers.Serializer):
         email = data.get("email")
         password = data.get("password", None)
         # 사용자 아이디와 비밀번호로 로그인 구현(<-> 사용자 아이디 대신 이메일로도 가능)
+
         user = authenticate(email=email, password=password)
 
         if user is None:
             return {'email': 'None'}
+        
         try:
             payload = JWT_PAYLOAD_HANDLER(user)
             jwt_token = JWT_ENCODE_HANDLER(payload)
-            
-            update_last_login(None, user)
+            if (Member.objects.get(email=email).last_login==None):
+                update_last_login(None, user)
+                return {
+                    'email': user.email,
+                    'token': jwt_token,
+                    'logined':False
+                }
 
+            else:
+                update_last_login(None, user)
         except Member.DoesNotExist:
             raise serializers.ValidationError(
                 'User with given username and password does not exist'
             )
         return {
             'email': user.email,
-            'token': jwt_token
+            'token': jwt_token,
+            'logined':True
         }
         
 # 사용자 정보 추출
