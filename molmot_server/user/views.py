@@ -16,6 +16,7 @@ from user.utils import login_check
 from .serializers import *
 from .models import *
 from rest_framework.views import APIView
+from rest_framework import viewsets
 
 
 
@@ -114,8 +115,8 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@authentication_classes([]) # Add this
-@permission_classes([]) # Maybe add this too
+@authentication_classes([]) 
+@permission_classes([]) 
 class UserInfoView(APIView):
     @login_check
     def get(self,request,userid):
@@ -130,3 +131,12 @@ class UserInfoView(APIView):
         user_id = request.user.uuid
         userinfo=UserSerializer(Member.objects.get(uuid=user_id))
         return Response({'user_info':userinfo.data})
+
+#데코레이터 안되는 문제 해결하기 
+#@login_check([])
+@authentication_classes([])
+@permission_classes([]) 
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = ProfileSerializer
+

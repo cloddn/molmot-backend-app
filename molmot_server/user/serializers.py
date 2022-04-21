@@ -79,3 +79,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ('email', 'age', 'gender', 'birth')
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ('email', 'username','nickname','age', 'gender', 'birth','locatedin','address','zipcode','phone_number')

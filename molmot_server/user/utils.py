@@ -9,13 +9,12 @@ from user.models import Member
 JWT_DECODE_HANDLER = api_settings.JWT_DECODE_HANDLER
 
 def login_check(func):
-
+    
     def wrapper(self, request, *args, **kwargs):
         try:
             access_token = request.headers.get('Authorization', None)
             #Decode - jwt.decode(access_token, SECRET_KEY, algorithm=ALGORITHM)
             payload = JWT_DECODE_HANDLER(access_token)
-            print(payload)
             user_id = Member.objects.get(uuid=payload['user_id'])
             request.user = user_id
 

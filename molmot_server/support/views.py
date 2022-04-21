@@ -24,7 +24,8 @@ from django.db.models import Q
 import json
 from django.utils.decorators import method_decorator
 
-@permission_classes([AllowAny])
+@authentication_classes([]) 
+@permission_classes([]) 
 class SupportFilterInfoView(APIView):
     @login_check
     def get(self,request):
@@ -68,7 +69,8 @@ class SupportFilterInfoView(APIView):
         data = list(supports.values())
         return JsonResponse(data,safe=False)  
 
-@permission_classes([AllowAny])
+@authentication_classes([]) 
+@permission_classes([]) 
 class SupportInfoView(generics.ListAPIView):
     serializer_class=SupportSerializer
 
@@ -81,7 +83,8 @@ class SupportInfoView(generics.ListAPIView):
         return Support.objects.filter(uuid=support_id)
 
 
-@permission_classes([AllowAny])
+@authentication_classes([]) 
+@permission_classes([])
 class SubscribeInfoView(generics.ListAPIView):
     serializer_class=SubscribeSerializer
 
