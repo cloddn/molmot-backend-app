@@ -1,7 +1,7 @@
 from pyexpat import model
 from django.db import models
 import uuid
-from fcm_django.models import AbstractFCMDevice
+from fcm_django.models import FCMDevice
 
 from user.models import Member
 # Create your models here.
@@ -69,11 +69,10 @@ class Channel(models.Model):
 
 
 
-
-
-class SupportNotification(AbstractFCMDevice):
+class SupportNotification(models.Model):
+    
     organizer_id=models.ForeignKey(Organization,verbose_name='관심있는 분야',null=True,on_delete=models.CASCADE)
-    user_device_info=models.CharField(max_length=255, blank=True,null=True) #접속한 기기정보
+    user_device_info=models.ForeignKey(FCMDevice,verbose_name='유저 디바이스 정보',null=True,on_delete=models.CASCADE)
     last_logined=models.DateTimeField(auto_now=True) #가장 마지막에 로그인한 시간
     sched_noti=models.ForeignKey(PeriodicTask,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
 
