@@ -60,3 +60,7 @@ class Support(models.Model):
 class Subscribe(models.Model):
     organizer_id=models.ForeignKey(Organization,null=True,on_delete=models.CASCADE)
     member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
+
+class Channel(models.Model):
+    organizer_id=models.ForeignKey(Organization,null=True,on_delete=models.CASCADE)
+    member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)

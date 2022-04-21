@@ -35,3 +35,10 @@ class Subscribe(admin.ModelAdmin):
     'organizer_id',
      'member_id'
      )
+
+@admin.register(models.Channel)
+class Channel(admin.ModelAdmin):
+     list_display= (
+    'organizer_id',
+     'member_id'
+     )
