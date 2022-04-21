@@ -1,10 +1,11 @@
 from pyexpat import model
 from django.db import models
 import uuid
+from fcm_django.models import AbstractFCMDevice
 
 from user.models import Member
 # Create your models here.
-
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 class Organization(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -65,3 +66,14 @@ class Channel(models.Model):
     channel_name=models.CharField(verbose_name='구독할 채널 작명',max_length=50,null=True,unique=True)
     organizer_id=models.ForeignKey(Organization,verbose_name='관련 제도',null=True,on_delete=models.CASCADE)
     member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
+
+
+
+
+
+class SupportNotification(AbstractFCMDevice):
+    organizer_id=models.ForeignKey(Organization,verbose_name='관심있는 분야',null=True,on_delete=models.CASCADE)
+    user_device_info=models.CharField(max_length=255, blank=True,null=True) #접속한 기기정보
+    last_logined=models.DateTimeField(auto_now=True) #가장 마지막에 로그인한 시간
+    sched_noti=models.ForeignKey(PeriodicTask,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
+
