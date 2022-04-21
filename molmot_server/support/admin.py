@@ -43,12 +43,19 @@ class Channel(admin.ModelAdmin):
      'member_id'
      )
 
+
 @admin.register(models.SupportNotification)
 class SupportNotification(admin.ModelAdmin):
      list_display=(
-    'organizer_id',
+     'organizer_id',
+     'support_id'
+    
+     )
+
+@admin.register(models.SupportScheduledNotification)
+class SupportScheduledNotification(admin.ModelAdmin):
+     list_display=(
      'user_device_info',
-     'last_logined',
      'sched_noti'
     
      )

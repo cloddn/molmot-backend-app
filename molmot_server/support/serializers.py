@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from support.models import Support,Subscribe
+from support.models import Support,Subscribe,SupportNotification
 
 
 class SupportSerializer(serializers.ModelSerializer):
@@ -14,3 +14,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
+class SupportNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupportNotification
+        fields = ('__all__')

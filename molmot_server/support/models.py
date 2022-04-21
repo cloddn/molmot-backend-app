@@ -68,14 +68,17 @@ class Channel(models.Model):
     member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
 
 
-
-class SupportNotification(models.Model):
+class SupportNotification(PeriodicTask):
+    organizer_id=models.ForeignKey(Organization,verbose_name='정부 및 기관, 주관사',null=True,on_delete=models.CASCADE)
+    support_id=models.ForeignKey(Support,verbose_name='제도/지원금',null=True,on_delete=models.CASCADE)
     
-    organizer_id=models.ForeignKey(Organization,verbose_name='관심있는 분야',null=True,on_delete=models.CASCADE)
+
+class SupportScheduledNotification(models.Model):
+    
     user_device_info=models.ForeignKey(FCMDevice,verbose_name='유저 디바이스 정보',null=True,on_delete=models.CASCADE)
-    last_logined=models.DateTimeField(auto_now=True) #가장 마지막에 로그인한 시간
-    sched_noti=models.ForeignKey(PeriodicTask,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
+    sched_noti=models.ForeignKey(SupportNotification,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
 
 
     class Meta:
-        verbose_name = ("SupportNotification")
+        verbose_name = ("SupportScheduledNotification")
+

@@ -23,6 +23,7 @@ from rest_framework.views import APIView
 from django.db.models import Q
 import json
 from django.utils.decorators import method_decorator
+from rest_framework import viewsets
 
 @authentication_classes([]) 
 @permission_classes([]) 
@@ -95,6 +96,17 @@ class SubscribeInfoView(generics.ListAPIView):
     def get_queryset(self):
         member_id=self.kwargs['member_id']
         return Subscribe.objects.filter(member_id=member_id)
+
+
+
+
+
+@authentication_classes([])
+@permission_classes([]) 
+class SupportNotificationViewSet(viewsets.ModelViewSet):
+    queryset = SupportNotification.objects.all()
+    serializer_class = SupportNotificationSerializer
+
 
 
 
