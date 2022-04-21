@@ -77,3 +77,6 @@ class SupportNotification(AbstractFCMDevice):
     last_logined=models.DateTimeField(auto_now=True) #가장 마지막에 로그인한 시간
     sched_noti=models.ForeignKey(PeriodicTask,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
 
+
+    class Meta:
+        verbose_name = ("SupportNotification")
