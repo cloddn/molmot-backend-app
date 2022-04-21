@@ -54,8 +54,10 @@ class SupportFilterInfoView(APIView):
             'number_of_households': 'number_of_households__in',
             'income_ratio':'income_ratio__in',
             'gender':'gender',
-            #'start_date_range_range': 'price__gte',
-            #'price_upper_range': 'price__lte',
+            #'start_date_lower_range_range': 'start_date__gte',
+            #'start_date_upper_range_range': 'start_date__lte',
+            #'end_date_lower_range_range': 'end_date__gte',
+            #'end_date_upper_range_range': 'end_date__lte',
         }
 
         filter_set = {
@@ -78,6 +80,18 @@ class SupportInfoView(generics.ListAPIView):
         support_id=self.kwargs['support_id']
         return Support.objects.filter(uuid=support_id)
 
+
+@permission_classes([AllowAny])
+class SubscribeInfoView(generics.ListAPIView):
+    serializer_class=SubscribeSerializer
+
+    @login_check
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        member_id=self.kwargs['member_id']
+        return Subscribe.objects.filter(member_id=member_id)
 
 
 # Reading the CSV to the model DB
