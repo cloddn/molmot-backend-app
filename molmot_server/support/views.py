@@ -97,6 +97,9 @@ class SubscribeInfoView(generics.ListAPIView):
         return Subscribe.objects.filter(member_id=member_id)
 
 
+
+#첫 로그인시 구독 분야 설정
+
 # Reading the CSV to the model DB
 '''
 def extract_db(csvfile):
