@@ -10,6 +10,7 @@ from support import views
 #ViewSet을 이용한 라우팅 방식 이용 
 router = DefaultRouter()
 router.register('support-notification', views.SupportNotificationViewSet)
+router.register('subscribe', views.SubscribeViewSet)
 
 
 urlpatterns = [
@@ -20,3 +21,6 @@ urlpatterns = [
     
     
 ]
+
+
+urlpatterns += router.urls
