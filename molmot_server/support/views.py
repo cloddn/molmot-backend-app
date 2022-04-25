@@ -130,6 +130,23 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             else:
                 return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
     
+@authentication_classes([])
+@permission_classes([]) 
+class ChannelViewSet(viewsets.ModelViewSet):
+
+    
+    #I took the liberty to change the model to queryset
+    queryset = Channel.objects.all()
+    serializer_class = ChannelSerializer
+
+
+    def create(self, request, *args, **kwargs):
+            serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+            if serializer.is_valid(raise_exception=True):
+                headers = self.get_success_headers(serializer.data)
+                return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
 #첫 로그인시 구독 분야 설정

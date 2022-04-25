@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from support.models import Support,Subscribe,SupportNotification
+from support.models import Channel, Support,Subscribe,SupportNotification
 
 
 class SupportSerializer(serializers.ModelSerializer):
@@ -20,6 +20,19 @@ class SubscribeSerializer(serializers.ModelSerializer):
             return sub_data
         except:
             return data
+
+class ChannelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Channel
+        fields = ('__all__')
+
+    def validate(self, data):
+        try:
+            ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
+            return ch_data
+        except:
+            return data
+
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
     class Meta:

@@ -11,6 +11,7 @@ from support import views
 router = DefaultRouter()
 router.register('support-notification', views.SupportNotificationViewSet)
 router.register('subscribe', views.SubscribeViewSet)
+router.register('channel', views.ChannelViewSet)
 
 
 urlpatterns = [

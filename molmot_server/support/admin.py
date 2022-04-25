@@ -39,6 +39,16 @@ class Subscribe(admin.ModelAdmin):
      )
 
 
+@admin.register(models.Channel)
+class Channel(admin.ModelAdmin):
+     list_display= (
+     'id',
+    'channel_name',
+    'organizer_id',
+     'member_id'
+     )
+
+
 
 @admin.register(models.SupportNotification)
 class SupportNotification(admin.ModelAdmin):
