@@ -11,7 +11,7 @@ from celery.schedules import crontab
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'molmot_server.settings')
 
-app = Celery('molmot_server', include=['user.tasks'])
+app = Celery('molmot_server', include=['support.tasks'])
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.update(

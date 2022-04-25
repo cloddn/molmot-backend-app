@@ -5,6 +5,7 @@ from django.contrib import admin
 @admin.register(models.Organization)
 class Organization(admin.ModelAdmin):
      list_display= (
+     'uuid',
     'name',
      'location',
      'link'
@@ -32,22 +33,18 @@ class Support(admin.ModelAdmin):
 @admin.register(models.Subscribe)
 class Subscribe(admin.ModelAdmin):
      list_display= (
+     'id',
     'organizer_id',
      'member_id'
      )
 
-@admin.register(models.Channel)
-class Channel(admin.ModelAdmin):
-     list_display= (
-    'organizer_id',
-     'member_id'
-     )
 
 
 @admin.register(models.SupportNotification)
 class SupportNotification(admin.ModelAdmin):
      list_display=(
-     'organizer_id',
+     'pk',
+    # 'organizer_id',
      'support_id'
     
      )
@@ -56,6 +53,8 @@ class SupportNotification(admin.ModelAdmin):
 class SupportScheduledNotification(admin.ModelAdmin):
      list_display=(
      'user_device_info',
-     'sched_noti'
+     'sched_noti',
+     'noti_on_time',
+     'noti_on_or_off'
     
      )

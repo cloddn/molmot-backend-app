@@ -25,7 +25,7 @@ STATIC_ROOT=os.path.join(BASE_DIR,"static")
 SECRET_KEY = 'django-insecure-7bpqi+04xxwesw7o0dq5%944qn18h*^xfk$7l7!+(x_o&0+r3n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -175,6 +175,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
 
 JWT_AUTH = {

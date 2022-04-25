@@ -1,3 +1,4 @@
+from email.policy import default
 from pyexpat import model
 from django.db import models
 import uuid
@@ -8,7 +9,7 @@ from user.models import Member
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 class Organization(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name=models.CharField(
         max_length=50,
         null=False,
@@ -77,7 +78,8 @@ class SupportScheduledNotification(models.Model):
     
     user_device_info=models.ForeignKey(FCMDevice,verbose_name='유저 디바이스 정보',null=True,on_delete=models.CASCADE)
     sched_noti=models.ForeignKey(SupportNotification,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
-
+    noti_on_time=models.DateTimeField(null=True,verbose_name='푸시알림 전송할 시간')
+    noti_on_or_off=models.BooleanField(default=False)
 
     class Meta:
         verbose_name = ("SupportScheduledNotification")
