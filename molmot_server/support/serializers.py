@@ -16,13 +16,10 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
-            Subscribe.objects.get(organizer_id=data['organizer_id'],member_id=data['member_id'])
-            raise serializers.ValidationError(
-                '이미 생성된 디비 입니다.'
-            )
-        except Subscribe.DoesNotExist:
+            sub_data,new=Subscribe.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
+            return sub_data
+        except:
             return data
-
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
     class Meta:
