@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
+from support.models import Support
+
 
 #URL = 'https://youth.seoul.go.kr/site/main/customSupp/list?targetMulti=&ageMulti=#n'
 DRIVER_PATH = 'chromedriver.exe'
@@ -57,7 +59,17 @@ for no in soup.find("body").find("div").find("ul").find_all("li"):
         except:
             pass
 
+
+    
+    array=text_list[1].split("~")
+    text_list[1]=array[0].rstrip()
+    text_list.insert(2,array[1].lstrip())
+
+    
+    #Support.objects.create(title=text_list[0],start_date=text_list[1],end_date=text_list[2],qualifications=text_list[3],organizer=text_list[4],submit_link=urls)
     print(text_list)
+    
+    #공백 삭제하기
 
     #제목
     #print(notice.find("div",class_="srv_rt").find("div",class_="tits").find("p").get_text())
