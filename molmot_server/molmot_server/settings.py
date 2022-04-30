@@ -30,6 +30,28 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+###########################AWS
+AWS_ACCESS_KEY_ID = 'AKIAWVRVGXN6APUZFQ6Q' # .csv 파일에 있는 내용을 입력 Access key ID
+AWS_SECRET_ACCESS_KEY = 'Azz3pDaVeSXPoTdTD8ge9wRQ3Xa3J6yltr0+5s3d' # .csv 파일에 있는 내용을 입력 Secret access key
+AWS_REGION = 'ap-northeast-2'
+
+###S3 Storages
+AWS_STORAGE_BUCKET_NAME = 'molmot-s3' # 설정한 버킷 이름
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME,AWS_REGION)
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'path/to/store/my/files/')
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024000000 # value in bytes 1GB here
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1024000000
+
+DEFAULT_FILE_STORAGE = 'molmot_server.storages.S3DefaultStorage'
+STATICFILES_STORAGE = 'molmot_server.storages.S3StaticStorage'
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,7 +73,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'django_celery_beat',
-    'fcm_django'
+    'fcm_django',
+    'storages'
 ]
 
 MIDDLEWARE = [
