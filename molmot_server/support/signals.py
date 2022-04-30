@@ -9,15 +9,19 @@ import datetime
 
 @receiver(signals.post_save, sender=Support) #Support 정보 수정하면 -> SupportNotification 수정하기.
 def run_task_on_Support_save(sender, instance, created, **kwargs):
-    noti_obj=SupportNotification.objects.get(pk=instance.sched_noti)
-    noti_obj.crontab=instance.noti_on_time
-    noti_obj.enabled=instance.noti_on_or_off
-    noti_obj.date_changed=datetime.datetime.now()
+    try:
+        noti_obj=SupportNotification.objects.get(pk=instance.sched_noti)
+        noti_obj.crontab=instance.noti_on_time
+        noti_obj.enabled=instance.noti_on_or_off
+        noti_obj.date_changed=datetime.datetime.now()
+    except SupportNotification.DoesNotExist:
+        pass
+
 
 
 
 @receiver(signals.post_save, sender=SupportNotification)
-def run_task_on_Support_save(sender, instance, created, **kwargs):
+def run_task_on_Support_Notification_save(sender, instance, created, **kwargs):
     noti_obj=SupportNotification.objects.get(pk=instance.sched_noti)
     noti_obj.crontab=instance.noti_on_time
     noti_obj.enabled=instance.noti_on_or_off

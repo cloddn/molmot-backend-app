@@ -1,12 +1,25 @@
 from rest_framework import serializers
 
-from support.models import Channel, Support,Subscribe,SupportNotification
+from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification
 
 
 class SupportSerializer(serializers.ModelSerializer):
+    hits=serializers.SerializerMethodField()
+
     class Meta:
         model = Support
         fields = ('__all__')
+    
+    def get_hits(self,obj):
+        obj.click
+        return obj.hits
+
+class HomeSupportSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Support
+        fields = ('__all__')
+    
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
@@ -39,6 +52,10 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         model = SupportNotification
         fields = ('__all__')
 
+class SupportScheduledNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupportScheduledNotification
+        fields = ('__all__')
 
 
 

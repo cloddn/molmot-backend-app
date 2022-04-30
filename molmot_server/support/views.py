@@ -83,7 +83,6 @@ class SupportInfoView(generics.ListAPIView):
         support_id=self.kwargs['support_id']
         return Support.objects.filter(uuid=support_id)
 
-
 @authentication_classes([]) 
 @permission_classes([])
 class SubscribeInfoView(generics.ListAPIView):

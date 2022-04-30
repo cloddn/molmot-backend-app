@@ -40,13 +40,28 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=30)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    fcm_token=serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
         email = data.get("email")
         password = data.get("password", None)
+        fcm_token = data.get("fcm_token", None)
         # 사용자 아이디와 비밀번호로 로그인 구현(<-> 사용자 아이디 대신 이메일로도 가능)
 
         user = authenticate(email=email, password=password)
+
+        member_obj=Member.objects.get(email=email)
+
+        if (fcm_token!=None):
+            if (MemberFCMDevice.objects.filter(registration_id=fcm_token).count()>=1):
+                deviceid=MemberFCMDevice.objects.filter(registration_id=fcm_token)
+                deviceid.delete()
+                device=MemberFCMDevice.objects.create(user=member_obj,registration_id=fcm_token)
+                device.user_device_info=fcm_token
+                device.last_update=datetime.now()
+                device.save()
+            else:
+                device=MemberFCMDevice.objects.create(user=member_obj,registration_id=fcm_token)
 
         if user is None:
             return {'email': 'None'}
@@ -54,7 +69,8 @@ class UserLoginSerializer(serializers.Serializer):
         try:
             payload = JWT_PAYLOAD_HANDLER(user)
             jwt_token = JWT_ENCODE_HANDLER(payload)
-            if (Member.objects.get(email=email).last_login==None):
+            if (member_obj.last_login==None):
+                #로그인 업데이트 
                 update_last_login(None, user)
                 return {
                     'email': user.email,

@@ -11,7 +11,7 @@ import json
 import requests
 from random import randint
 import time
-
+from fcm_django.models import AbstractFCMDevice
 
 class MemberManager(BaseUserManager):    
     
@@ -170,3 +170,7 @@ class AuthSMS(TimeStampedModel):
         else:
             return False
 
+
+class MemberFCMDevice(AbstractFCMDevice):
+    last_update = models.DateTimeField(auto_now_add=True)  
+    

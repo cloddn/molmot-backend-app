@@ -4,7 +4,7 @@ from django.db import models
 import uuid
 from fcm_django.models import FCMDevice
 
-from user.models import Member
+from user.models import Member, MemberFCMDevice
 # Create your models here.
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
@@ -54,9 +54,15 @@ class Support(models.Model):
     gender = models.CharField(verbose_name='성별',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
     number_of_households=models.IntegerField(verbose_name='가구수',null=True)
     income_ratio=models.IntegerField(verbose_name='한국장학재단 기준 소득분위',null=True)
+    hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):
         return self.title
+
+    @property
+    def click(self):
+        self.hits +=1
+        self.save()
 
 
 class Subscribe(models.Model):
@@ -74,8 +80,10 @@ class SupportNotification(PeriodicTask):
     support_id=models.ForeignKey(Support,verbose_name='제도/지원금',null=True,on_delete=models.CASCADE)
     
 
+
 class SupportScheduledNotification(models.Model):
     
+    member_device_info=models.ForeignKey(MemberFCMDevice,verbose_name='멤버 디바이스 정보',null=True,on_delete=models.CASCADE)
     user_device_info=models.ForeignKey(FCMDevice,verbose_name='유저 디바이스 정보',null=True,on_delete=models.CASCADE)
     sched_noti=models.ForeignKey(SupportNotification,verbose_name='예정되어있는 알림',null=True,on_delete=models.CASCADE)
     noti_on_time=models.DateTimeField(null=True,verbose_name='푸시알림 전송할 시간')

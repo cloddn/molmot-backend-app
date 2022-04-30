@@ -62,6 +62,7 @@ class SupportNotification(admin.ModelAdmin):
 @admin.register(models.SupportScheduledNotification)
 class SupportScheduledNotification(admin.ModelAdmin):
      list_display=(
+     'member_device_info',
      'user_device_info',
      'sched_noti',
      'noti_on_time',

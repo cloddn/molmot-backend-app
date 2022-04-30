@@ -28,3 +28,9 @@ class AuthSMS(admin.ModelAdmin):
     'phone_number',
     'auth_number',
      )
+
+@admin.register(models.MemberFCMDevice)
+class MemberFCMDevice(admin.ModelAdmin):
+     list_display= (
+    'last_update',
+     )
