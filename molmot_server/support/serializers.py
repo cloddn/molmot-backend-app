@@ -1,7 +1,9 @@
+from django.forms import DateInput
 from rest_framework import serializers
 
 from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification
-
+from user.models import Member
+import datetime
 
 class SupportSerializer(serializers.ModelSerializer):
     hits=serializers.SerializerMethodField()
@@ -42,6 +44,7 @@ class ChannelSerializer(serializers.ModelSerializer):
     def validate(self, data):
         try:
             ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
+            Member.objects.get(uuid=data['member_id']).last_login=datetime.datetime.now()
             return ch_data
         except:
             return data

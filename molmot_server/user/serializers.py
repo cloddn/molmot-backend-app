@@ -71,7 +71,7 @@ class UserLoginSerializer(serializers.Serializer):
             jwt_token = JWT_ENCODE_HANDLER(payload)
             if (member_obj.last_login==None):
                 #로그인 업데이트 
-                update_last_login(None, user)
+                #update_last_login(None, user)
                 return {
                     'email': user.email,
                     'token': jwt_token,
