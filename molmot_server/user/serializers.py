@@ -53,8 +53,8 @@ class UserLoginSerializer(serializers.Serializer):
         member_obj=Member.objects.get(email=email)
 
         if (fcm_token!=None):
-            if (MemberFCMDevice.objects.filter(user=email).count()>=1):
-                deviceid=MemberFCMDevice.objects.filter(user=email)
+            if (MemberFCMDevice.objects.filter(user=member_obj).count()>=1):
+                deviceid=MemberFCMDevice.objects.filter(user=member_obj)
                 deviceid.delete()
                 device,is_created=MemberFCMDevice.objects.get_or_create(user=member_obj,registration_id=fcm_token)
                 device.last_update=datetime.now()

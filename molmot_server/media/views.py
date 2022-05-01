@@ -8,7 +8,7 @@ from media.serializers import UIPhotoSerializer
 from rest_framework.decorators import permission_classes, authentication_classes
 from django.core import serializers
 from support.models import Support, SupportScheduledNotification
-from support.serializers import HomeSupportSerializer, SupportSerializer,SupportScheduledNotification,SupportScheduledNotificationSerializer
+from support.serializers import HomeSupportSerializer, SupportSerializer,SupportNotificationSerializer,SupportNotification,HomeSupportNotificationSerializer
 from user.models import MemberFCMDevice
 
 
@@ -29,17 +29,18 @@ class HomeLoadImageView(generics.ListAPIView):
 @permission_classes([]) 
 class GetHomeUIInfoView(APIView):
     def get(self,request):
-        uiphoto=UIPhoto.objects.get(indexnum=1)
+        
+        uiphotos=UIPhotoSerializer(UIPhoto.objects.all(),many=True)
         #3개가 없을 경우에 대한 에러 처리 
         hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:3],many=True)
-        return Response({"hottag":hottag.data,"uiphoto":uiphoto.photo_file.url})
+        return Response({"hottag":hottag.data,"uiphoto":uiphotos.data})
 
     #알람서비스 추가되면 추가 개발예정
-    def get(self,request,memeber_id):
+    def get(self,request,member_id):
         #3개가 없을 경우에 대한 에러 처리 
-        alarm_list=SupportScheduledNotificationSerializer(SupportScheduledNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=memeber_id).order_by('-noti_on_time')[:3]),many=True)
+        uiphotos=UIPhotoSerializer(UIPhoto.objects.all(),many=True)
+        alarm_list=HomeSupportNotificationSerializer(SupportNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=member_id)).order_by('-noti_on_time')[:3],many=True)
         print(alarm_list.data)
-        uiphoto=UIPhoto.objects.get(indexnum=1)
         #3개가 없을 경우에 대한 에러 처리 
         hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:3],many=True)
-        return Response({"hottag":hottag.data,"uiphoto":uiphoto.photo_file.url})
+        return Response({"hottag":hottag.data,"uiphoto":uiphotos.data,"alarm_list":alarm_list.data})

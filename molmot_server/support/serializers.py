@@ -22,7 +22,7 @@ class HomeSupportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Support
-        fields = ('__all__')
+        fields = ('title',)
     
 
 
@@ -64,15 +64,17 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         text=str(data.interval.period)+str(data.interval.every)
         return text
 
-class SupportScheduledNotificationSerializer(serializers.ModelSerializer):
-    interval=serializers.SerializerMethodField()
-    class Meta:
-        model = SupportScheduledNotification
-        fields = ('__all__')
 
-    def get_interval(self,data):
-        text=data.interval.period+data.interval.every
-        return text
+
+class HomeSupportNotificationSerializer(serializers.ModelSerializer):
+    support_id=serializers.SerializerMethodField()
+    class Meta:
+        model = SupportNotification
+        fields = ('support_id',)
+    
+    def get_support_id(self,data):
+        return data.support_id.title
+
 
 class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30)

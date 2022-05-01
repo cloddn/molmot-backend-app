@@ -8,6 +8,8 @@ from media import models
 class UIPhotoAdmin(admin.ModelAdmin):
     list_display = (
         'field',
+        'title',
+        'body',
         'uuid',
         'indexnum',
         'photo_file'
