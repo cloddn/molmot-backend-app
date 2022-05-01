@@ -92,12 +92,14 @@ class UserLoginSerializer(serializers.Serializer):
 # 사용자 정보 추출
 class UserSerializer(serializers.ModelSerializer):
     uuid=serializers.SerializerMethodField()
+
     class Meta:
         model = Member
-        fields = ( 'uuid','email', 'age', 'gender', 'birth')
+        fields = ('uuid','email', 'age', 'gender', 'birth')
     
     def get_uuid(self,data):
-        return self.uuid
+        obj=Member.objects.get(email=data['email'])
+        return obj.uuid
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
