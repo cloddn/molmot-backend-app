@@ -71,10 +71,10 @@ class SupportFilterInfoView(APIView):
         
         supports = Support.objects.filter(**filter_set).distinct()
         data = list(supports.values())
-        return JsonResponse(data,safe=False)  
+        return Response(data)  
     
     
-    def get(self,request,member_id):
+    def post(self,request):
         located_in               = request.GET.getlist('located_in', None)
         gender              = request.GET.getlist('gender', None)
         number_of_households= request.GET.getlist('number_of_households', None)
@@ -115,7 +115,7 @@ class SupportFilterInfoView(APIView):
         #즐겨찾기 연결 -> 몇개 나오게 할 건지, 생각!!!!
         #SupportBookMark.objects.create
         data = list(supports.values())
-        return JsonResponse(data,safe=False)  
+        return Response(data)  
 
 @authentication_classes([]) 
 @permission_classes([]) 
