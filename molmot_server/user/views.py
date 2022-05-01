@@ -30,18 +30,28 @@ class Registration(generics.GenericAPIView):
         if not serializer.is_valid(raise_exception=True):
             return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
 
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save(request) # request 필요 -> 오류 발생
-        return Response(
-            {
-            # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
-            # 디폴트 정보 context는 request, view, format
-                "user": UserSerializer(
-                    user, context=self.get_serializer_context()
-                ).data
-            },
-                status=status.HTTP_201_CREATED,
-        )
+        if serializer.is_valid():
+            user = serializer.save(request) # request 필요 -> 오류 발생
+            return Response(
+                {
+                # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
+                # 디폴트 정보 context는 request, view, format
+                    "user": UserSerializer(
+                        user, context=self.get_serializer_context()
+                    ).data
+                },
+                    status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                {
+                # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
+                # 디폴트 정보 context는 request, view, format
+                    "success":False
+                },
+                    status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 @permission_classes([AllowAny])
 class Login(generics.GenericAPIView):

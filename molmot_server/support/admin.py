@@ -34,6 +34,7 @@ class Support(admin.ModelAdmin):
 class Subscribe(admin.ModelAdmin):
      list_display= (
      'id',
+     'colored',
     'organizer_id',
      'member_id'
      )
@@ -43,6 +44,7 @@ class Subscribe(admin.ModelAdmin):
 class Channel(admin.ModelAdmin):
      list_display= (
      'id',
+     'category',
     'channel_name',
     'organizer_id',
      'member_id'

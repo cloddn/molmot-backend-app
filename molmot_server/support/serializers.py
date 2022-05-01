@@ -1,4 +1,4 @@
-from django.forms import DateInput
+from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 
 from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark
@@ -35,8 +35,9 @@ class SubscribeSerializer(serializers.ModelSerializer):
         try:
             sub_data,new=Subscribe.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
             return sub_data
-        except:
-            return data
+        except ValidationError as ex:
+            raise serializers.ValidationError({"success":False})
+
 
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,8 +49,9 @@ class ChannelSerializer(serializers.ModelSerializer):
             ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
             Member.objects.get(uuid=data['member_id']).last_login=datetime.datetime.now()
             return ch_data
-        except:
-            return data
+
+        except ValidationError as ex:
+            raise serializers.ValidationError({"success":False})
 
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
@@ -103,8 +105,11 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             support_noti_id.save()
         except Support.DoesNotExist:
             pass
+        except ValidationError as ex:
+            raise serializers.ValidationError({"success":False})
         return data
 
+  
 
 
 
