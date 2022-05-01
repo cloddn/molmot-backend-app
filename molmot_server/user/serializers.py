@@ -93,9 +93,9 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ( 'pk','email', 'age', 'gender', 'birth')
+        fields = ( 'uuid','email', 'age', 'gender', 'birth')
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ('pk','email', 'username','nickname','age', 'gender', 'birth','locatedin','address','zipcode','phone_number')
+        fields = ('uuid','email', 'username','nickname','age', 'gender', 'birth','locatedin','address','zipcode','phone_number')
