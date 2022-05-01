@@ -82,6 +82,8 @@ class SupportFilterInfoView(APIView):
         #start_date_range  = request.GET.get('StartDate',datetime.datetime(2018, 1, 31, 0, 0))
         #end_date_range  = request.GET.get('EndDate', datetime.datetime(2023, 1, 31, 0, 0))
 
+        print(request.GET)
+        print(request.data.get('member_id',None))
         q=Q()
         if located_in:
             q &= Q(located_in__in= located_in)
@@ -94,7 +96,10 @@ class SupportFilterInfoView(APIView):
             
         #q &= Q(price__range = (start_date_range,end_date_range))
                     
-        supports = Support.objects.filter(q).order_by('-start_date')
+        supports = Support.objects.filter(q).order_by('-start_date')[:5]
+
+    
+
 
         filter_options = {
             'located_in': 'located_in__in',
@@ -115,6 +120,9 @@ class SupportFilterInfoView(APIView):
         #즐겨찾기 연결 -> 몇개 나오게 할 건지, 생각!!!!
         #SupportBookMark.objects.create
         data = list(supports.values())
+        for i in data:
+            print(i)
+            SupportBookMark.objects.get_or_create(support_id=Support.objects.get(uuid=i['uuid']),member_id=Member.objects.get(pk=request.data.get('member_id',None)))
         return Response(data)  
 
 @authentication_classes([]) 

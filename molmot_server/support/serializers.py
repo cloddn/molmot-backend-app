@@ -79,7 +79,7 @@ class HomeSupportNotificationSerializer(serializers.ModelSerializer):
 
 
 class SupportBookMarkSerializer(serializers.ModelSerializer):
-    interval_data=serializers.CharField(max_length=30)
+    interval_data=serializers.CharField(max_length=30,default="7")
 
     class Meta:
         model = SupportBookMark
@@ -100,16 +100,16 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
                 enabled=True,
                 name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
                 task='support.tasks.support_notification_push',
-                kwargs=json.dumps({'support_id':str(data['support_id']),'member_id':str(data['member_id'])}),                )[0]
+                kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(data['member_id'])})
+                )[0]
             print(support_noti_id)
             support_noti_id.save()
         except Support.DoesNotExist:
             pass
         except ValidationError as ex:
+            print(ex)
             raise serializers.ValidationError({"success":False})
         return data
-
-  
 
 
 

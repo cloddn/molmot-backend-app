@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from support.models import Support, SupportBookMark,SupportNotification,SupportScheduledNotification
 import json
 import datetime
+from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
 
 from user.models import MemberFCMDevice
 
@@ -32,11 +33,11 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
             #기기 토큰 1개만 가지고 있을 수 있도록...?
             support_id=Support.objects.get(title=instance.support_id)
             member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
-            SupportNotification.objects.get_or_create(member_device_info=member_device_info,support_id=support_id,noti_on_time=support_id.start_date)
+            interval=IntervalSchedule.objects.get_or_create(every="7",period="days")[0]
+            SupportNotification.objects.get_or_create(member_device_info=member_device_info,support_id=support_id,noti_on_time=support_id.start_date,interval=interval)
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
             pass
-    #삭제될 경우....는...어케하쥐?
-    
+    #삭제될 경우....는...어케하쥐?=> 테스팅 해보기
 
 
 
