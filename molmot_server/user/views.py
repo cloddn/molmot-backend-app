@@ -109,7 +109,7 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
                 member_obj=Member.objects.get(email=email)
                 member_obj.set_password(request.data['new_pw'])
                 member_obj.save()
-                return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':member_obj.password}, status=status.HTTP_200_OK)
+                return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':request.data['new_pw']}, status=status.HTTP_200_OK)
             else:
                 p_num=request.query_params['phone_number']
                 a_num=request.query_params['auth_number']
