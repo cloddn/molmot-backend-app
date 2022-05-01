@@ -53,15 +53,14 @@ class UserLoginSerializer(serializers.Serializer):
         member_obj=Member.objects.get(email=email)
 
         if (fcm_token!=None):
-            if (MemberFCMDevice.objects.filter(registration_id=fcm_token).count()>=1):
-                deviceid=MemberFCMDevice.objects.filter(registration_id=fcm_token)
+            if (MemberFCMDevice.objects.filter(user=email).count()>=1):
+                deviceid=MemberFCMDevice.objects.filter(user=email)
                 deviceid.delete()
-                device=MemberFCMDevice.objects.create(user=member_obj,registration_id=fcm_token)
-                device.user_device_info=fcm_token
+                device,is_created=MemberFCMDevice.objects.get_or_create(user=member_obj,registration_id=fcm_token)
                 device.last_update=datetime.now()
                 device.save()
             else:
-                device=MemberFCMDevice.objects.create(user=member_obj,registration_id=fcm_token)
+                device=MemberFCMDevice.objects.create(user=member_obj,registration_id=fcm_token,last_update=datetime.now())
 
         if user is None:
             return {'email': 'None'}

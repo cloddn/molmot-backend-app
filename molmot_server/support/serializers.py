@@ -1,9 +1,11 @@
 from django.forms import DateInput
 from rest_framework import serializers
 
-from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification
-from user.models import Member
+from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark
+from user.models import Member,MemberFCMDevice
 import datetime
+from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
+import json
 
 class SupportSerializer(serializers.ModelSerializer):
     hits=serializers.SerializerMethodField()
@@ -51,15 +53,55 @@ class ChannelSerializer(serializers.ModelSerializer):
 
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
+    interval=serializers.SerializerMethodField()
     class Meta:
         model = SupportNotification
         fields = ('__all__')
 
+    def get_interval(self,data):
+        print(data.interval.period)
+        print(data.interval.every)
+        text=str(data.interval.period)+str(data.interval.every)
+        return text
+
 class SupportScheduledNotificationSerializer(serializers.ModelSerializer):
+    interval=serializers.SerializerMethodField()
     class Meta:
         model = SupportScheduledNotification
         fields = ('__all__')
 
+    def get_interval(self,data):
+        text=data.interval.period+data.interval.every
+        return text
+
+class SupportBookMarkSerializer(serializers.ModelSerializer):
+    interval_data=serializers.CharField(max_length=30)
+
+    class Meta:
+        model = SupportBookMark
+        fields = ('__all__')
+
+    def validate(self, data):
+        try:
+            support_id=Support.objects.get(title=data['support_id'])
+            interval=IntervalSchedule.objects.get_or_create(every=data['interval_data'],period="days")[0]
+            member_device_info=MemberFCMDevice.objects.get(user=data['member_id'])
+            support_noti_id=SupportNotification.objects.get_or_create(
+                support_id=support_id,
+                member_device_info=member_device_info,
+                noti_on_time=support_id.start_date,
+                interval=interval,
+                start_time=datetime.datetime.now(),
+                one_off=False,
+                enabled=True,
+                name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
+                task='support.tasks.support_notification_push',
+                kwargs=json.dumps({'support_id':str(data['support_id']),'member_id':str(data['member_id'])}),                )[0]
+            print(support_noti_id)
+            support_noti_id.save()
+        except Support.DoesNotExist:
+            pass
+        return data
 
 
 

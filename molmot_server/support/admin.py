@@ -50,12 +50,26 @@ class Channel(admin.ModelAdmin):
 
 
 
+@admin.register(models.SupportBookMark)
+class SupportBookMark(admin.ModelAdmin):
+     list_display= (
+     'uuid',
+    'support_id',
+     'member_id'
+     )
+
+
+
+
 @admin.register(models.SupportNotification)
 class SupportNotification(admin.ModelAdmin):
      list_display=(
-     'pk',
+     'name',
+     'member_device_info',
     # 'organizer_id',
-     'support_id'
+     'support_id',
+     'noti_on_time',
+     'noti_on_or_off'
     
      )
 

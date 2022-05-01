@@ -69,6 +69,50 @@ class SupportFilterInfoView(APIView):
         supports = Support.objects.filter(**filter_set).distinct()
         data = list(supports.values())
         return JsonResponse(data,safe=False)  
+    
+    @login_check
+    def get(self,request,member_id):
+        located_in               = request.GET.getlist('located_in', None)
+        gender              = request.GET.getlist('gender', None)
+        number_of_households= request.GET.getlist('number_of_households', None)
+        income_ratio=request.GET.getlist('income_ratio', None)
+        #start_date_range  = request.GET.get('StartDate',datetime.datetime(2018, 1, 31, 0, 0))
+        #end_date_range  = request.GET.get('EndDate', datetime.datetime(2023, 1, 31, 0, 0))
+
+        q=Q()
+        if located_in:
+            q &= Q(located_in__in= located_in)
+        if gender:
+            q &= Q(gender = gender)
+        if number_of_households:
+            q &= Q(number_of_households__in = int(number_of_households))
+        if income_ratio:
+            q &= Q(income_ratio__in=income_ratio)
+            
+        #q &= Q(price__range = (start_date_range,end_date_range))
+                    
+        supports = Support.objects.filter(q).order_by('-start_date')
+
+        filter_options = {
+            'located_in': 'located_in__in',
+            'number_of_households': 'number_of_households__in',
+            'income_ratio':'income_ratio__in',
+            'gender':'gender',
+            #'start_date_lower_range_range': 'start_date__gte',
+            #'start_date_upper_range_range': 'start_date__lte',
+            #'end_date_lower_range_range': 'end_date__gte',
+            #'end_date_upper_range_range': 'end_date__lte',
+        }
+
+        filter_set = {
+            filter_options.get(key) : value for (key, value) in dict(request.GET).items() if filter_options.get(key)
+        }
+        
+        supports = Support.objects.filter(**filter_set).distinct()
+        #즐겨찾기 연결 -> 몇개 나오게 할 건지, 생각!!!!
+        #SupportBookMark.objects.create
+        data = list(supports.values())
+        return JsonResponse(data,safe=False)  
 
 @authentication_classes([]) 
 @permission_classes([]) 
@@ -137,6 +181,26 @@ class ChannelViewSet(viewsets.ModelViewSet):
     #I took the liberty to change the model to queryset
     queryset = Channel.objects.all()
     serializer_class = ChannelSerializer
+
+
+    def create(self, request, *args, **kwargs):
+            serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+            if serializer.is_valid(raise_exception=True):
+                headers = self.get_success_headers(serializer.data)
+                return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@authentication_classes([])
+@permission_classes([]) 
+class SupportBookMarkViewSet(viewsets.ModelViewSet):
+
+    
+    #I took the liberty to change the model to queryset
+    queryset = SupportBookMark.objects.all()
+    serializer_class = SupportBookMarkSerializer
 
 
     def create(self, request, *args, **kwargs):

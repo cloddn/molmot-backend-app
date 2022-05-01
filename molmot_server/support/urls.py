@@ -12,11 +12,13 @@ router = DefaultRouter()
 router.register('support-notification', views.SupportNotificationViewSet)
 router.register('subscribe', views.SubscribeViewSet)
 router.register('channel', views.ChannelViewSet)
+router.register('support-bookmark', views.SupportBookMarkViewSet)
 
 
 urlpatterns = [
     path('support-info-view/<uuid:support_id>/',SupportInfoView.as_view()),
     path('support-filter-view/',SupportFilterInfoView.as_view()),
+    path('support-filter-view/<uuid:member_id>/',SupportFilterInfoView.as_view()),
     path('subscribe-info-view/<uuid:member_id>/',SubscribeInfoView.as_view()),
 
     

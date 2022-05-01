@@ -5,6 +5,7 @@ from django.contrib import admin
 @admin.register(models.Member)
 class Member(admin.ModelAdmin):
      list_display= (
+     'pk',
     'email',
     'password',
      'username',
@@ -32,5 +33,6 @@ class AuthSMS(admin.ModelAdmin):
 @admin.register(models.MemberFCMDevice)
 class MemberFCMDevice(admin.ModelAdmin):
      list_display= (
+     
     'last_update',
      )
