@@ -118,7 +118,7 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
                     return Response({'message': 'OK','timestamp':str(int(time.time() * 1000))}, status=status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
-        except KeyError:
+        except KeyError or Member.DoesNotExist:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self,request):
@@ -128,7 +128,7 @@ class IDPWCheckingAPI(APIView): #아이디 알려주기
             result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
             memberid=Member.objects.get(phone_number=p_num)
             return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':memberid.email},status=status.HTTP_200_OK)
-        except KeyError:
+        except KeyError or Member.DoesNotExist:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
