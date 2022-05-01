@@ -1,3 +1,4 @@
+from pickle import TRUE
 from xxlimited import Null
 from django.shortcuts import render
 from rest_framework.response import Response
@@ -102,18 +103,23 @@ class AuthSMSAPI(APIView):
 @permission_classes([AllowAny])
 class IDPWCheckingAPI(APIView): #아이디 알려주기 
     def post(self, request):
-        #try:
-            p_num=request.query_params['phone_number']
-            a_num=request.query_params['auth_number']
-            email = request.data['email']
-            member_obj=Member.objects.get(email=email)
-            member_obj.set_password(request.data['new_pw'])
-            member_obj.save()
-            #result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
-            #if (authenticate(email=email,password=latest_pw)):
-            return Response({'message': 'OK','timestamp':str(int(time.time() * 1000))}, status=status.HTTP_200_OK)
-        #except KeyError:
-        #    return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if request.data.get('new_pw',None)!=None:
+                email = request.data['email']
+                member_obj=Member.objects.get(email=email)
+                member_obj.set_password(request.data['new_pw'])
+                member_obj.save()
+                return Response({'message': 'OK','timestamp':str(int(time.time() * 1000)),'result':member_obj.password}, status=status.HTTP_200_OK)
+            else:
+                p_num=request.query_params['phone_number']
+                a_num=request.query_params['auth_number']
+                result=AuthSMS.check_auth_number(AuthSMS.objects.get(phone_number=p_num),p_num,a_num)
+                if (result==True):
+                    return Response({'message': 'OK','timestamp':str(int(time.time() * 1000))}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+        except KeyError:
+            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self,request):
         try:

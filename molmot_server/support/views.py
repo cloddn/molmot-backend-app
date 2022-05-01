@@ -1,5 +1,8 @@
+from cgitb import enable
 import csv
 import datetime
+from pickle import TRUE
+from re import L
 from django.http import JsonResponse
 from requests import api
 from django.shortcuts import render
@@ -212,6 +215,23 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
                 return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+@authentication_classes([])
+@permission_classes([]) 
+class AllAlarmsONOFFView(APIView):
+    def get(self,request,member_id,on_off):
+        try:
+            if (on_off=="OFF"):
+                SupportNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=Member.objects.get(pk=member_id))).update(enabled=False,noti_on_or_off=False)
+            elif (on_off=="ON"):
+                SupportNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=Member.objects.get(pk=member_id))).update(enabled=True,noti_on_or_off=True)
+            else:
+                return Response({"success":False},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success":True},status=status.HTTP_200_OK)
+        except:
+            return Response({"success":False},status=status.HTTP_400_BAD_REQUEST)
+       
 #첫 로그인시 구독 분야 설정
 
 # Reading the CSV to the model DB
