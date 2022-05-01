@@ -31,7 +31,7 @@ from rest_framework import viewsets
 @authentication_classes([]) 
 @permission_classes([]) 
 class SupportFilterInfoView(APIView):
-    @login_check
+    
     def get(self,request):
         located_in               = request.GET.getlist('located_in', None)
         gender              = request.GET.getlist('gender', None)
@@ -52,7 +52,7 @@ class SupportFilterInfoView(APIView):
             
         #q &= Q(price__range = (start_date_range,end_date_range))
                     
-        supports = Support.objects.filter(q).order_by('-start_date')
+        supports = Support.objects.filter(q).order_by('-start_date')[:5]
 
         filter_options = {
             'located_in': 'located_in__in',
