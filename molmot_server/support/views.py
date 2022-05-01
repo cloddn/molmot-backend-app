@@ -31,7 +31,7 @@ from rest_framework import viewsets
 @authentication_classes([]) 
 @permission_classes([]) 
 class SupportFilterInfoView(APIView):
-    
+
     def get(self,request):
         located_in               = request.GET.getlist('located_in', None)
         gender              = request.GET.getlist('gender', None)
@@ -73,7 +73,7 @@ class SupportFilterInfoView(APIView):
         data = list(supports.values())
         return JsonResponse(data,safe=False)  
     
-    @login_check
+    
     def get(self,request,member_id):
         located_in               = request.GET.getlist('located_in', None)
         gender              = request.GET.getlist('gender', None)
