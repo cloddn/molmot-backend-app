@@ -86,7 +86,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','d_day')
+        fields = ('uuid','support_id','member_id','d_day','interval_data')
 
     def validate(self, data):
         try:
