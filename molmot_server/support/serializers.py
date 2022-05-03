@@ -115,8 +115,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
         return data
 
     def get_d_day(self,data):
-        support_id=Support.objects.get(title=data['support_id'])
-        d_day=str((support_id.end_date.date()-datetime.date.today()).days)
+        d_day=str((data.end_date.date()-datetime.date.today()).days)
         return d_day
 
 '''
