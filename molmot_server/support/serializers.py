@@ -81,7 +81,7 @@ class HomeSupportNotificationSerializer(serializers.ModelSerializer):
 
 class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
-    d_day=serializers.CharField(max_length=255)
+    d_day=serializers.SerializerMethodField()
 
 
     class Meta:
