@@ -170,6 +170,7 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
     def update(self,request, *args, **kwargs):
         print(request.data)
         print(kwargs['pk'])
+        
         supno_obj=SupportNotification.objects.get(pk=kwargs['pk'])
         if (request.data.get('interval',None)!=None):
             interval_obj=IntervalSchedule.objects.get(pk=supno_obj.interval.pk)

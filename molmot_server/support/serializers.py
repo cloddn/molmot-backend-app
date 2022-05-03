@@ -81,6 +81,7 @@ class HomeSupportNotificationSerializer(serializers.ModelSerializer):
 
 class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
+    d_day=serializers.CharField(max_length=255)
 
     class Meta:
         model = SupportBookMark
@@ -112,6 +113,10 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"success":False})
         return data
 
+    def get_d_day(self,data):
+        support_id=Support.objects.get(title=data['support_id'])
+        d_day=str((support_id.end_date.date()-datetime.date.today()).days)
+        return d_day
 
 '''
 def create(self,validated_data):
