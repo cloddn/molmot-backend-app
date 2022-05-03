@@ -66,6 +66,7 @@ class SupportBookMark(admin.ModelAdmin):
 @admin.register(models.SupportNotification)
 class SupportNotification(admin.ModelAdmin):
      list_display=(
+     'pk',
      'name',
      'member_device_info',
     # 'organizer_id',

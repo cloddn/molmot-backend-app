@@ -34,7 +34,14 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
             support_id=Support.objects.get(title=instance.support_id)
             member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
             interval=IntervalSchedule.objects.get_or_create(every="7",period="days")[0]
-            SupportNotification.objects.get_or_create(member_device_info=member_device_info,support_id=support_id,noti_on_time=support_id.start_date,interval=interval)
+            SupportNotification.objects.get_or_create(
+                member_device_info=member_device_info,
+                support_id=support_id,
+                noti_on_time=support_id.start_date,
+                interval=interval,
+                name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
+                task='support.tasks.support_notification_push',
+                kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(instance.member_id)}))
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
             pass
     #삭제될 경우....는...어케하쥐?=> 테스팅 해보기

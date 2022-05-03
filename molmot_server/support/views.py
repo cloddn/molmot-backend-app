@@ -3,6 +3,7 @@ import csv
 import datetime
 from pickle import TRUE
 from re import L
+import re
 from django.http import JsonResponse
 from requests import api
 from django.shortcuts import render
@@ -27,6 +28,10 @@ from django.db.models import Q
 import json
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets
+
+
+from rest_framework import status, viewsets
+from rest_framework.response import Response
 
 @authentication_classes([]) 
 @permission_classes([]) 
@@ -161,10 +166,26 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
     queryset = SupportNotification.objects.all()
     serializer_class = SupportNotificationSerializer
 
+    
+    def update(self,request, *args, **kwargs):
+        print(request.data)
+        print(kwargs['pk'])
+        supno_obj=SupportNotification.objects.get(pk=kwargs['pk'])
+        if (request.data.get('interval',None)!=None):
+            interval_obj=IntervalSchedule.objects.get(pk=supno_obj.interval.pk)
+            interval_obj.every=request.data.get('interval',None)
+            interval_obj.save()
+            return Response({"success":True}, status=status.HTTP_201_CREATED)
+        elif (request.data.get('enabled',None)!=None):
+            bool_data=True if request.data.get('enabled',None)=="True" else False
+            print(bool_data)
+            supno_obj.enabled=bool_data
+            supno_obj.save()
+            return Response({"success":True}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+    
 
-
-from rest_framework import status, viewsets
-from rest_framework.response import Response
 
 @authentication_classes([])
 @permission_classes([]) 

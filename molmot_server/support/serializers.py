@@ -61,12 +61,13 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
     def get_interval(self,data):
-        print(data.interval.period)
-        print(data.interval.every)
         text=str(data.interval.period)+str(data.interval.every)
         return text
 
-
+    def update(self, instance, validated_data):
+        SupportNotification.objects.filter(pk=instance.pk)\
+                            .update(**validated_data)
+        return SupportNotification.objects.get(pk=instance.pk)
 
 class HomeSupportNotificationSerializer(serializers.ModelSerializer):
     support_id=serializers.SerializerMethodField()
@@ -110,8 +111,6 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             print(ex)
             raise serializers.ValidationError({"success":False})
         return data
-
-
 
 
 '''
