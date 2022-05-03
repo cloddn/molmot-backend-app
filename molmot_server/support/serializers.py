@@ -82,11 +82,13 @@ class HomeSupportNotificationSerializer(serializers.ModelSerializer):
 class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
     d_day=serializers.SerializerMethodField()
+    title=serializers.SerializerMethodField()
+    end_date=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','d_day','interval_data')
+        fields = ('uuid','support_id','member_id','d_day','title','end_date','interval_data')
 
     def validate(self, data):
         try:
@@ -118,6 +120,11 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
         d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
         return d_day
 
+    def get_title(self,data):
+        return data.support_id.title
+    
+    def get_end_date(self,data):
+        return data.support_id.end_date
 '''
 def create(self,validated_data):
         print("생성")
