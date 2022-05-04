@@ -157,3 +157,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = ProfileSerializer
 
+    def get_queryset(self):
+        if self.kwargs.get('member_id',None)!=None:
+            member_id=self.kwargs.get('member_id',None)
+            return super().get_queryset().filter(member_id=member_id)
+        else:
+            return super().get_queryset()

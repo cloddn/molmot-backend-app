@@ -98,8 +98,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('uuid','email', 'age', 'gender', 'birth')
     
     def get_uuid(self,data):
-        obj=Member.objects.get(email=data['email'])
-        return obj.uuid
+        try:
+            obj=Member.objects.get(email=data.email)
+            return obj.uuid
+        except:
+            return data
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
