@@ -75,9 +75,10 @@ class Member(AbstractBaseUser):
         ('W', '여성(Woman)'),
         ('N', '어느쪽도 아님(None)')
     )
-  
-    locatedin=models.CharField(verbose_name='학교 및 소재지', max_length=255,null=True,blank=True)
+    colleage=models.CharField(verbose_name='학교', max_length=255,null=True,blank=True)
+    colleage_locatedin=models.CharField(verbose_name='소재지', max_length=255,null=True,blank=True)
     address=models.CharField(verbose_name='실거주지', max_length=255,null=True,blank=True)
+    city_address=models.CharField(verbose_name='시/군/구', max_length=255,null=True,blank=True)
     zipcode=models.CharField(verbose_name='우편번호', max_length=10,null=True,blank=True)
     gender = models.CharField(verbose_name='성별',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
     birth = models.CharField(verbose_name='생일', max_length=10,null=True,blank=True)
