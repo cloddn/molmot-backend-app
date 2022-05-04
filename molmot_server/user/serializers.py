@@ -15,23 +15,14 @@ JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 # 회원가입
 class CustomRegisterSerializer(RegisterSerializer):
-    username= models.CharField(
-        max_length=50,
-        null=False,
-        unique=False
-    )  
-    age = models.IntegerField(
+    phone_number = models.IntegerField(
         null=True,
         blank=True
     )  
-    gender= models.CharField(blank=True, default='N',max_length=1, null=True)
-    birth=models.CharField(max_length=10,null=True,blank=True)
 
     def get_cleaned_data(self):
         data_dict = super().get_cleaned_data() # username, password, email이 디폴트
-        data_dict['age'] = self.validated_data.get('age', '')
-        data_dict['gender'] = self.validated_data.get('gender', '')
-        data_dict['birth'] = self.validated_data.get('birth', '')
+        data_dict['phone_number'] = self.validated_data.get('phone_number', '')
 
         return data_dict
 
@@ -95,7 +86,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Member
-        fields = ('uuid','email', 'age', 'gender', 'birth')
+        fields = ('uuid','email','phone_number')
     
     def get_uuid(self,data):
         try:

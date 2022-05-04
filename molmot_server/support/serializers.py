@@ -1,7 +1,7 @@
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 
-from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark
+from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
 from user.models import Member,MemberFCMDevice
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
@@ -33,9 +33,11 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
+            #data #오브젝트 형태로 전달
             sub_data,new=Subscribe.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
             return sub_data
         except ValidationError as ex:
+            print(ex)
             raise serializers.ValidationError({"success":False})
 
 
@@ -46,11 +48,14 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
+            print(data)#오브젝트 형태로 전달
             ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
-            Member.objects.get(uuid=data['member_id']).last_login=datetime.datetime.now()
+            data['member_id'].last_login=datetime.datetime.now()
+            data['member_id'].save()
             return ch_data
 
         except ValidationError as ex:
+            print(ex)
             raise serializers.ValidationError({"success":False})
 
 
