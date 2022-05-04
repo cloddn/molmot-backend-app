@@ -69,10 +69,11 @@ class SupportNotification(admin.ModelAdmin):
      'pk',
      'name',
      'member_device_info',
+     'enabled',
+     'interval',
     # 'organizer_id',
      'support_id',
-     'noti_on_time',
-     'noti_on_or_off'
+     'noti_on_time'
     
      )
 

@@ -196,6 +196,15 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     queryset = Subscribe.objects.all()
     serializer_class = SubscribeSerializer
 
+
+
+    def get_queryset(self):
+        if self.kwargs.get('member_id',None)!=None:
+            member_id=self.kwargs.get('member_id',None)
+            return super().get_queryset().filter(member_id=member_id)
+        else:
+            return super().get_queryset()
+
     def create(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
             if serializer.is_valid():
@@ -214,9 +223,13 @@ class ChannelViewSet(viewsets.ModelViewSet):
     serializer_class = ChannelSerializer
 
 
-    def list(self):
-        member_id=self.kwargs['member_id']
-        return Subscribe.objects.filter(member_id=member_id)
+
+    def get_queryset(self):
+        if self.kwargs.get('member_id',None)!=None:
+            member_id=self.kwargs.get('member_id',None)
+            return super().get_queryset().filter(member_id=member_id)
+        else:
+            return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
@@ -237,7 +250,7 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
     queryset = SupportBookMark.objects.all()
     serializer_class = SupportBookMarkSerializer
 
-    
+
     def get_queryset(self):
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
