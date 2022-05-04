@@ -179,7 +179,6 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             return Response({"success":True}, status=status.HTTP_201_CREATED)
         elif (request.data.get('enabled',None)!=None):
             bool_data=True if request.data.get('enabled',None)=="True" else False
-            print(bool_data)
             supno_obj.enabled=bool_data
             supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
@@ -196,7 +195,6 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     #I took the liberty to change the model to queryset
     queryset = Subscribe.objects.all()
     serializer_class = SubscribeSerializer
-
 
     def create(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
@@ -215,6 +213,10 @@ class ChannelViewSet(viewsets.ModelViewSet):
     queryset = Channel.objects.all()
     serializer_class = ChannelSerializer
 
+
+    def list(self):
+        member_id=self.kwargs['member_id']
+        return Subscribe.objects.filter(member_id=member_id)
 
     def create(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
@@ -235,6 +237,13 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
     queryset = SupportBookMark.objects.all()
     serializer_class = SupportBookMarkSerializer
 
+    
+    def get_queryset(self):
+        if self.kwargs.get('member_id',None)!=None:
+            member_id=self.kwargs.get('member_id',None)
+            return super().get_queryset().filter(member_id=member_id)
+        else:
+            return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
             serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
