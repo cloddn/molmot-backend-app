@@ -269,6 +269,31 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
 
 
 
+@authentication_classes([])
+@permission_classes([]) 
+class RecordingListViewSet(viewsets.ModelViewSet):
+
+    
+    #I took the liberty to change the model to queryset
+    queryset = RecordingList.objects.all()
+    serializer_class = RecordingListSerializer
+
+
+    def get_queryset(self):
+        if self.kwargs.get('member_id',None)!=None:
+            member_id=self.kwargs.get('member_id',None)
+            return super().get_queryset().filter(member_id=member_id)
+        else:
+            return super().get_queryset()
+
+    def create(self, request, *args, **kwargs):
+            serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+            if serializer.is_valid():
+                headers = self.get_success_headers(serializer.data)
+                return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @authentication_classes([])
 @permission_classes([]) 

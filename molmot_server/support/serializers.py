@@ -1,7 +1,7 @@
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 
-from support.models import Channel, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
+from support.models import Channel, RecordingList, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
 from user.models import Member,MemberFCMDevice
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
@@ -24,6 +24,20 @@ class HomeSupportSerializer(serializers.ModelSerializer):
         model = Support
         fields = ('title',)
     
+
+class RecordingListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecordingList
+        fields = ('__all__')
+
+    def validate(self, data):
+        try:
+            #data #오브젝트 형태로 전달
+            sub_data,new=RecordingList.objects.get_or_create(support_id=data['support_id'],member_id=data['member_id'])
+            return sub_data
+        except ValidationError as ex:
+            print(ex)
+            raise serializers.ValidationError({"success":False})
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
@@ -83,6 +97,7 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
 
 class HomeSupportNotificationSerializer(serializers.ModelSerializer):
     support_id=serializers.SerializerMethodField()
+    
     class Meta:
         model = SupportNotification
         fields = ('support_id',)

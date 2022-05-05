@@ -115,3 +115,13 @@ class SupportScheduledNotification(models.Model):
     class Meta:
         verbose_name = ("SupportScheduledNotification")
 
+
+
+class RecordingList(models.Model):
+    
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
+    support_id=models.ForeignKey(Support,verbose_name='제도/지원금',null=True,on_delete=models.CASCADE)
+    member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = ("RecordingList")

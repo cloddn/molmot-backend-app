@@ -13,6 +13,7 @@ router.register('support-notification', views.SupportNotificationViewSet)
 router.register('subscribe', views.SubscribeViewSet)
 router.register('channel', views.ChannelViewSet)
 router.register('support-bookmark', views.SupportBookMarkViewSet)
+router.register('recording', views.RecordingListViewSet)
 
 
 urlpatterns = [
