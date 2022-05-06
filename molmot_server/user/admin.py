@@ -38,3 +38,13 @@ class MemberFCMDevice(admin.ModelAdmin):
      
     'last_update',
      )
+
+@admin.register(models.CityAddress)
+class CityAddress(admin.ModelAdmin):
+     list_display= (
+     
+    'city',
+    'address'
+     )
+
+

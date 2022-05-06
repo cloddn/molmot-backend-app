@@ -1,6 +1,7 @@
 from datetime import datetime
 from operator import ge
 from os import access
+from xxlimited import Null
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 import uuid
@@ -175,3 +176,8 @@ class AuthSMS(TimeStampedModel):
 class MemberFCMDevice(AbstractFCMDevice):
     last_update = models.DateTimeField(auto_now_add=True)  
     
+
+class CityAddress(models.Model):
+    
+    city=models.CharField(max_length=255,null=True) #특별시,광역시
+    address=models.CharField(max_length=255,null=True,unique=True) #행정구

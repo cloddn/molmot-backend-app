@@ -64,7 +64,7 @@ class UserLoginSerializer(serializers.Serializer):
                 #update_last_login(None, user)
                 return {
                     'email': user.email,
-                    'token': jwt_token,
+                    'uuid': member_obj.uuid,
                     'logined':False
                 }
 

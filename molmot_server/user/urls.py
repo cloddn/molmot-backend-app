@@ -24,6 +24,7 @@ urlpatterns = [
     path('idpw-check/?phone_number=<str:phone_number>&auth_number=<str:auth_number>',IDPWCheckingAPI.as_view()),
     #path('user-info-view/',UserInfoView.as_view()),
     #path('user-info-view/<uuid:userid>/',UserInfoView.as_view()),
+    path('excel-csv/',views.Import_csv,name="Import_csv"),
 
 
 ]

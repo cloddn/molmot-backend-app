@@ -163,3 +163,39 @@ class ProfileViewSet(viewsets.ModelViewSet):
             return super().get_queryset().filter(member_id=member_id)
         else:
             return super().get_queryset()
+
+
+import datetime as dt
+import pandas as pd
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+ 
+from django.views.decorators.csrf import csrf_exempt
+
+
+
+@csrf_exempt
+@authentication_classes([])
+@permission_classes([]) 
+def Import_csv(request):
+    print('s')               
+    try:
+        if request.method == 'POST' and request.FILES['myfile']:
+          
+            myfile = request.FILES['myfile']        
+            empexceldata = pd.read_csv(myfile,encoding='utf-8')
+            print(type(empexceldata))
+            dbframe = empexceldata
+            for dbframe in dbframe.itertuples():
+                 
+                fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                obj = CityAddress.objects.create(city=dbframe.city,address=dbframe.address)
+                print(type(obj))
+                obj.save()
+ 
+            return Response({"success":True})
+    except Exception as identifier:            
+        print(identifier)
+     
+    return Response({"success":False})
