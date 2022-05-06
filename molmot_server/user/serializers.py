@@ -64,7 +64,7 @@ class UserLoginSerializer(serializers.Serializer):
                 #update_last_login(None, user)
                 return {
                     'email': user.email,
-                    'uuid': member_obj.uuid,
+                    'token': jwt_token,
                     'logined':False
                 }
 
@@ -90,7 +90,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_uuid(self,data):
         try:
-            obj=Member.objects.get(email=data.email)
+            obj=Member.objects.get(email=data['email'])
             return obj.uuid
         except:
             return data
