@@ -53,7 +53,7 @@ class Support(models.Model):
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,unique=False,blank=True)
     age=models.IntegerField(verbose_name='나이',null=True,blank=True)
     gender = models.CharField(verbose_name='성별',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
-    number_of_households=models.IntegerField(verbose_name='가구수',null=True,blank=True)
+    number_of_households=models.IntegerField(verbose_name='가구수',null=True,blank=True,default=1)
     income_ratio=models.IntegerField(verbose_name='한국장학재단 기준 소득분위',null=True,blank=True)
     hits = models.PositiveIntegerField(default = 0)
 

@@ -76,11 +76,12 @@ class ChannelSerializer(serializers.ModelSerializer):
 class SupportNotificationSerializer(serializers.ModelSerializer):
     interval=serializers.SerializerMethodField()
     d_day=serializers.SerializerMethodField()
+    title=serializers.SerializerMethodField()
     
     
     class Meta:
         model = SupportNotification
-        fields = ('interval','d_day','name','task','enabled','noti_on_time')
+        fields = ('interval','d_day','name','title','task','enabled','noti_on_time')
 
     def get_interval(self,data):
         text=str(data.interval.period)+str(data.interval.every)
@@ -89,6 +90,9 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
     def get_d_day(self,data):
         d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
         return d_day
+
+    def get_title(self,data):
+        return str(data.support_id.title)
 
     def update(self, instance, validated_data):
         SupportNotification.objects.filter(pk=instance.pk)\
