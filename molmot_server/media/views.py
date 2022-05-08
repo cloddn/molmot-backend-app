@@ -42,5 +42,5 @@ class GetHomeUIInfoView(APIView):
         alarm_list=HomeSupportNotificationSerializer(SupportNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=member_id)).order_by('-noti_on_time')[:3],many=True)
         print(alarm_list.data)
         #3개가 없을 경우에 대한 에러 처리 
-        hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:3],many=True)
+        hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:6],many=True)
         return Response({"hottag":hottag.data,"uiphoto":uiphotos.data,"alarm_list":alarm_list.data})
