@@ -73,7 +73,7 @@ def get_seoul_youth_list(num):
 
         try:
 
-            Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[5],qualifications=text_list[4],submit_link=urls)
+            Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[-1],qualifications=text_list[-2],submit_link=urls)
         except:
             print(text_list)
             pass
