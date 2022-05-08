@@ -32,7 +32,7 @@ class GetHomeUIInfoView(APIView):
         
         uiphotos=UIPhotoSerializer(UIPhoto.objects.all(),many=True)
         #3개가 없을 경우에 대한 에러 처리 
-        hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:3],many=True)
+        hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:6],many=True)
         return Response({"hottag":hottag.data,"uiphoto":uiphotos.data})
 
     #알람서비스 추가되면 추가 개발예정

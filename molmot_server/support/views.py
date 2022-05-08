@@ -17,6 +17,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 # JWT 사용을 위해 필요
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+from support.seoul_youth import get_seoul_youth_list
 
 from user.utils import login_check
 from django.core import serializers as core_serializers
@@ -32,6 +33,7 @@ from rest_framework import viewsets
 
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+from dateutil.parser import parse
 
 @authentication_classes([]) 
 @permission_classes([]) 
@@ -324,3 +326,14 @@ def extract_db(csvfile):
             p.save()      
 
 '''
+
+@authentication_classes([])
+@permission_classes([]) 
+class GetSupportData(APIView):
+    def get(self,request,num):
+        text_list=get_seoul_youth_list(num)
+        #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
+
+
+        return Response({"success":True})
+

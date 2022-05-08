@@ -40,7 +40,7 @@ class Support(models.Model):
         null=False,
         unique=False
     )   
-    detail=models.TextField(verbose_name='상세 설명',)
+    detail=models.TextField(verbose_name='상세 설명',blank=True)
     submit_link=models.URLField(blank=True,null=True,verbose_name='관련 링크',)
     organizer=models.CharField(
         verbose_name='주관사',
@@ -49,12 +49,12 @@ class Support(models.Model):
     )
     start_date=models.DateTimeField(verbose_name='시작 날짜')
     end_date=models.DateTimeField(verbose_name='마감 날짜')
-    qualifications=models.TextField(verbose_name='지원자격',null=True)
-    located_in=models.CharField(verbose_name='지역',max_length=50,null=True,unique=False)
-    age=models.IntegerField(verbose_name='나이',null=True)
+    qualifications=models.TextField(verbose_name='지원자격',null=True,blank=True)
+    located_in=models.CharField(verbose_name='지역',max_length=50,null=True,unique=False,blank=True)
+    age=models.IntegerField(verbose_name='나이',null=True,blank=True)
     gender = models.CharField(verbose_name='성별',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
-    number_of_households=models.IntegerField(verbose_name='가구수',null=True)
-    income_ratio=models.IntegerField(verbose_name='한국장학재단 기준 소득분위',null=True)
+    number_of_households=models.IntegerField(verbose_name='가구수',null=True,blank=True)
+    income_ratio=models.IntegerField(verbose_name='한국장학재단 기준 소득분위',null=True,blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):
