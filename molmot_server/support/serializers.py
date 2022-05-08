@@ -81,7 +81,7 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SupportNotification
-        fields = ('interval','d_day','name','title','task','enabled','noti_on_time')
+        fields = ('id','interval','d_day','name','title','task','enabled','noti_on_time')
 
     def get_interval(self,data):
         text=str(data.interval.period)+str(data.interval.every)
@@ -115,11 +115,12 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     end_date=serializers.SerializerMethodField()
+    id=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','d_day','title','end_date','interval_data')
+        fields = ('uuid','support_id','member_id','id','d_day','title','end_date','interval_data')
 
     def validate(self, data):
         try:
