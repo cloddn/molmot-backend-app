@@ -15,7 +15,7 @@ def run_task_on_Support_save(sender, instance, created, **kwargs):
     if (created==False):
         try:
             #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
-            sched_noti=SupportNotification.objects.filter(pk=instance.start_date).update(
+            sched_noti=SupportNotification.objects.filter(pk=instance.pk).update(
                     noti_on_time=instance.start_date,
                     crontab=instance.start_date,
                     date_changed=datetime.datetime.now()
