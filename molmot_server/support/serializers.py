@@ -115,12 +115,11 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     end_date=serializers.SerializerMethodField()
-    id=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','id','d_day','title','end_date','interval_data')
+        fields = ('uuid','support_id','member_id','d_day','title','end_date','interval_data')
 
     def validate(self, data):
         try:
@@ -157,6 +156,8 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     
     def get_end_date(self,data):
         return data.support_id.end_date
+
+
 '''
 def create(self,validated_data):
         print("생성")
