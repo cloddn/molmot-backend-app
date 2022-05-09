@@ -166,21 +166,21 @@ class ChannelSerializer(serializers.ModelSerializer):
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
     interval=serializers.SerializerMethodField()
-    d_day=serializers.SerializerMethodField()
+    #d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     
     
     class Meta:
         model = SupportNotification
-        fields = ('id','interval','d_day','name','title','task','enabled','noti_on_time')
+        fields = ('id','interval','name','title','task','enabled','noti_on_time')
 
     def get_interval(self,data):
         text=str(data.interval.period)+str(data.interval.every)
         return text
 
-    def get_d_day(self,data):
-        d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
-        return d_day
+    #def get_d_day(self,data):
+    #    d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+    #    return d_day
 
     def get_title(self,data):
         return str(data.support_id.title)
@@ -203,14 +203,14 @@ class HomeSupportNotificationSerializer(serializers.ModelSerializer):
 
 class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
-    d_day=serializers.SerializerMethodField()
+    #d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     end_date=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','d_day','title','end_date','interval_data')
+        fields = ('uuid','support_id','member_id','title','end_date','interval_data')
 
     def validate(self, data):
         try:
@@ -238,9 +238,9 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"success":False})
         return data
 
-    def get_d_day(self,data):
-        d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
-        return d_day
+    #def get_d_day(self,data):
+    #    d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+    #    return d_day
 
     def get_title(self,data):
         return data.support_id.title
