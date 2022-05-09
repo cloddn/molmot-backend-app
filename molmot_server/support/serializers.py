@@ -172,7 +172,7 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SupportNotification
-        fields = ('id','interval','name','title','task','enabled','noti_on_time')
+        fields = ('id','interval','name','title','task','enabled','start_time')
 
     def get_interval(self,data):
         text=str(data.interval.period)+str(data.interval.every)
@@ -205,12 +205,12 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
     #d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
-    end_date=serializers.SerializerMethodField()
+    date=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','title','end_date','interval_data')
+        fields = ('uuid','support_id','member_id','title','date','interval_data')
 
     def validate(self, data):
         try:
@@ -245,8 +245,8 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     def get_title(self,data):
         return data.support_id.title
     
-    def get_end_date(self,data):
-        return data.support_id.end_date
+    def get_date(self,data):
+        return data.support_id.date
 
 
 '''
