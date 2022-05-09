@@ -138,7 +138,6 @@ class SupportFilterInfoView(APIView):
 class SupportInfoView(generics.ListAPIView):
     serializer_class=SupportSerializer
 
-    @login_check
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -151,7 +150,6 @@ class SupportInfoView(generics.ListAPIView):
 class SubscribeInfoView(generics.ListAPIView):
     serializer_class=SubscribeSerializer
 
-    @login_check
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
