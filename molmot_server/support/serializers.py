@@ -205,12 +205,12 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
     #d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
-    date=serializers.SerializerMethodField()
+    rqutPrdCn=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','title','date','interval_data')
+        fields = ('uuid','support_id','member_id','title','rqutPrdCn','interval_data')
 
     def validate(self, data):
         try:
@@ -220,7 +220,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             support_noti_id=SupportNotification.objects.get_or_create(
                 support_id=support_id,
                 member_device_info=member_device_info,
-                noti_on_time=support_id.start_date,
+                noti_on_time=support_id.start_time,
                 interval=interval,
                 start_time=datetime.datetime.now(),
                 one_off=False,
@@ -245,8 +245,8 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     def get_title(self,data):
         return data.support_id.title
     
-    def get_date(self,data):
-        return data.support_id.date
+    def get_rqutPrdCn(self,data):
+        return data.support_id.rqutPrdCn
 
 
 '''
