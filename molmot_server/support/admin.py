@@ -16,6 +16,7 @@ class Organization(admin.ModelAdmin):
 class Support(admin.ModelAdmin):
      list_display= (
      'uuid',
+     'located_in',
     'title',
      'detail',
      'submit_link',
@@ -23,7 +24,6 @@ class Support(admin.ModelAdmin):
      'start_date',
      'end_date',
      'qualifications',
-     'located_in',
      'age',
      'gender',
      'number_of_households',
