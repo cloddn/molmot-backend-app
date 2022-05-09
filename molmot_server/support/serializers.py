@@ -1,3 +1,4 @@
+from this import d
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 
@@ -22,52 +23,77 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Support
-        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','notice',
-        'notice','located_in','polyBizTy',
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','polyBizTy',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
         'empmSttsCn','accrRqisCn','majrRqisCn',
         'splzRlmRqisCn','rqutUrla','member_id')
 
+    def validate(self, data):
+        data['organizer']=data.get('polyBizTy','').replace('\n',"%^^%")
+        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+" 지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
+        data['submit_link']=data.get('rqutUrla','')
+        data['qualifications']=("연령: "+data.get('ageInfo','')+" 취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
+        data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
+        member_id=data.get('member_id',None)
+        sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
+        submit_link=data['submit_link'],qualifications=data['qualifications'],title=data['title'],rqutPrdCn=data['rqutPrdCn'],plcyTpNm=data['plcyTpNm'])
+        SupportBookMark.objects.get_or_create(support_id=Support.objects.get(title=data['title']),member_id=Member.objects.get(pk=member_id))
+        print(data)
+        return data
+    
     def create(self, data):
         print(data)
-        organizer=data.pop('polyBizTy','')
-        title=data.pop('polyBizSjnm','')
-        detail="정책 소개: "+data.pop('polyItcnCn','')+" 지원 내용: "+data.pop('sporCn','')
-        qualifications="연령: "+data.pop('ageInfo','')+" 취업 상태: "+data.pop('empmSttsCn','')+" 학력: "+data.pop('accrRqisCn','')+" 전공: "+data.pop('majrRqisCn','')+" 특화 분야: "+data.pop('splzRlmRqisCn','')
-        submit_link=data.pop('rqutUrla','')
+        sub_data,new=Support.objects.get_or_create(**data)
         member_id=data.pop('member_id',None)
+        #Support.objects.filter(bizId=data['bizId']).delete()
+
+    ''''
+    def create(self, data):
+        print(data)
+        organizer=data.pop('polyBizTy','').replace('\n',"%^^%")
+        title=data.pop('polyBizSjnm','').replace('\n',"%^^%")
+        detail=("정책 소개: "+data.pop('polyItcnCn','')+" 지원 내용: "+data.pop('sporCn','')).replace('\n',"%^^%")
+        qualifications=("연령: "+data.pop('ageInfo','')+" 취업 상태: "+data.pop('empmSttsCn','')+" 학력: "+data.pop('accrRqisCn','')+" 전공: "+data.pop('majrRqisCn','')+" 특화 분야: "+data.pop('splzRlmRqisCn','')).replace('\n',"%^^%")
+        submit_link=data.pop('rqutUrla','')
+        member_id=data.pop('member_id',None).replace('\n',"%^^%")
         sub_data,new=Support.objects.get_or_create(organizer=organizer,title=title,detail=detail,qualifications=qualifications,
+        
         submit_link=submit_link,**data)
         SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Support.objects.filter(bizId=data['bizId']).delete()
         print("123"+Support.objects.get(pk='f47fad85-6059-4e53-8ec9-fe97c13b3c57').title)
-
-
-
-
-
+'''
 class OpenapiSupportSerializer(serializers.ModelSerializer):
     polyBizTy=serializers.CharField(max_length=255) #organizer
-    polyBizSjnm=serializers.CharField(max_length=255)#qualifications
+    polyBizSjnm=serializers.CharField(max_length=255) #title
+    polyItcnCn=serializers.CharField(max_length=255) #detail
+    sporCn=serializers.CharField(max_length=255)#detail
+    ageInfo=serializers.CharField(max_length=255) #qualifications
+    empmSttsCn=serializers.CharField(max_length=255)#qualifications
+    accrRqisCn=serializers.CharField(max_length=255)#qualifications
+    majrRqisCn=serializers.CharField(max_length=255)#qualifications
+    splzRlmRqisCn=serializers.CharField(max_length=255)#qualifications
     rqutUrla=serializers.CharField(max_length=255) #submit_link
 
     class Meta:
         model = Support
-        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','notice',
-        'notice','located_in','polyBizTy',
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','polyBizTy',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
         'empmSttsCn','accrRqisCn','majrRqisCn',
         'splzRlmRqisCn','rqutUrla','member_id')
 
+    
+    def validate(self, data):
+        data['organizer']=data.get('polyBizTy','').replace('\n',"%^^%")
+        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+" 지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
+        data['submit_link']=data.get('rqutUrla','')
+        data['qualifications']=("연령: "+data.get('ageInfo','')+" 취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
+        data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
+        return data
+
     def create(self, data):
-        print(data)
-        organizer=data.pop('polyBizTy','')
-        title=data.pop('polyBizSjnm','')
-        detail=data.pop('polyItcnCn','')+" / "+data.pop('sporCn','')
-        qualifications="연령: "+data.pop('ageInfo','')+" 취업 상태: "+data.pop('empmSttsCn','')+" 학력: "+data.pop('accrRqisCn','')+" 전공: "+data.pop('majrRqisCn','')+" 특화 분야: "+data.pop('splzRlmRqisCn','')
-        submit_link=data.pop('rqutUrla','')
-        Support.objects.get_or_create(organizer=organizer,title=title,detail=detail,qualifications=qualifications,
-        submit_link=submit_link,**data)
+        sub_data,new=Support.objects.get_or_create(**data)
+      
         #Support.objects.filter(bizId=data['bizId']).delete()
 
 
@@ -199,7 +225,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
                 start_time=datetime.datetime.now(),
                 one_off=False,
                 enabled=True,
-                name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
+                name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
                 task='support.tasks.support_notification_push',
                 kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(data['member_id'])})
                 )[0]

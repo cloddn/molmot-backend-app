@@ -39,7 +39,7 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
                 noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 interval=interval,
                 start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
-                name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
+                name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
                 task='support.tasks.support_notification_push',
                 kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(instance.member_id)}))
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
@@ -54,7 +54,7 @@ def run_task_on_SupportBookMark_deleted_save(sender, instance, **kwargs):
             support_id=Support.objects.get(title=instance.support_id)
             member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
             SupportNotification.objects.filter(
-                name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
+                name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
                 task='support.tasks.support_notification_push').delete()
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
             pass

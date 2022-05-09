@@ -377,7 +377,7 @@ class SearchSupportData(APIView):
             pass
         else:
             print(support_serializers.errors)
-        return Response(dict2_type['empsInfo']['emp'])
+        return Response(support_serializers.data)
 
 
 @authentication_classes([])

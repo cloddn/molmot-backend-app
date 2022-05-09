@@ -52,7 +52,6 @@ class Support(models.Model):
     rqutPrdCn=models.TextField(verbose_name='신청 기간',null=True,blank=True)
     plcyTpNm=models.TextField(verbose_name='정책 유형',null=True,blank=True)
     qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
-    notice=models.TextField(verbose_name='유의 사항',null=True,blank=True)
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,unique=False,blank=True)
     hits = models.PositiveIntegerField(default = 0)
 

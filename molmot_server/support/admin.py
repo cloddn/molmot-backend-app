@@ -26,7 +26,6 @@ class Support(admin.ModelAdmin):
      'end_date',
      'rqutPrdCn',
      'qualifications',
-     'notice',
      'plcyTpNm'
      )
 
