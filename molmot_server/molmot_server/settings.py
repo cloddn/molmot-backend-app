@@ -74,7 +74,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'django_celery_beat',
     'fcm_django',
-    'storages'
+    'storages',
+    'xmltodict'
 ]
 
 MIDDLEWARE = [

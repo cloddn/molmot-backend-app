@@ -10,13 +10,14 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, mixins
 from rest_framework import generics # generics class-based view 사용할 계획
-
+import xmltodict
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.decorators import permission_classes, authentication_classes
 
 # JWT 사용을 위해 필요
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+from support.open_api import get_youth_center
 from support.seoul_youth import get_seoul_youth_list
 
 from user.utils import login_check
@@ -325,7 +326,6 @@ def extract_db(csvfile):
                                         Third_Round_Interviewer_Name=row['Third Round Interviewer Name '], Management_Round_Interviewer_Name=row['Management/HR Round Interviewer Name'], HR_Round_Interviewer_Name=row['HR Round '])
             p.save()      
 
-'''
 
 @authentication_classes([])
 @permission_classes([]) 
@@ -337,3 +337,75 @@ class GetSupportData(APIView):
 
         return Response({"success":True})
 
+
+
+'''
+
+@authentication_classes([])
+@permission_classes([]) 
+class GetSupportData(APIView):
+    def post(self,request):
+        query=request.data['query']
+        print(query)
+        #text_list=get_seoul_youth_list(num)
+        xml_data=get_youth_center(query)
+        #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
+
+        dict_type = xmltodict.parse(xml_data)
+        json_type = json.dumps(dict_type)
+        dict2_type = json.loads(json_type)
+        return Response(dict2_type['empsInfo']['emp'])
+
+
+@authentication_classes([])
+@permission_classes([]) 
+class SearchSupportData(APIView):
+    def post(self,request):
+        query=request.data['query']
+        print(query)
+        #text_list=get_seoul_youth_list(num)
+        xml_data=get_youth_center(query)
+        #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
+
+        dict_type = xmltodict.parse(xml_data)
+        json_type = json.dumps(dict_type)
+        dict2_type = json.loads(json_type)
+    
+        support_dict=dict2_type['empsInfo']['emp']
+        support_serializers=OpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        if (support_serializers.is_valid()):
+            #불필요한 데이터 쌓임 방지
+            #support_serializers.save()
+            pass
+        else:
+            print(support_serializers.errors)
+        return Response(dict2_type['empsInfo']['emp'])
+
+
+@authentication_classes([])
+@permission_classes([]) 
+class SmartRecommendSupportData(APIView):
+    def post(self,request):
+        query=request.data['query']
+        member_id=request.data.get('member_id','')
+        print(query)
+        #text_list=get_seoul_youth_list(num)
+        xml_data=get_youth_center(query)
+        #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
+
+        dict_type = xmltodict.parse(xml_data)
+        json_type = json.dumps(dict_type)
+        dict2_type = json.loads(json_type)
+        dict2_type['empsInfo']['emp']
+        support_dict=dict2_type['empsInfo']['emp']
+        for i in support_dict:
+            i['member_id']=member_id
+        support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        if (support_serializers.is_valid()):
+            #불필요한 데이터 쌓임 방지
+            #support_serializers.save()
+            print(support_serializers.data)
+            pass
+        else:
+            print(support_serializers.errors)
+        return Response(support_serializers.data)

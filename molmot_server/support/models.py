@@ -28,16 +28,16 @@ class Organization(models.Model):
         return self.name
 
 class Support(models.Model): 
-    GENDERS = (
-        ('M', '남성(Man)'),
-        ('W', '여성(Woman)'),
-        ('N', '어느쪽도 아님(None)')
-    )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
+    bizId=models.CharField(
+        verbose_name='정책 번호',
+        max_length=50,
+        null=True
+    )   
     title=models.CharField(
         max_length=50,
-        null=False,
+        null=True,
         unique=False
     )   
     detail=models.TextField(verbose_name='상세 설명',blank=True)
@@ -47,18 +47,17 @@ class Support(models.Model):
         max_length=50,
         null=True
     )
-    start_date=models.DateTimeField(verbose_name='시작 날짜')
-    end_date=models.DateTimeField(verbose_name='마감 날짜')
-    qualifications=models.TextField(verbose_name='지원자격',null=True,blank=True)
+    start_date=models.DateTimeField(verbose_name='시작 날짜',null=True,blank=True)
+    end_date=models.DateTimeField(verbose_name='마감 날짜',null=True,blank=True)
+    rqutPrdCn=models.TextField(verbose_name='신청 기간',null=True,blank=True)
+    plcyTpNm=models.TextField(verbose_name='정책 유형',null=True,blank=True)
+    qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
+    notice=models.TextField(verbose_name='유의 사항',null=True,blank=True)
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,unique=False,blank=True)
-    age=models.IntegerField(verbose_name='나이',null=True,blank=True)
-    gender = models.CharField(verbose_name='성별',blank=True, default='N',max_length=1, choices=GENDERS, null=True)
-    number_of_households=models.IntegerField(verbose_name='가구수',null=True,blank=True,default=1)
-    income_ratio=models.IntegerField(verbose_name='한국장학재단 기준 소득분위',null=True,blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     @property
     def click(self):

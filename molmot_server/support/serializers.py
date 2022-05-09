@@ -7,6 +7,71 @@ import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
 import json
 
+class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
+    polyBizTy=serializers.CharField(max_length=255) #organizer
+    polyBizSjnm=serializers.CharField(max_length=255) #title
+    polyItcnCn=serializers.CharField(max_length=255) #detail
+    sporCn=serializers.CharField(max_length=255)#detail
+    ageInfo=serializers.CharField(max_length=255) #qualifications
+    empmSttsCn=serializers.CharField(max_length=255)#qualifications
+    accrRqisCn=serializers.CharField(max_length=255)#qualifications
+    majrRqisCn=serializers.CharField(max_length=255)#qualifications
+    splzRlmRqisCn=serializers.CharField(max_length=255)#qualifications
+    rqutUrla=serializers.CharField(max_length=255) #submit_link
+    member_id=serializers.CharField(max_length=255) 
+
+    class Meta:
+        model = Support
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','notice',
+        'notice','located_in','polyBizTy',
+        'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
+        'empmSttsCn','accrRqisCn','majrRqisCn',
+        'splzRlmRqisCn','rqutUrla','member_id')
+
+    def create(self, data):
+        print(data)
+        organizer=data.pop('polyBizTy','')
+        title=data.pop('polyBizSjnm','')
+        detail="정책 소개: "+data.pop('polyItcnCn','')+" 지원 내용: "+data.pop('sporCn','')
+        qualifications="연령: "+data.pop('ageInfo','')+" 취업 상태: "+data.pop('empmSttsCn','')+" 학력: "+data.pop('accrRqisCn','')+" 전공: "+data.pop('majrRqisCn','')+" 특화 분야: "+data.pop('splzRlmRqisCn','')
+        submit_link=data.pop('rqutUrla','')
+        member_id=data.pop('member_id',None)
+        sub_data,new=Support.objects.get_or_create(organizer=organizer,title=title,detail=detail,qualifications=qualifications,
+        submit_link=submit_link,**data)
+        SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+        #Support.objects.filter(bizId=data['bizId']).delete()
+        print("123"+Support.objects.get(pk='f47fad85-6059-4e53-8ec9-fe97c13b3c57').title)
+
+
+
+
+
+class OpenapiSupportSerializer(serializers.ModelSerializer):
+    polyBizTy=serializers.CharField(max_length=255) #organizer
+    polyBizSjnm=serializers.CharField(max_length=255)#qualifications
+    rqutUrla=serializers.CharField(max_length=255) #submit_link
+
+    class Meta:
+        model = Support
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','notice',
+        'notice','located_in','polyBizTy',
+        'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
+        'empmSttsCn','accrRqisCn','majrRqisCn',
+        'splzRlmRqisCn','rqutUrla','member_id')
+
+    def create(self, data):
+        print(data)
+        organizer=data.pop('polyBizTy','')
+        title=data.pop('polyBizSjnm','')
+        detail=data.pop('polyItcnCn','')+" / "+data.pop('sporCn','')
+        qualifications="연령: "+data.pop('ageInfo','')+" 취업 상태: "+data.pop('empmSttsCn','')+" 학력: "+data.pop('accrRqisCn','')+" 전공: "+data.pop('majrRqisCn','')+" 특화 분야: "+data.pop('splzRlmRqisCn','')
+        submit_link=data.pop('rqutUrla','')
+        Support.objects.get_or_create(organizer=organizer,title=title,detail=detail,qualifications=qualifications,
+        submit_link=submit_link,**data)
+        #Support.objects.filter(bizId=data['bizId']).delete()
+
+
+
 class SupportSerializer(serializers.ModelSerializer):
     hits=serializers.SerializerMethodField()
 

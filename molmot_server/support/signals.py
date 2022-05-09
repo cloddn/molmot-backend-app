@@ -36,14 +36,28 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
             SupportNotification.objects.get_or_create(
                 member_device_info=member_device_info,
                 support_id=support_id,
-                noti_on_time=support_id.start_date,
+                noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 interval=interval,
+                start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
                 task='support.tasks.support_notification_push',
                 kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(instance.member_id)}))
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
             pass
-    #삭제될 경우....는...어케하쥐?=> 테스팅 해보기
+
+
+@receiver(signals.post_delete, sender=SupportBookMark) #즐겨찾기한 지원금 제도에 한정해서 추가되도록 
+def run_task_on_SupportBookMark_deleted_save(sender, instance, **kwargs):
+        try:
+            #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
+            #기기 토큰 1개만 가지고 있을 수 있도록...?
+            support_id=Support.objects.get(title=instance.support_id)
+            member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
+            SupportNotification.objects.filter(
+                name=str(member_device_info.user)+"의 지원금"+str(support_id)+"알림",          
+                task='support.tasks.support_notification_push').delete()
+        except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
+            pass
 
 
 

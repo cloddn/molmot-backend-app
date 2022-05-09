@@ -17,17 +17,17 @@ class Support(admin.ModelAdmin):
      list_display= (
      'uuid',
      'located_in',
+     'bizId',
     'title',
      'detail',
      'submit_link',
      'organizer',
      'start_date',
      'end_date',
+     'rqutPrdCn',
      'qualifications',
-     'age',
-     'gender',
-     'number_of_households',
-     'income_ratio'
+     'notice',
+     'plcyTpNm'
      )
 
 @admin.register(models.Subscribe)
