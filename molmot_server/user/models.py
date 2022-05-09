@@ -87,7 +87,7 @@ class Member(AbstractBaseUser):
     phone_number=models.CharField(verbose_name='휴대폰 번호',blank=False,null=True,max_length=11)
     date_joined = models.DateTimeField(auto_now_add=True)  
     is_staff=models.BooleanField(('staff status'),default=False) 
-    privacy_agreement=models.BooleanField(('staff status'),default=False) 
+    privacy_agreement=models.BooleanField(('개인정보 동의'),default=False) 
     USERNAME_FIELD = 'email' 
     
     def __str__(self):
