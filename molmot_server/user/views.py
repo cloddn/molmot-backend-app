@@ -1,4 +1,5 @@
 from pickle import TRUE
+import re
 from xxlimited import Null
 from django.shortcuts import render
 from rest_framework.response import Response
@@ -60,6 +61,7 @@ class Login(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        print(request.data)
         
         if not serializer.is_valid(raise_exception=True):
             return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
