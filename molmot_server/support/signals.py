@@ -30,7 +30,7 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
         try:
             #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
             #기기 토큰 1개만 가지고 있을 수 있도록...?
-            support_id=Support.objects.get(title=instance.support_id)
+            support_id=Support.objects.get(uuid=instance.support_id.pk)
             member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
             interval=IntervalSchedule.objects.get_or_create(every="7",period="days")[0]
             SupportNotification.objects.get_or_create(
@@ -52,7 +52,7 @@ def run_task_on_SupportBookMark_deleted_save(sender, instance, **kwargs):
         try:
             #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
             #기기 토큰 1개만 가지고 있을 수 있도록...?
-            support_id=Support.objects.get(title=instance.support_id)
+            support_id=Support.objects.get(uuid=instance.support_id.pk)
             member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
             SupportNotification.objects.filter(
                 name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
