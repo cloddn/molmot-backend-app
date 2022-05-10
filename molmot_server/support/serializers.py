@@ -36,8 +36,8 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
         member_id=data.get('member_id',None)
         sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
-        submit_link=data['submit_link'],qualifications=data['qualifications'],title=data['title'],rqutPrdCn=data['rqutPrdCn'],plcyTpNm=data['plcyTpNm'])
-        SupportBookMark.objects.get_or_create(support_id=Support.objects.get(title=data['title']),member_id=Member.objects.get(pk=member_id))
+        submit_link=data['submit_link'],qualifications=data['qualifications'],title=data['title'],bizId=data['bizId'],rqutPrdCn=data['rqutPrdCn'],plcyTpNm=data['plcyTpNm'])
+        SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         print(data)
         return data
     
