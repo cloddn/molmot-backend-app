@@ -38,8 +38,8 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
                 support_id=support_id,
                 noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 interval=interval,
-                last_run_at=None,
-                start_time=None,
+                last_run_at=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
+                start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
                 task='support.tasks.support_notification_push',
                 kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(instance.member_id)}))
