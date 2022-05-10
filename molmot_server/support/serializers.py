@@ -203,7 +203,7 @@ class HomeSupportNotificationSerializer(serializers.ModelSerializer):
 
 class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
-    #d_day=serializers.SerializerMethodField()
+    d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     rqutPrdCn=serializers.SerializerMethodField()
 
@@ -214,16 +214,18 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
+            KST = datetime.timezone(datetime.timedelta(hours=9))
             support_id=Support.objects.get(title=data['support_id'])
             interval=IntervalSchedule.objects.get_or_create(every=data['interval_data'],period="days")[0]
             member_device_info=MemberFCMDevice.objects.get(user=data['member_id'])
+            interval=IntervalSchedule.objects.get_or_create(every="7",period="days")[0]       
             support_noti_id=SupportNotification.objects.get_or_create(
                 support_id=support_id,
                 member_device_info=member_device_info,
                 noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 interval=interval,
-                start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
-                last_run_at=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
+                last_run_at=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00,tzinfo=KST)-datetime.timedelta(days=interval.every),
+                start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00,tzinfo=KST),
                 one_off=False,
                 enabled=True,
                 name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
@@ -239,9 +241,9 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"success":False})
         return data
 
-    #def get_d_day(self,data):
-    #    d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
-    #    return d_day
+    def get_d_day(self,data):
+        d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+        return d_day
 
     def get_title(self,data):
         return data.support_id.title
