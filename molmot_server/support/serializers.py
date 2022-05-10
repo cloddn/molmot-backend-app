@@ -220,9 +220,10 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             support_noti_id=SupportNotification.objects.get_or_create(
                 support_id=support_id,
                 member_device_info=member_device_info,
-                noti_on_time=support_id.start_time,
+                noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 interval=interval,
-                start_time=datetime.datetime.now(),
+                start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
+                last_run_at=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
                 one_off=False,
                 enabled=True,
                 name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
