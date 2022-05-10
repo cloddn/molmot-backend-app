@@ -1,12 +1,14 @@
+from parser import ParserError
 from this import d
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
-
+from dateutil.parser import parse
 from support.models import Channel, RecordingList, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
 from user.models import Member,MemberFCMDevice
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
 import json
+from django.utils import timezone
 
 class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     polyBizTy=serializers.CharField(max_length=255) #organizer
@@ -29,20 +31,39 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
         'splzRlmRqisCn','rqutUrla','member_id')
 
     def validate(self, data):
+        print(data)
         data['organizer']=data.get('polyBizTy','').replace('\n',"%^^%")
         data['detail']=("정책 소개: "+data.get('polyItcnCn','')+" 지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
         data['submit_link']=data.get('rqutUrla','')
         data['qualifications']=("연령: "+data.get('ageInfo','')+" 취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
         member_id=data.get('member_id',None)
-        sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
-        submit_link=data['submit_link'],qualifications=data['qualifications'],title=data['title'],bizId=data['bizId'],rqutPrdCn=data['rqutPrdCn'],plcyTpNm=data['plcyTpNm'])
-        SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
-        print(data)
-        return data
+        try:
+            #date_list = data['rqutPrdCn'].split('~')
+            #start_time = date_list[0]
+            #end_time = date_list[1]
+            #start_time = start_time.replace(".","-").replace(" ","")
+            #end_time = end_time.replace(".","-").replace(" ","")
+            #start_time=parse(start_time)
+            #end_time=parse(end_time)
+            #KST = datetime.timezone(datetime.timedelta(hours=9))
+            #start_time=datetime.datetime(timezone.now().year,start_time.month,start_time.day,9,00,tzinfo=KST)
+            #end_time=datetime.datetime(timezone.now().year,end_time.month,end_time.day,18,00,tzinfo=KST)
+            #rqutPrdCn=start_time.strftime("%Y-%m-%d")+" ~ "+end_time.strftime("%Y-%m-%d")
+            sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
+            submit_link=data['submit_link'],
+            qualifications=data['qualifications'],
+            title=data['title'],bizId=data['bizId'],
+            rqutPrdCn=data['rqutPrdCn'],
+            plcyTpNm=data['plcyTpNm'])
+            SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+            return data
+        except :
+            raise ValidationError('Unauthorized Request')
+
+            
     
     def create(self, data):
-        print(data)
         sub_data,new=Support.objects.get_or_create(**data)
         member_id=data.pop('member_id',None)
         #Support.objects.filter(bizId=data['bizId']).delete()
@@ -179,8 +200,11 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         return text
 
     def get_d_day(self,data):
-        d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
-        return d_day
+        try:
+            d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+            return d_day
+        except:
+            return ""
 
     def get_title(self,data):
         return str(data.support_id.title)
@@ -242,8 +266,11 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
         return data
 
     def get_d_day(self,data):
-        d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
-        return d_day
+        try:
+            d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+            return d_day
+        except:
+            return ""
 
     def get_title(self,data):
         return data.support_id.title
