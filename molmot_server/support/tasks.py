@@ -23,9 +23,10 @@ def support_notification_push(*args, **kwargs):
    print("keyword args:", kwargs)
    #try:
    #except:
+   print("실행")
    print(kwargs)
    support_id=Support.objects.get(pk=kwargs['support_id'])
-   member_id=Member.objects.get(pk=kwargs['member_id'])
+   member_id=Member.objects.get(email=kwargs['member_id'])
    #d_day=str((support_id.end_date.date()-datetime.date.today()).days)
    #해당 서포트 아이디가 있는 사람에게 전송
    #registration_ja_tokens=list(SupportNotification.objects.filter(support_id=support_id).values_list('registration_id',flat=True))
