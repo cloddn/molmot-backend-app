@@ -30,6 +30,6 @@ def support_notification_push(*args, **kwargs):
    #d_day=str((support_id.end_date.date()-datetime.date.today()).days)
    #해당 서포트 아이디가 있는 사람에게 전송
    #registration_ja_tokens=list(SupportNotification.objects.filter(support_id=support_id).values_list('registration_id',flat=True))
-   message=messaging.Message(android=AndroidConfig(priority="high"),apns=APNSConfig(payload=APNSPayload(aps=Aps(content_available=True,sound="default",badge=0))),notification=Notification(title=str(support_id.title),body="기간 정보를 알려드릴게요! "+support_id.date),token=MemberFCMDevice.objects.get(user=member_id).registration_id)
+   message=messaging.Message(android=AndroidConfig(priority="high"),apns=APNSConfig(payload=APNSPayload(aps=Aps(content_available=True,sound="default",badge=0))),notification=Notification(title=str(support_id.title),body="기간 정보를 알려드릴게요! "+support_id.rqutPrdCn),token=MemberFCMDevice.objects.get(user=member_id).registration_id)
    response = messaging.send(message)
    print("푸시알림 정해진대로 전송")
