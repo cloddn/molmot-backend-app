@@ -65,7 +65,7 @@ class Support(models.Model):
 
 
     class Meta:
-        ordering = ['end_date']  
+        ordering = ['-end_date']  
 
 #분야..
 class Subscribe(models.Model):
