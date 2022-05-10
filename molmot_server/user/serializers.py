@@ -36,7 +36,7 @@ class UserLoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get("email")
         password = data.get("password", None)
-        fcm_token = data.get("fcm_token", None)
+        fcm_token = data.get("token", None)
         # 사용자 아이디와 비밀번호로 로그인 구현(<-> 사용자 아이디 대신 이메일로도 가능)
 
         user = authenticate(email=email, password=password)
