@@ -248,8 +248,9 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     def get_title(self,data):
         return data.support_id.title
     
-    def get_rqutPrdCn(self,data):
-        return data.support_id.rqutPrdCn
+    
+    def get_end_date(self,data):
+        return data.support_id.end_date
 
 
 '''
