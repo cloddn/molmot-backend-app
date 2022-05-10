@@ -172,7 +172,7 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SupportNotification
-        fields = ('id','interval','name','title','task','enabled','end_time')
+        fields = ('id','interval','name','title','task','enabled','end_date')
 
     def get_interval(self,data):
         text=str(data.interval.period)+str(data.interval.every)
