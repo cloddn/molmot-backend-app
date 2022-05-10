@@ -210,7 +210,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','member_id','title','rqutPrdCn','interval_data')
+        fields = ('uuid','support_id','d_day','member_id','title','rqutPrdCn','interval_data')
 
     def validate(self, data):
         try:
