@@ -205,12 +205,12 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
     interval_data=serializers.CharField(max_length=30,default="7")
     d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
-    rqutPrdCn=serializers.SerializerMethodField()
+    end_date=serializers.SerializerMethodField()
 
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','d_day','member_id','title','rqutPrdCn','interval_data')
+        fields = ('uuid','support_id','d_day','member_id','title','end_date','interval_data')
 
     def validate(self, data):
         try:
