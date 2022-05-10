@@ -249,7 +249,7 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
 
     
     #I took the liberty to change the model to queryset
-    queryset = SupportBookMark.objects.all().order_by('-end_date')
+    queryset = SupportBookMark.objects.all()
     serializer_class = SupportBookMarkSerializer
 
 
