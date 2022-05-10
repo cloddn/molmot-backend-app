@@ -22,6 +22,8 @@ class Support(admin.ModelAdmin):
      'detail',
      'submit_link',
      'organizer',
+     'start_date',
+     'end_date',
      'rqutPrdCn',
      'qualifications',
      'plcyTpNm'
