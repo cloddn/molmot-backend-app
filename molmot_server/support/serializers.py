@@ -166,21 +166,21 @@ class ChannelSerializer(serializers.ModelSerializer):
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
     interval=serializers.SerializerMethodField()
-    #d_day=serializers.SerializerMethodField()
+    d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     
     
     class Meta:
         model = SupportNotification
-        fields = ('id','interval','name','title','task','enabled','end_date')
+        fields = ('id','interval','name','title','task','enabled','d_day')
 
     def get_interval(self,data):
         text=str(data.interval.period)+str(data.interval.every)
         return text
 
-    #def get_d_day(self,data):
-    #    d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
-    #    return d_day
+    def get_d_day(self,data):
+        d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+        return d_day
 
     def get_title(self,data):
         return str(data.support_id.title)
