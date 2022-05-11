@@ -40,8 +40,8 @@ def support_notification_push(*args, **kwargs):
    time_data=timezone.now()+datetime.timedelta(days=pt.interval_time)
    pt.crontab.minute=time_data.minute
    pt.crontab.hour=time_data.hour
-   pt.crontab.day_of_month=time_data.day_of_month
-   pt.crontab.month_of_year=time_data.month_of_year
+   pt.crontab.day_of_month=time_data.day
+   pt.crontab.month_of_year=time_data.month
    pt.crontab.save()
    pt.save()
    print("푸시알림 정해진대로 전송")
