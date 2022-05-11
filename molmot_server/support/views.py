@@ -2,6 +2,7 @@ from cgitb import enable
 import csv
 import datetime
 from pickle import TRUE
+from pickletools import read_uint1
 from re import L
 import re
 from django.http import JsonResponse
@@ -174,13 +175,23 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
         
         supno_obj=SupportNotification.objects.get(pk=kwargs['pk'])
         if (request.data.get('interval',None)!=None):
-            interval_obj=IntervalSchedule.objects.get(pk=supno_obj.interval.pk)
-            interval_obj.every=request.data.get('interval',None)
-            interval_obj.save()
+            supno_obj.interval_time=int(request.data.get('interval',None))
+            supno_obj.enabled=True
+            supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
         elif (request.data.get('enabled',None)!=None):
             bool_data=True if request.data.get('enabled',None)=="True" else False
             supno_obj.enabled=bool_data
+            supno_obj.save()
+        elif (request.data.get('start_run',None)!=None):
+            time_data=parse(request.data.get('start_run'))
+            supno_obj.crontab.minute=time_data.minute
+            supno_obj.crontab.hour=time_data.hour
+            supno_obj.crontab.day_of_month=time_data.day_of_month
+            supno_obj.crontab.month_of_year=time_data.month_of_year
+            supno_obj.enabled=True
+            print(datetime.datetime.today())
+            print(supno_obj.start_time)
             supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
         else:
@@ -241,6 +252,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
             else:
                 return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
+from django.db.models import Count
 
 
 @authentication_classes([])
@@ -344,7 +356,6 @@ class GetSupportData(APIView):
 class GetSupportData(APIView):
     def post(self,request):
         query=request.data['query']
-        print(query)
         #text_list=get_seoul_youth_list(num)
         xml_data=get_youth_center(query)
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
@@ -360,7 +371,6 @@ class GetSupportData(APIView):
 class SearchSupportData(APIView):
     def post(self,request):
         query=request.data['query']
-        print(query)
         #text_list=get_seoul_youth_list(num)
         xml_data=get_youth_center(query)
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
@@ -386,7 +396,6 @@ class SmartRecommendSupportData(APIView):
     def post(self,request):
         query=request.data['query']
         member_id=request.data.get('member_id','')
-        print(query)
         #text_list=get_seoul_youth_list(num)
         xml_data=get_youth_center(query)
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
@@ -394,6 +403,7 @@ class SmartRecommendSupportData(APIView):
         dict_type = xmltodict.parse(xml_data)
         json_type = json.dumps(dict_type)
         dict2_type = json.loads(json_type)
+        success=[]
         dict2_type['empsInfo']['emp']
         support_dict=dict2_type['empsInfo']['emp']
         for i in support_dict:
@@ -403,7 +413,8 @@ class SmartRecommendSupportData(APIView):
             #불필요한 데이터 쌓임 방지
             #support_serializers.save()
             print(support_serializers.data)
-            pass
+            success.append(support_serializers.data)
+            print(success)
         else:
             print(support_serializers.errors)
-        return Response(support_serializers.data)
+        return Response(success)

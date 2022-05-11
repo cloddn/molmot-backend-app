@@ -98,6 +98,7 @@ class SupportNotification(PeriodicTask):
     member_device_info=models.ForeignKey(MemberFCMDevice,blank=True,verbose_name='멤버 디바이스 정보',null=True,on_delete=models.CASCADE)
     noti_on_time=models.DateTimeField(null=True,blank=True,verbose_name='푸시알림 전송할 시간')
     #유저의 On_&_off 필터링 
+    interval_time=models.IntegerField(verbose_name='인터벌 시간 설정',default=7,null=True,blank=True)
     noti_on_or_off=models.BooleanField(default=False)
 
     class Meta:

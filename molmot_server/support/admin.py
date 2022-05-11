@@ -26,7 +26,8 @@ class Support(admin.ModelAdmin):
      'end_date',
      'rqutPrdCn',
      'qualifications',
-     'plcyTpNm'
+     'plcyTpNm',
+     'interval_time'
      )
 
 @admin.register(models.Subscribe)
@@ -69,6 +70,7 @@ class SupportNotification(admin.ModelAdmin):
      'name',
      'member_device_info',
      'enabled',
+     'crontab',
      'interval',
     # 'organizer_id',
      'support_id',
