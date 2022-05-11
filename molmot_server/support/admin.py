@@ -27,7 +27,6 @@ class Support(admin.ModelAdmin):
      'rqutPrdCn',
      'qualifications',
      'plcyTpNm',
-     'interval_time'
      )
 
 @admin.register(models.Subscribe)
@@ -74,7 +73,8 @@ class SupportNotification(admin.ModelAdmin):
      'interval',
     # 'organizer_id',
      'support_id',
-     'noti_on_time'
+     'noti_on_time',
+     'interval_time'
     
      )
 
