@@ -194,11 +194,12 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
     interval=serializers.SerializerMethodField()
     d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
+    on_time=serializers.SerializerMethodField()
     
     
     class Meta:
         model = SupportNotification
-        fields = ('id','interval','name','title','task','enabled','d_day')
+        fields = ('id','interval','name','title','task','enabled','d_day','on_time')
 
     def get_interval(self,data):
         text="days"+str(data.interval_time)
@@ -208,6 +209,12 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         try:
             d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
             return d_day
+        except:
+            return ""
+    def get_on_time(self,data):
+        try:
+            on_time=str(data.crontab.hour)+":"+str(data.crontab.minute)
+            return on_time
         except:
             return ""
 
