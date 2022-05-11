@@ -169,9 +169,6 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
     serializer_class = SupportNotificationSerializer
 
 
-    def get_queryset(self,kwargs):
-        return super().get_queryset().filter(pk=kwargs['pk'])
-
     def create(self,request,*args,**kwargs):
         try:
             #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
