@@ -150,6 +150,8 @@ class RecordingListSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
+    subs_field_name=serializers.SerializerMethodField()
+
     class Meta:
         model = Subscribe
         fields = ('__all__')
@@ -163,8 +165,12 @@ class SubscribeSerializer(serializers.ModelSerializer):
             print(ex)
             raise serializers.ValidationError({"success":False})
 
+    def get_subs_field_name(self,data):
+        return data.organizer_id.name
+
 
 class ChannelSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Channel
         fields = ('__all__')
@@ -180,6 +186,8 @@ class ChannelSerializer(serializers.ModelSerializer):
         except ValidationError as ex:
             print(ex)
             raise serializers.ValidationError({"success":False})
+
+
 
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
