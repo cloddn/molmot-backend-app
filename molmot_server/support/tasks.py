@@ -33,9 +33,13 @@ def support_notification_push(*args, **kwargs):
    #registration_ja_tokens=list(SupportNotification.objects.filter(support_id=support_id).values_list('registration_id',flat=True))
    message=messaging.Message(android=AndroidConfig(priority="high"),apns=APNSConfig(payload=APNSPayload(aps=Aps(content_available=True,sound="default",badge=0))),notification=Notification(title=str(support_id.title),body="기간 정보를 알려드릴게요! "+support_id.rqutPrdCn),token=MemberFCMDevice.objects.get(user=member_id).registration_id)
    response = messaging.send(message)
+   KST = datetime.timezone(datetime.timedelta(hours=9))
    pt=SupportNotification.objects.get(name=str(member_id)+"의 지원금"+support_id.title+"알림")
-   pt.enabled=True
-   pt.crontab.day_of_month=pt.crontab.day_of_month+str(pt.interval_time)
+   time_data=datetime.datetime.now(tzinfo=KST)+datetime.timedelta(days=pt.interval_time)
+   pt.crontab.minute=time_data.minute
+   pt.crontab.hour=time_data.hour
+   pt.crontab.day_of_month=time_data.day_of_month
+   pt.crontab.month_of_year=time_data.month_of_year
    pt.crontab.save()
    pt.save()
    print("푸시알림 정해진대로 전송")
