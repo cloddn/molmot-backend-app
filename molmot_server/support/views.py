@@ -215,10 +215,12 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             supno_obj.enabled=True
             supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
+            return Response({"success":True}, status=status.HTTP_201_CREATED)
         elif (request.data.get('enabled',None)!=None):
             bool_data=True if request.data.get('enabled',None)=="True" else False
             supno_obj.enabled=bool_data
             supno_obj.save()
+            return Response({"success":True}, status=status.HTTP_201_CREATED)
         elif (request.data.get('start_run',None)!=None):
             time_data=parse(request.data.get('start_run'))
             supno_obj.crontab.minute=time_data.minute
