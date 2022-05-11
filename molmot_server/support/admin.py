@@ -45,6 +45,7 @@ class Channel(admin.ModelAdmin):
      'id',
      'category',
     'channel_name',
+    'support_id',
     'organizer_id',
      'member_id'
      )

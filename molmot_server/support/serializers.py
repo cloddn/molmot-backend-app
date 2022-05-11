@@ -178,7 +178,7 @@ class ChannelSerializer(serializers.ModelSerializer):
     def validate(self, data):
         try:
             print(data)#오브젝트 형태로 전달
-            ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
+            ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'],channel_name=data['member_id'])
             data['member_id'].last_login=datetime.datetime.now()
             data['member_id'].save()
             return ch_data
