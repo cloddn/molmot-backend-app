@@ -168,6 +168,45 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
     queryset = SupportNotification.objects.all()
     serializer_class = SupportNotificationSerializer
 
+
+    def get_queryset(self,kwargs):
+        return super().get_queryset().filter(pk=kwargs['pk'])
+
+    def create(self,request,*args,**kwargs):
+        try:
+            #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
+            #기기 토큰 1개만 가지고 있을 수 있도록...?
+            time_data=parse(request.data.get('start_run'))
+            interval=request.data.get('interval','7')
+            support_id=Support.objects.get(uuid=request.data.get('support_id',None))
+            #member_id 
+            schedule =CrontabSchedule.objects.create(
+            minute=time_data.minute,
+            hour=time_data.hour,
+            day_of_month=datetime.datetime.today().day,
+            month_of_year=datetime.datetime.today().month,
+            timezone="Asia/Seoul"
+            )
+            KST = datetime.timezone(datetime.timedelta(hours=9))
+            member_device_info=MemberFCMDevice.objects.get(user=request.data.get('member_id','None'))
+            #알림서비스 새로 만들기 
+            SupportNotification.objects.get_or_create(
+                member_device_info=member_device_info,
+                support_id=support_id,
+                noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00,tzinfo=KST),
+                crontab=schedule,
+                interval_time=interval,
+                start_time=timezone.now(),
+                name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
+                task='support.tasks.support_notification_push',
+                kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':request.data.get('member_id','None')}))
+            return Response({"success":True}, status=status.HTTP_201_CREATED)
+        except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
+            pass
+        except:
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+        
+   
     
     def update(self,request, *args, **kwargs):
         print(request.data)
@@ -187,11 +226,12 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             time_data=parse(request.data.get('start_run'))
             supno_obj.crontab.minute=time_data.minute
             supno_obj.crontab.hour=time_data.hour
-            supno_obj.crontab.day_of_month=time_data.day_of_month
-            supno_obj.crontab.month_of_year=time_data.month_of_year
+            supno_obj.crontab.save()
+            #supno_obj.crontab.day_of_month=time_data.day_of_month
+            #supno_obj.crontab.month_of_year=time_data.month_of_year
             supno_obj.enabled=True
             print(datetime.datetime.today())
-            print(supno_obj.start_time)
+            print(supno_obj.crontab)
             supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
         else:
