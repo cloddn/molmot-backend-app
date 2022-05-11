@@ -28,6 +28,8 @@ class Registration(generics.GenericAPIView):
     serializer_class = CustomRegisterSerializer
 
     def post(self, request, *args, **kwargs):
+        #serializers_data=request.data
+        #serializers_data['username']=request.data.get('email',None)
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid(raise_exception=True):
             return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
@@ -38,9 +40,7 @@ class Registration(generics.GenericAPIView):
                 {
                 # get_serializer_context: serializer에 포함되어야 할 어떠한 정보의 context를 딕셔너리 형태로 리턴
                 # 디폴트 정보 context는 request, view, format
-                    "user": UserSerializer(
-                        user, context=self.get_serializer_context()
-                    ).data
+                    "success":True
                 },
                     status=status.HTTP_201_CREATED,
             )
