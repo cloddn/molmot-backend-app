@@ -89,9 +89,11 @@ class Login(generics.GenericAPIView):
     
         return Response(
             {
-                "user": UserSerializer(
-                    user, context=self.get_serializer_context()
-                ).data, 
+                "user": {
+                    'uuid':member_obj.uuid,
+                    'email':member_obj.email
+
+                }, 
                 "token": user['token'],
                 "logined":user['logined']
             }
