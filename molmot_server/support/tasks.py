@@ -38,7 +38,7 @@ def support_notification_push(*args, **kwargs):
    response = messaging.send(message)
    KST = datetime.timezone(datetime.timedelta(hours=9))
    pt=SupportNotification.objects.get(name=str(member_id)+"의 지원금"+support_id.title+"알림")
-   time_data=timezone.now()+datetime.timedelta(days=pt.interval_time)
+   time_data=timezone.now()+datetime.timedelta(days=(pt.interval_time+1))
    pt.crontab.minute=time_data.minute
    pt.crontab.hour=time_data.hour
    pt.crontab.day_of_month=time_data.day
