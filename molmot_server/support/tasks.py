@@ -35,6 +35,6 @@ def support_notification_push(*args, **kwargs):
    response = messaging.send(message)
    pt=SupportNotification.objects.get(name=str(member_id)+"의 지원금"+support_id.title+"알림",)
    pt.enabled=True
-   pt.crontab.day_of_month=pt.crontab.day_of_month+timezone.timedelta(days=str(pt.interval_time))
+   pt.crontab.day_of_month=pt.crontab.day_of_month+timezone.timedelta(days=pt.interval_time)
    pt.save()
    print("푸시알림 정해진대로 전송")
