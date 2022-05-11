@@ -202,8 +202,7 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         fields = ('id','interval','name','title','task','enabled','d_day','on_time')
 
     def get_interval(self,data):
-        text="days"+str(data.interval_time)
-        return text
+        return str(data.interval_time)
 
     def get_d_day(self,data):
         try:
