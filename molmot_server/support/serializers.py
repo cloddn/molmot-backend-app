@@ -38,7 +38,13 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
         data['qualifications']=("연령: "+data.get('ageInfo','')+" 취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
         member_id=data.get('member_id',None)
-        try:
+        sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
+            submit_link=data['submit_link'],
+            qualifications=data['qualifications'],
+            title=data['title'],bizId=data['bizId'],
+            rqutPrdCn=data['rqutPrdCn'],
+            plcyTpNm=data['plcyTpNm'])
+        SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
             #date_list = data['rqutPrdCn'].split('~')
             #start_time = date_list[0]
             #end_time = date_list[1]
@@ -50,18 +56,9 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             #start_time=datetime.datetime(timezone.now().year,start_time.month,start_time.day,9,00,tzinfo=KST)
             #end_time=datetime.datetime(timezone.now().year,end_time.month,end_time.day,18,00,tzinfo=KST)
             #rqutPrdCn=start_time.strftime("%Y-%m-%d")+" ~ "+end_time.strftime("%Y-%m-%d")
-            sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
-            submit_link=data['submit_link'],
-            qualifications=data['qualifications'],
-            title=data['title'],bizId=data['bizId'],
-            rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'])
-            SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
-            return data
-        except :
-            raise ValidationError('Unauthorized Request')
+    
+        return data
 
-            
     
     def create(self, data):
         sub_data,new=Support.objects.get_or_create(**data)
@@ -196,7 +193,7 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
         fields = ('id','interval','name','title','task','enabled','d_day')
 
     def get_interval(self,data):
-        text=str(data.interval.period)+str(data.interval.every)
+        text="days"+str(data.interval_time)
         return text
 
     def get_d_day(self,data):
@@ -238,18 +235,23 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
+            schedule, is_created =CrontabSchedule.objects.get_or_create(
+            minute=00,
+            hour=17,
+            day_of_month=datetime.datetime.today().day,
+            month_of_year=datetime.datetime.today().month,
+            timezone="Asia/Seoul"
+            )
             KST = datetime.timezone(datetime.timedelta(hours=9))
             support_id=Support.objects.get(title=data['support_id'])
-            interval=IntervalSchedule.objects.get_or_create(every=data['interval_data'],period="days")[0]
+            support_id.interval_time=int(data['interval_data'])
             member_device_info=MemberFCMDevice.objects.get(user=data['member_id'])
-            interval=IntervalSchedule.objects.get_or_create(every="7",period="days")[0]       
             support_noti_id=SupportNotification.objects.get_or_create(
                 support_id=support_id,
                 member_device_info=member_device_info,
                 noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
-                interval=interval,
-                last_run_at=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00,tzinfo=KST)-datetime.timedelta(days=interval.every),
-                start_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00,tzinfo=KST),
+                crontab=schedule,
+                start_time=timezone.now(),
                 one_off=False,
                 enabled=True,
                 name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
