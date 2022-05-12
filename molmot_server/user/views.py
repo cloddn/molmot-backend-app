@@ -31,7 +31,7 @@ class Registration(generics.GenericAPIView):
         #serializers_data=request.data
         #serializers_data['username']=request.data.get('email',None)
         serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
+        if not serializer.is_valid():
             return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
 
         if serializer.is_valid():
