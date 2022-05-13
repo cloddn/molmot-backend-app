@@ -273,7 +273,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             timezone="Asia/Seoul"
             )
             KST = datetime.timezone(datetime.timedelta(hours=9))
-            support_id=Support.objects.get(pk=data['support_id'])
+            support_id=Support.objects.get(uuid=data['support_id'].uuid)
             support_id.interval_time=int(data['interval_data'])
             member_device_info=MemberFCMDevice.objects.get(user=data['member_id'])
             support_noti_id=SupportNotification.objects.get_or_create(
@@ -299,17 +299,20 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def get_d_day(self,data):
         try:
-            d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
+            support_id=Support.objects.get(uuid=data['support_id'].uuid)
+            d_day=str((support_id.end_date.date()-datetime.date.today()).days)
             return d_day
         except:
             return ""
 
     def get_title(self,data):
-        return data.support_id.title
+        support_id=Support.objects.get(uuid=data['support_id'].uuid)
+        return support_id.title
     
     
     def get_end_date(self,data):
-        return data.support_id.end_date
+        support_id=Support.objects.get(uuid=data['support_id'].uuid)
+        return support_id.end_date
 
 
 '''
