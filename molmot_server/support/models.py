@@ -76,16 +76,18 @@ class Subscribe(models.Model):
     )
 
     subscribe_name=models.CharField(verbose_name='관심있는 분야',max_length=50,null=True)
-    colored=models.CharField(verbose_name='색깔 분류',max_length=10,choices=COLORED,null=True)
-    organizer_id=models.ForeignKey(Organization,verbose_name='관심있는 기관',null=True,on_delete=models.CASCADE)
-    member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
+    colored=models.CharField(verbose_name='카테고리',max_length=10,choices=COLORED,null=True)
+    support_id=models.ForeignKey(Support,verbose_name='관련있는 제도',null=True,on_delete=models.CASCADE)
+    member_id=models.OneToOneField(Member,null=True,blank=True,on_delete=models.CASCADE)
 
+#채널
 class Channel(models.Model):
     category=models.CharField(verbose_name='카테고리',max_length=50,null=True,blank=True)
     channel_name=models.CharField(verbose_name='구독할 채널 작명',max_length=50,null=True)
-    organizer_id=models.ForeignKey(Organization,verbose_name='관련 기관',null=True,on_delete=models.CASCADE)
+    organizer_id=models.ForeignKey(Organization,verbose_name='관련 기관',null=True,blank=True,on_delete=models.CASCADE)
     support_id=models.ForeignKey(Support,verbose_name='관련 제도',null=True,on_delete=models.CASCADE)
-    member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
+    member_id=models.OneToOneField(Member,null=True,blank=True,on_delete=models.CASCADE)
+
 
 
 class SupportBookMark(models.Model):

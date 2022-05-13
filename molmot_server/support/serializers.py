@@ -11,7 +11,7 @@ import json
 from django.utils import timezone
 
 class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
-    polyBizTy=serializers.CharField(max_length=255) #organizer
+    cnsgNmor=serializers.CharField(max_length=255) #organizer
     polyBizSjnm=serializers.CharField(max_length=255) #title
     polyItcnCn=serializers.CharField(max_length=255) #detail
     sporCn=serializers.CharField(max_length=255)#detail
@@ -25,17 +25,17 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Support
-        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','polyBizTy',
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
         'empmSttsCn','accrRqisCn','majrRqisCn',
         'splzRlmRqisCn','rqutUrla','member_id')
 
     def validate(self, data):
         print(data)
-        data['organizer']=data.get('polyBizTy','').replace('\n',"%^^%")
-        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+" 지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
+        data['organizer']=data.get('cnsgNmor','').replace('\n',"%^^%")
+        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+"%^^%지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
         data['submit_link']=data.get('rqutUrla','')
-        data['qualifications']=("연령: "+data.get('ageInfo','')+" 취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
+        data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
         member_id=data.get('member_id',None)
         sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
@@ -45,6 +45,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             rqutPrdCn=data['rqutPrdCn'],
             plcyTpNm=data['plcyTpNm'])
         SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+        #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
             #start_time = date_list[0]
             #end_time = date_list[1]
@@ -159,34 +160,48 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         try:
             #data #오브젝트 형태로 전달
-            sub_data,new=Subscribe.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'])
-            return sub_data
+            sb_datas=Subscribe.objects.filter(subscribe_name=data['subscribe_name'])
+            for sb_data in sb_datas:
+                uuid=data['member_id'][0].uuid
+                sb_data.member_id.add(uuid)
+                data['member_id'][0].last_login=datetime.datetime.now()
+                data['member_id'][0].save()
         except ValidationError as ex:
             print(ex)
             raise serializers.ValidationError({"success":False})
 
     def get_subs_field_name(self,data):
-        return data.organizer_id.name
+        return data.subscribe_name
 
 
 class ChannelSerializer(serializers.ModelSerializer):
+    support_name=serializers.SerializerMethodField()
+    
 
     class Meta:
         model = Channel
-        fields = ('__all__')
+        fields = ('organizer_id','member_id','channel_name','support_id','support_name')
 
     def validate(self, data):
+        print(data)
         try:
-            print(data)#오브젝트 형태로 전달
-            ch_data,new=Channel.objects.get_or_create(organizer_id=data['organizer_id'],member_id=data['member_id'],channel_name=data['channel_name'])
-            data['member_id'].last_login=datetime.datetime.now()
-            data['member_id'].save()
+            #오브젝트 형태로 전달
+            #org_obj=Organization.objects.get(pk=data['organizer_id'])
+            ch_datas=Channel.objects.filter(channel_name=data['organizer_id'])
+            for ch_data in ch_datas:
+                uuid=data['member_id'][0].uuid
+                ch_data.member_id.add(uuid)
+                data['member_id'][0].last_login=datetime.datetime.now()
+                data['member_id'][0].save()
             return ch_data
 
         except ValidationError as ex:
             print(ex)
             raise serializers.ValidationError({"success":False})
 
+
+    def get_support_name(self,data):
+        return data.support_id.title
 
 
 

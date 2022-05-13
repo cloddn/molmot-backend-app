@@ -16,13 +16,11 @@ class Organization(admin.ModelAdmin):
 class Support(admin.ModelAdmin):
      list_display= (
      'uuid',
-     'located_in',
      'bizId',
     'title',
      'detail',
      'submit_link',
      'organizer',
-
      'rqutPrdCn',
      'qualifications',
      'plcyTpNm',
@@ -33,8 +31,7 @@ class Subscribe(admin.ModelAdmin):
      list_display= (
      'id',
      'colored',
-    'organizer_id',
-     'member_id'
+    'support_id',
      )
 
 
@@ -42,11 +39,8 @@ class Subscribe(admin.ModelAdmin):
 class Channel(admin.ModelAdmin):
      list_display= (
      'id',
-     'category',
     'channel_name',
     'support_id',
-    'organizer_id',
-     'member_id'
      )
 
 

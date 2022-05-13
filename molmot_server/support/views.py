@@ -156,7 +156,7 @@ class SubscribeInfoView(generics.ListAPIView):
 
     def get_queryset(self):
         member_id=self.kwargs['member_id']
-        return Subscribe.objects.filter(member_id=member_id)
+        return Subscribe.objects.filter(member_id__id=member_id)
 
 
 
@@ -215,13 +215,12 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             supno_obj.enabled=True
             supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
-            return Response({"success":True}, status=status.HTTP_201_CREATED)
-        elif (request.data.get('enabled',None)!=None):
+        if (request.data.get('enabled',None)!=None):
             bool_data=True if request.data.get('enabled',None)=="True" else False
             supno_obj.enabled=bool_data
             supno_obj.save()
             return Response({"success":True}, status=status.HTTP_201_CREATED)
-        elif (request.data.get('start_run',None)!=None):
+        if (request.data.get('start_run',None)!=None):
             time_data=parse(request.data.get('start_run'))
             supno_obj.crontab.minute=time_data.minute
             supno_obj.crontab.hour=time_data.hour
@@ -252,7 +251,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id=member_id)
+            return super().get_queryset().filter(member_id__id=member_id)
         else:
             return super().get_queryset()
 
@@ -277,19 +276,20 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
+        print(self.kwargs.get('member_id',None))
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id=member_id)
-        else:
-            return super().get_queryset()
+            return super().get_queryset().filter(member_id__id=list(member_id))
 
     def create(self, request, *args, **kwargs):
-            serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
-            if serializer.is_valid():
-                headers = self.get_success_headers(serializer.data)
-                return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
-            else:
-                return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+        print(request.data)
+        serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+        if serializer.is_valid():
+            headers = self.get_success_headers(serializer.data)
+            return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            print(serializer.errors)
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 from django.db.models import Count
 
@@ -297,7 +297,6 @@ from django.db.models import Count
 @authentication_classes([])
 @permission_classes([]) 
 class SupportBookMarkViewSet(viewsets.ModelViewSet):
-
     
     #I took the liberty to change the model to queryset
     queryset = SupportBookMark.objects.all()
@@ -307,7 +306,7 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id=member_id)
+            return super().get_queryset().filter(member_id__id=member_id)
         else:
             return super().get_queryset()
 
@@ -442,18 +441,24 @@ class SmartRecommendSupportData(APIView):
         dict_type = xmltodict.parse(xml_data)
         json_type = json.dumps(dict_type)
         dict2_type = json.loads(json_type)
+        print(dict2_type)
         success=[]
-        dict2_type['empsInfo']['emp']
-        support_dict=dict2_type['empsInfo']['emp']
-        for i in support_dict:
-            i['member_id']=member_id
-        support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
-        if (support_serializers.is_valid()):
-            #불필요한 데이터 쌓임 방지
-            #support_serializers.save()
-            print(support_serializers.data)
-            success.append(support_serializers.data)
-            print(success)
-        else:
-            print(support_serializers.errors)
-        return Response(success)
+        try:
+            dict2_type['empsInfo']['emp']
+            support_dict=dict2_type['empsInfo']['emp']
+
+            for i in support_dict:
+                i['member_id']=member_id
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+            if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                #support_serializers.save()
+                print(support_serializers.data)
+                success.append(support_serializers.data)
+                print(success)
+            else:
+                print(support_serializers.errors)
+            return Response(support_serializers.data)
+        except:
+            pass
+            #return Response([])
