@@ -47,12 +47,21 @@ class Support(models.Model):
         max_length=50,
         null=True
     )
+    FIELDS=(
+        ('1','다자녀 가정'),
+        ('2','한부모 가정'),
+        ('3','다문화 가정'),
+        ('4','현역 군인 및 군무원의 자녀'),
+        ('5','장애인, 장애우'),
+        ('6','기타'),
+    )
     start_date=models.DateTimeField(verbose_name='시작 날짜',null=True,blank=True)
     end_date=models.DateTimeField(verbose_name='마감 날짜',null=True,blank=True)
     rqutPrdCn=models.TextField(verbose_name='신청 기간',null=True,blank=True)
     plcyTpNm=models.TextField(verbose_name='정책 유형',null=True,blank=True)
     qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
-    located_in=models.CharField(verbose_name='지역',max_length=50,null=True,unique=False,blank=True)
+    located_in=models.CharField(verbose_name='지역',max_length=50,null=True,blank=True)
+    detail_field=models.CharField(verbose_name='분야',choices=FIELDS,max_length=6,null=True,default='1',blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):

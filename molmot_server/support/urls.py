@@ -23,7 +23,7 @@ urlpatterns = [
     path('support-all-alarms-off/<uuid:member_id>/<str:on_off>/',AllAlarmsONOFFView.as_view()),
     path('support-get-data/',GetSupportData.as_view()),
     path('support-search-data/',SearchSupportData.as_view()),
-    path('support-smart-recommend-data/',SmartRecommendSupportData.as_view()),
+    path('support-smart-recommend-data/',SmartRecommendDevelopSupportData.as_view()),
     
     
 ]

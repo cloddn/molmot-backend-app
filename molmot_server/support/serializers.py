@@ -14,7 +14,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     cnsgNmor=serializers.CharField(max_length=255) #organizer
     polyBizSjnm=serializers.CharField(max_length=255) #title
     polyItcnCn=serializers.CharField(max_length=255) #detail
-    sporCn=serializers.CharField(max_length=255)#detail
+    sporCn=serializers.CharField(max_length=None)#detail
     ageInfo=serializers.CharField(max_length=255) #qualifications
     empmSttsCn=serializers.CharField(max_length=255)#qualifications
     accrRqisCn=serializers.CharField(max_length=255)#qualifications
@@ -22,11 +22,12 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     splzRlmRqisCn=serializers.CharField(max_length=255)#qualifications
     rqutUrla=serializers.CharField(max_length=255) #submit_link
     member_id=serializers.CharField(max_length=255) 
+    polyBizSecd=serializers.CharField(max_length=255) 
 
     class Meta:
         model = Support
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
-        'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
+        'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
         'splzRlmRqisCn','rqutUrla','member_id')
 
@@ -43,8 +44,8 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'])
-        SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'])
+        #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
             #start_time = date_list[0]

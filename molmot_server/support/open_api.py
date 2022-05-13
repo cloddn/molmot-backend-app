@@ -4,6 +4,7 @@ from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
 import json
 from bs4 import BeautifulSoup
+import xmltodict
 
 def get_youth_center(query):
 
@@ -32,5 +33,8 @@ def get_youth_center(query):
     #response = urlopen(url + queryParams) 
     get_data = requests.get(url+ queryParams_request)
     soup=BeautifulSoup(get_data.content,"xml")
+    dict_type = xmltodict.parse(get_data.content)
+    json_type = json.dumps(dict_type)
+    dict2_type = json.loads(json_type)
 
-    return get_data.content
+    return dict2_type

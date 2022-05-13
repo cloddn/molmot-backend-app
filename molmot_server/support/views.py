@@ -3,6 +3,7 @@ import csv
 import datetime
 from pickle import TRUE
 from pickletools import read_uint1
+import random
 from re import L
 import re
 from django.http import JsonResponse
@@ -214,12 +215,10 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             supno_obj.interval_time=int(request.data.get('interval',None))
             supno_obj.enabled=True
             supno_obj.save()
-            return Response({"success":True}, status=status.HTTP_201_CREATED)
         if (request.data.get('enabled',None)!=None):
             bool_data=True if request.data.get('enabled',None)=="True" else False
             supno_obj.enabled=bool_data
             supno_obj.save()
-            return Response({"success":True}, status=status.HTTP_201_CREATED)
         if (request.data.get('start_run',None)!=None):
             time_data=parse(request.data.get('start_run'))
             supno_obj.crontab.minute=time_data.minute
@@ -231,9 +230,7 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             print(datetime.datetime.today())
             print(supno_obj.crontab)
             supno_obj.save()
-            return Response({"success":True}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success":True}, status=status.HTTP_201_CREATED)
     
 
 
@@ -275,7 +272,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 
 
-    def get_queryset(self):
+    def get_queryset(self,request):
         print(self.kwargs.get('member_id',None))
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
@@ -434,31 +431,199 @@ class SmartRecommendSupportData(APIView):
     def post(self,request):
         query=request.data['query']
         member_id=request.data.get('member_id','')
+        detail_field=request.data.get('detail_field','6')
+        home_field=request.data.get('home_field','')
+        job=request.data.get('job','')
         #text_list=get_seoul_youth_list(num)
-        xml_data=get_youth_center(query)
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
 
-        dict_type = xmltodict.parse(xml_data)
-        json_type = json.dumps(dict_type)
-        dict2_type = json.loads(json_type)
+        result_list=[]
+        #1번 검색
+        if (detail_field=='1'):
+            query['query']="다자녀"
+        elif (detail_field=='2'):
+            query['query']="한부모"
+        elif (detail_field=='3'):
+            query['query']="다문화"
+        elif (detail_field=='4'):
+            query['query']="군인"
+        elif (detail_field=='5'):
+            query['query']="다자녀"
+        else:
+            pass
+        
+        dict2_type=get_youth_center(query)
+        support_dict=dict2_type['empsInfo']['emp']
+        for i in support_dict:
+            i['member_id']=member_id
+            i['detail_field']=detail_field
+        support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        if (support_serializers.is_valid()):
+            #불필요한 데이터 쌓임 방지
+                #support_serializers.save()
+            #print(support_serializers.data)
+            result_list.append(support_serializers.data)
+        
+
+
+        #디테일 필드 검색 
+  
         print(dict2_type)
-        success=[]
-        try:
-            dict2_type['empsInfo']['emp']
+        if (home_field=='1'):
+            query['query']="기숙사"
+            dict2_type=get_youth_center(query)
+            print(dict2_type)
             support_dict=dict2_type['empsInfo']['emp']
+            for i in support_dict:
+                i['member_id']=member_id
+                i['detail_field']=detail_field
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+            if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                    #support_serializers.save()
+                #print(support_serializers.data)
+                result_list.append(support_serializers.data)
+
+            query['query']="자취"
+            dict2_type=get_youth_center(query)
+            print(dict2_type)
+            support_dict=dict2_type['empsInfo']['emp']
+            for i in support_dict:
+                i['member_id']=member_id
+                i['detail_field']=detail_field
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+            if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                    #support_serializers.save()
+                #print(support_serializers.data)
+                result_list.append(support_serializers.data)
+
+        if (job=="학생"):
+            query['query']="학생"
+        elif (job=="직장인"):
+            query['query']="직장인"     
+        elif (job=="프리랜서"):
+            query['query']="프리랜서"    
+ 
+        dict2_type=get_youth_center(query)
+        support_dict=dict2_type['empsInfo']['emp']
+        try:
 
             for i in support_dict:
                 i['member_id']=member_id
+                i['detail_field']=detail_field
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+            if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                #support_serializers.save()
+                #print(support_serializers.data)
+                result_list.append(support_serializers.data)
+                #print(result_list)
+            else:
+                print(support_serializers.errors)
+            return Response(result_list)
+        except Exception as e:
+            print(e)
+            pass
+            return Response([])
+
+@authentication_classes([])
+@permission_classes([]) 
+class SmartRecommendDevelopSupportData(APIView):
+    def post(self,request):
+        query=request.data['query']
+        detail_field=request.data.get('detail_field','6')
+        member_id=request.data.get('member_id','')
+        home_field=request.data.get('home_field','')
+        job=request.data.get('job','')
+        location=request.data.get('location','')
+        location_numbering={"서울":"003002001","부산":"003002002","대구":"003002003","인천":"003002004","광주":"003002005",
+        "대전:":"003002006","울산":"003002007","경기":"003002008","강원":"003002009","충북":"003002010","충남:":"003002011",
+        "전북":"003002012","전남":"003002013","경북":"003002014","경남":"003002015","제주":"003002016","세종":"003002017"
+
+        }
+        #text_list=get_seoul_youth_list(num)
+        #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
+        query['srchPolyBizSecd']=location_numbering[location]
+        print(query['srchPolyBizSecd'])
+        result_list=[]
+        #1번 검색
+        if (detail_field=='1'):
+            query['query']="다자녀"
+        elif (detail_field=='2'):
+            query['query']="한부모"
+        elif (detail_field=='3'):
+            query['query']="다문화"
+        elif (detail_field=='4'):
+            query['query']="군인"
+        elif (detail_field=='5'):
+            query['query']="다자녀"
+        else:
+            pass
+        
+        dict2_type=get_youth_center(query)
+        print(dict2_type)
+        support_dict=dict2_type['empsInfo']['emp']
+
+        for i in support_dict:
+            i['member_id']=request.data['member_id']
+            i['detail_field']=detail_field
+        support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        if (support_serializers.is_valid()):
+            #불필요한 데이터 쌓임 방지
+                #support_serializers.save()
+            for i in support_serializers.data:
+                    result_list.append(i)
+        
+
+
+        #디테일 필드 검색 
+  
+        if (home_field=='1'):
+            query['query']="기숙사"
+            dict2_type=get_youth_center(query)
+            print(dict2_type)
+            support_dict=dict2_type['empsInfo']['emp']
+            for i in support_dict:
+                i['member_id']=member_id
+                i['detail_field']=detail_field
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+            if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                    #support_serializers.save()
+                #print(support_serializers.data)
+                for i in support_serializers.data:
+                    result_list.append(i)
+
+        if (job=="학생"):
+            query['query']="학생"
+        elif (job=="직장인"):
+            query['query']="직장인"     
+        elif (job=="프리랜서"):
+            query['query']="프리랜서"    
+ 
+        dict2_type=get_youth_center(query)
+        support_dict=dict2_type['empsInfo']['emp']
+        print(dict2_type)
+        print("query",query)
+        try:
+            for i in support_dict:
+                i['member_id']=member_id
+                i['detail_field']=detail_field
             support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
             if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
                 #support_serializers.save()
                 print(support_serializers.data)
-                success.append(support_serializers.data)
-                print(success)
+                for i in support_serializers.data:
+                    result_list.append(i)
+                print(result_list)
             else:
                 print(support_serializers.errors)
-            return Response(support_serializers.data)
-        except:
+        except Exception as e:
+            print(e)
             pass
-            #return Response([])
+            return Response([])
+        print(len(result_list))
+        return Response(random.sample(result_list, 6))
+        
