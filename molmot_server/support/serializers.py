@@ -44,7 +44,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'],plcyTpNm_detail="R&D 지원")
+            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'],plcyTpNm_detail="학자금 지원")
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
@@ -299,20 +299,19 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def get_d_day(self,data):
         try:
-            support_id=Support.objects.get(uuid=data['support_id'].uuid)
-            d_day=str((support_id.end_date.date()-datetime.date.today()).days)
+
+            d_day=str((data.support_id.end_date.date()-datetime.date.today()).days)
             return d_day
         except:
             return ""
 
     def get_title(self,data):
-        support_id=Support.objects.get(uuid=data['support_id'].uuid)
-        return support_id.title
+
+        return data.support_id.title
     
     
     def get_end_date(self,data):
-        support_id=Support.objects.get(uuid=data['support_id'].uuid)
-        return support_id.end_date
+        return data.support_id.end_date
 
 
 '''

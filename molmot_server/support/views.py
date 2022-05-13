@@ -170,6 +170,15 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
     serializer_class = SupportNotificationSerializer
 
 
+
+    def get_queryset(self):
+        if self.kwargs.get('pk',None)!=None:
+            pk=self.kwargs.get('pk',None)
+            print(super().get_queryset().filter(pk=pk))
+            return super().get_queryset().filter(pk=pk)
+        else:
+            return super().get_queryset()
+
     def create(self,request,*args,**kwargs):
         try:
             #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
@@ -217,6 +226,7 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             supno_obj.save()
         if (request.data.get('enabled',None)!=None):
             bool_data=True if request.data.get('enabled',None)=="True" else False
+            print(bool_data)
             supno_obj.enabled=bool_data
             supno_obj.save()
         if (request.data.get('start_run',None)!=None):
@@ -226,7 +236,6 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             supno_obj.crontab.save()
             #supno_obj.crontab.day_of_month=time_data.day_of_month
             #supno_obj.crontab.month_of_year=time_data.month_of_year
-            supno_obj.enabled=True
             print(datetime.datetime.today())
             print(supno_obj.crontab)
             supno_obj.save()
@@ -248,7 +257,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id__id=member_id)
+            return super().get_queryset().filter(member_id=member_id)
         else:
             return super().get_queryset()
 
@@ -276,7 +285,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
         print(self.kwargs.get('member_id',None))
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id__id=list(member_id))
+            return super().get_queryset().filter(member_id=list(member_id))
 
     def create(self, request, *args, **kwargs):
         print(request.data)
@@ -545,8 +554,11 @@ class SmartRecommendDevelopSupportData(APIView):
         }
         #text_list=get_seoul_youth_list(num)
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
-        query['srchPolyBizSecd']=location_numbering[location]
-        print(query['srchPolyBizSecd'])
+        try:
+            query['srchPolyBizSecd']=location_numbering[location]
+            print(query['srchPolyBizSecd'])
+        except:
+            pass
         result_list=[]
         #1번 검색
         if (detail_field=='1'):
@@ -561,7 +573,7 @@ class SmartRecommendDevelopSupportData(APIView):
             query['query']="다자녀"
         else:
             pass
-        
+        '''
         dict2_type=get_youth_center(query)
         print(dict2_type)
         support_dict=dict2_type['empsInfo']['emp']
@@ -577,8 +589,12 @@ class SmartRecommendDevelopSupportData(APIView):
                     result_list.append(i)
         
 
+        '''
+        
 
         #디테일 필드 검색 
+
+        
   
         if (home_field=='1'):
             query['query']="기숙사"
@@ -626,6 +642,6 @@ class SmartRecommendDevelopSupportData(APIView):
             pass
             return Response([])
         print(len(result_list))
-        
-        return Response(random.sample(result_list, 6))
+        return Response(result_list)
+        #return Response(random.sample(result_list, 6))
         
