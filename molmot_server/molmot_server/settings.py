@@ -271,3 +271,21 @@ SCHEDULE_HOUR = 60 * SCHEDULE_MINUTE
 SCHEDULE_DAY = 24 * SCHEDULE_HOUR
 SCHEDULE_WEEK = 7 * SCHEDULE_DAY
 SCHEDULE_MONTH = 30 * SCHEDULE_DAY
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# Don't require username
+ACCOUNT_USERNAME_REQUIRED = False
+# Still require email
+ACCOUNT_EMAIL_REQUIRED = True
+# Login with email (default is username)
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+
+### Django Rest Auth settings
+REST_AUTH_SERIALIZERS = {
+    "LOGIN_SERIALIZER": "path.to.helpers.serializers.CustomLoginSerializer",
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "path.to.helpers.serializers.CustomRegisterSerializer",
+}
