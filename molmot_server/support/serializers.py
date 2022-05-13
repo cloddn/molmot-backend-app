@@ -44,7 +44,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'])
+            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'],plcyTpNm_detail="R&D 지원")
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
@@ -265,7 +265,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
-            schedule, is_created =CrontabSchedule.objects.get_or_create(
+            schedule =CrontabSchedule.objects.get_or_create(
             minute=00,
             hour=17,
             day_of_month=datetime.datetime.today().day,
