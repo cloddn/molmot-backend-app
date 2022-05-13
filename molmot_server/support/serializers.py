@@ -273,7 +273,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             timezone="Asia/Seoul"
             )
             KST = datetime.timezone(datetime.timedelta(hours=9))
-            support_id=Support.objects.get(title=data['support_id'])
+            support_id=Support.objects.get(pk=data['support_id'])
             support_id.interval_time=int(data['interval_data'])
             member_device_info=MemberFCMDevice.objects.get(user=data['member_id'])
             support_noti_id=SupportNotification.objects.get_or_create(

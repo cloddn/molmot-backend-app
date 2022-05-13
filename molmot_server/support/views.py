@@ -313,6 +313,7 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
                 headers = self.get_success_headers(serializer.data)
                 return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
             else:
+                print(serializer.errors)
                 return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -625,5 +626,6 @@ class SmartRecommendDevelopSupportData(APIView):
             pass
             return Response([])
         print(len(result_list))
+        
         return Response(random.sample(result_list, 6))
         

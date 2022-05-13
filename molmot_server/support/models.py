@@ -55,13 +55,20 @@ class Support(models.Model):
         ('5','장애인, 장애우'),
         ('6','기타'),
     )
+    JOBS=(
+        ('학생','학생'),
+        ('직장인','직장인'),
+        ('프리랜서','프리랜서'),
+    )
     start_date=models.DateTimeField(verbose_name='시작 날짜',null=True,blank=True)
     end_date=models.DateTimeField(verbose_name='마감 날짜',null=True,blank=True)
     rqutPrdCn=models.TextField(verbose_name='신청 기간',null=True,blank=True)
     plcyTpNm=models.TextField(verbose_name='정책 유형',null=True,blank=True)
+    plcyTpNm_detail=models.CharField(verbose_name='정책 유형 - 세부 필드',max_length=255,null=True,blank=True)
     qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,blank=True)
     detail_field=models.CharField(verbose_name='분야',choices=FIELDS,max_length=6,null=True,default='1',blank=True)
+    job_info=models.CharField(verbose_name='분야',choices=JOBS,max_length=6,null=True,default='1',blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):
