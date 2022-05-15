@@ -86,7 +86,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
-        'splzRlmRqisCn','rqutUrla','member_id','job_field')
+        'splzRlmRqisCn','rqutUrla','member_id','job_info')
 
     def validate(self, data):
         print(data)
@@ -101,7 +101,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],job_field=data['job_field'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
+            plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
