@@ -300,7 +300,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 @authentication_classes([])
 @permission_classes([]) 
-class ChannelsView(generics.ListAPIView):
+class ChannelsView(generics.ListAPIView,generics.ListCreateAPIView):
     serializer_class=ChannelSerializer
 
     def get_queryset(self):
@@ -309,6 +309,19 @@ class ChannelsView(generics.ListAPIView):
             return Channel.objects.filter(member_id__in=[member_id])
         else:
             return Channel.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        for i in request.data:
+            i['member_id']=[i['member_id']]
+        #request.data['member_id']=list(request.data['member_id'])
+        serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+        if serializer.is_valid():
+            headers = self.get_success_headers(serializer.data)
+            return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            print(serializer.errors)
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
         
         
         

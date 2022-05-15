@@ -24,6 +24,7 @@ urlpatterns = [
     path('support-get-data/',GetSupportData.as_view()),
     path('support-search-data/',SearchSupportData.as_view()),
     path('support-smart-recommend-data/',SmartRecommendDevelopSupportData.as_view()),
+    path('channels-get-list-view/',ChannelsView.as_view()),
     path('channels-get-list-view/<uuid:member_id>/',ChannelsView.as_view()),
     
     
