@@ -121,9 +121,14 @@ class Channel(models.Model):
 
 
 class SupportBookMark(models.Model):
+    FOLDERS=(
+        ('smart','스마트 맞춤 설계 결과'),
+        ('general','일반 북마크'),
+    )
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  
     support_id=models.ForeignKey(Support,verbose_name='제도/지원금',null=True,on_delete=models.CASCADE)
     member_id=models.ForeignKey(Member,null=True,on_delete=models.CASCADE)
+    folder=models.CharField(verbose_name='분류 폴더',max_length=10,choices=FOLDERS,default='general')
 
 class SupportNotification(PeriodicTask):
     organizer_id=models.ForeignKey(Organization,blank=True,verbose_name='정부 및 기관, 주관사',null=True,on_delete=models.CASCADE)

@@ -103,7 +103,10 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
             plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
-        #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+        obj=Member.objects.get(pk=member_id)
+        obj.is_smart_recommed=True
+        obj.save()
+        #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=obj,folder="smart")
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
             #start_time = date_list[0]

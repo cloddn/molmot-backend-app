@@ -62,7 +62,8 @@ class SupportBookMark(admin.ModelAdmin):
      list_display= (
      'uuid',
     'support_id',
-     'member_id'
+     'member_id',
+     'folder'
      )
 
 
