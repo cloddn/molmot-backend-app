@@ -2,12 +2,13 @@ from parser import ParserError
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 from dateutil.parser import parse
-from support.models import Channel, RecordingList, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
+from support.models import Category, Channel, RecordingList, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
 from user.models import Member,MemberFCMDevice
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
 import json
 from django.utils import timezone
+
 
 class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     cnsgNmor=serializers.CharField(max_length=255) #organizer
@@ -44,6 +45,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
             plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
+        Support.objects.filter(title='').delete()
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
@@ -185,6 +187,24 @@ class SupportSerializer(serializers.ModelSerializer):
         obj.click
         return obj.hits
 
+
+class CategorywithSupportSerializer(serializers.ModelSerializer):
+    detail_field=serializers.SerializerMethodField()
+    job_info=serializers.SerializerMethodField()
+    
+
+    class Meta:
+        model = Support
+        fields = ('uuid','title','plcyTpNm','detail_field','job_info')
+
+    def get_detail_field(self,data):
+        return data.get_detail_field_display()
+    
+    def get_job_info(self,data):
+        return data.get_detail_field_display()
+    
+    
+
 class HomeSupportSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -230,6 +250,14 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_subs_field_name(self,data):
         return data.subscribe_name
 
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    support_id=CategorywithSupportSerializer()
+
+    class Meta:
+        model = Category
+        fields = ('__all__')
 
 class ChannelSerializer(serializers.ModelSerializer):
     support_name=serializers.SerializerMethodField()

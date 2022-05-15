@@ -26,8 +26,9 @@ urlpatterns = [
     path('support-smart-recommend-data/',SmartRecommendDevelopSupportData.as_view()),
     path('channels-get-list-view/',ChannelsView.as_view()),
     path('channels-get-list-view/<uuid:member_id>/',ChannelsView.as_view()),
+    path('category-get-list-view/<str:colored>/',GetCategoryListView.as_view()),
     
-    
+    path('develop-category-create/',CategorylistView.as_view()),
 ]
 
 

@@ -324,7 +324,32 @@ class ChannelsView(generics.ListAPIView,generics.ListCreateAPIView):
             return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
         
         
-        
+
+@authentication_classes([])
+@permission_classes([]) 
+class GetCategoryListView(generics.ListAPIView,generics.ListCreateAPIView):
+    serializer_class=CategorySerializer
+
+    def get_queryset(self):
+        if self.kwargs.get('colored',None)!=None:
+            colored=self.kwargs.get('colored',None)
+            return Category.objects.filter(colored=colored)
+        else:
+            return Category.objects.all()
+
+    '''def create(self, request, *args, **kwargs):
+        print(request.data)
+        for i in request.data:
+            i['member_id']=[i['member_id']]
+        #request.data['member_id']=list(request.data['member_id'])
+        serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+        if serializer.is_valid():
+            headers = self.get_success_headers(serializer.data)
+            return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            print(serializer.errors)
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+    '''  
 from django.db.models import Count
 
 
@@ -683,6 +708,24 @@ class SmartRecommendDevelopSupportData(APIView):
                 print(support_serializers.data)
         else:
                 print(support_serializers.errors)
+        #QR코드 생성 및 QR코드 return 
         return Response(support_serializers.data)
         
         
+
+@authentication_classes([])
+@permission_classes([]) 
+class CategorylistView(APIView):
+    def post(self,request):
+        plcyTpNm=request.data['plcyTpNm']
+        color=request.data['color']
+        supports = Support.objects.filter(plcyTpNm=plcyTpNm).distinct()
+        #즐겨찾기 연결 -> 몇개 나오게 할 건지, 생각!!!!
+        #SupportBookMark.objects.create
+        data = list(supports.values())
+        for i in data:
+            try:
+                Category.objects.get_or_create(support_id=Support.objects.get(uuid=i['uuid']),colored=color,category=plcyTpNm)
+            except:
+                print("!23")
+        return Response({"success":True})

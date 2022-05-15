@@ -1,6 +1,5 @@
-from calendar import c
+
 from email.policy import default
-from pyexpat import model
 from django.db import models
 import uuid
 from fcm_django.models import FCMDevice
@@ -103,7 +102,7 @@ class Category(models.Model):
         ('cyan', '창업(cyan)'),
         ('pink', '주거/금융(pink)'),
         ('green', '생활/복지(green)'),
-        ('purple', '정책참여(purple))'),
+        ('purple', '정책참여(purple)'),
         ('gray', '코로나19(gray)'),
 
     )
