@@ -49,3 +49,13 @@ class GetHomeUIInfoView(APIView):
             return Response({"hottag":hottag.data,"uiphoto":uiphotos.data,"alarm_list":alarm_list.data})
         else:
             return Response({"hottag":hottag.data,"uiphoto":uiphotos.data})
+
+    
+@authentication_classes([])
+@permission_classes([]) 
+class GetMemberhasSmartResult(APIView):
+
+    #알람서비스 추가되면 추가 개발예정
+    def get(self,request,member_id):
+        obj=Member.objects.get(pk=member_id)
+        return Response({"is_smart_recommed":obj.is_smart_recommed})
