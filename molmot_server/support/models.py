@@ -99,11 +99,16 @@ class Subscribe(models.Model):
 
 class Category(models.Model):
     COLORED = (    #색깔 분류
-        ('pink', 'pink'),
-        ('yellow', 'yellow ')
+        ('blue', '취업(blue)'),
+        ('cyan', '창업(cyan)'),
+        ('pink', '주거/금융(pink)'),
+        ('green', '생활/복지(green)'),
+        ('purple', '정책참여(purple))'),
+        ('gray', '코로나19(gray)'),
+
     )
-    colored=models.CharField(verbose_name='카테고리',max_length=10,choices=COLORED,null=True)
-    category=models.CharField(verbose_name='카테고리',max_length=50,null=True,blank=True)
+    colored=models.CharField(verbose_name='색깔 분류',max_length=10,choices=COLORED,null=True)
+    category=models.CharField(verbose_name='카테고리 명',max_length=50,null=True,blank=True)
     organizer_id=models.ForeignKey(Organization,verbose_name='관련 기관',null=True,blank=True,on_delete=models.CASCADE)
     support_id=models.ForeignKey(Support,verbose_name='관련 제도',null=True,on_delete=models.CASCADE)
 
