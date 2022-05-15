@@ -67,7 +67,7 @@ class Support(models.Model):
     qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,blank=True)
     detail_field=models.CharField(verbose_name='스마트설계 - 분야',choices=FIELDS,max_length=6,null=True,default='1',blank=True)
-    job_info=models.CharField(verbose_name='직업',choices=JOBS,max_length=6,null=True,default='1',blank=True)
+    job_info=models.CharField(verbose_name='직업',choices=JOBS,max_length=6,null=True,default='학생',blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):

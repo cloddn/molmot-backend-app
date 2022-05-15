@@ -14,7 +14,7 @@ from rest_framework import status, mixins
 from rest_framework import generics # generics class-based view 사용할 계획
 import xmltodict
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from rest_framework.decorators import permission_classes, authentication_classes
+from rest_framework.decorators import action,permission_classes, authentication_classes
 
 # JWT 사용을 위해 필요
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -362,10 +362,22 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
     serializer_class = SupportBookMarkSerializer
 
 
-    def get_queryset(self):
+    @action(methods=['GET'], detail=False)
+    def bookmark_list(self,request, *args, **kwargs):
+        print(request.GET['member_id'])
+        try:
+            if request.GET['folder']!=None:
+                member_id=request.GET['member_id']
+                return Response(SupportBookMark.objects.filter(member_id=member_id,folder=request.GET['folder']).values())
+        except KeyError:
+            return Response(SupportBookMark.objects.filter(member_id=request.GET['member_id']).values())
+        except:
+            return Response(SupportBookMark.objects.all().values())
+
+    def get_queryset(self,*args, **kwargs):
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id__id=member_id)
+            return super().get_queryset().filter(member_id=member_id,folder=self.kwargs.get('folder','general'))
         else:
             return super().get_queryset()
 
@@ -377,7 +389,6 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
             else:
                 print(serializer.errors)
                 return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @authentication_classes([])

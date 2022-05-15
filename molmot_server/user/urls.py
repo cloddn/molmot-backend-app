@@ -26,7 +26,7 @@ urlpatterns = [
     #path('user-info-view/<uuid:userid>/',UserInfoView.as_view()),
     path('excel-csv/',views.Import_csv,name="Import_csv"),
 
-
+    path('index/<uuid:member_id>/', views.index, name="index"),
 ]
 
 urlpatterns += router.urls

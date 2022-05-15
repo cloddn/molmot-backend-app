@@ -12,6 +12,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 # JWT 사용을 위해 필요
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
+from support.models import SupportBookMark
 
 from user.utils import login_check
 
@@ -216,3 +217,28 @@ def Import_csv(request):
         print(identifier)
      
     return Response({"success":False})
+
+from django.template import loader
+from django.shortcuts import render
+from django.http import HttpResponse
+
+@csrf_exempt
+@authentication_classes([])
+@permission_classes([]) 
+def index(request,member_id):
+    support_querys = SupportBookMark.objects.filter(folder="smart",member_id=member_id)[:3]
+    context_list=[]
+    template = loader.get_template('smart_qr_view.html')
+    for i in support_querys:
+        if (len(i.support_id.title)>10):
+            context_list.append(i.support_id.title[:9]+"...")
+        else:
+            context_list.append(i.support_id.title)
+
+    context = {
+        "context_list_1": context_list[0],
+        "context_list_2": context_list[1],
+        "context_list_3": context_list[2],
+    }
+    print(context_list)
+    return HttpResponse(template.render(context, request))

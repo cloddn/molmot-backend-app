@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css">
+  </head>
+  <style>
+      .back_ground{
+      /* my molmot map */
+        position: relative;
+        width: 420px;
+        height: 1131px;
+        /*background: url(https://molmot-s3.s3.ap-northeast-2.amazonaws.com/media/html_view/qr+%EB%B7%B0-2.png);*/
+
+    }
+    
+    .middle_box {
+      position: absolute;
+      width: 360px;
+      height: 500px;
+      left: 30px;
+      top: 229px;
+
+      background: url(https://molmot-s3.s3.ap-northeast-2.amazonaws.com/media/html_view/molmot+map22+1.svg);
+      border-radius: 20px;
+    }
+   
+    .text_image{
+      /* molmot map2_text 1 */
+
+        position: absolute;
+        width: 280px;
+        height: 276px;
+        left: 58px;
+        top: 44px;
+
+        background: url(https://molmot-s3.s3.ap-northeast-2.amazonaws.com/media/html_view/molmot+map2_text+1.svg);
+    }
+    
+    .text_field_1 {
+        position: absolute;
+        width: 86px;
+        height: 18px;
+        left: 5px;
+        top: 13px;     
+
+        font-family: 'NanumSquare';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 8px;
+        line-height: 18px;
+        display: flex;
+        justify-content : center;
+        align-items: center;
+        text-align: center;
+
+        /* solid black 23개까지 */
+        color: #383838;
+    }
+    .text_field_2 {
+        position: absolute;
+        width: 67.08px;
+        height: 13.5px;
+        left: 5px;
+        top: 10px;
+
+        font-family: 'NanumSquare';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 8px;
+        line-height: 11px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+
+        /* solid black  22개까지*/
+        color: #383838;
+
+    }
+
+    .text_field_3 {
+        position: absolute;
+        width: 56px;
+        height: 10px;
+        left: 5px;
+        top: 10px;
+
+        font-family: 'NanumSquare';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 6px;
+        line-height: 10px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+
+        /* solid black 22*/
+        color: #383838;
+    }
+
+
+    .text_filled_1 {
+
+        position: absolute;
+        width: 100px;
+        height: 40px;
+        left: 233px;
+        top: 250px;
+
+        background: rgba(246, 246, 246, 0.8);
+        border-radius: 20px;
+    }
+
+    .text_filled_2 {
+
+    
+    position: absolute;
+    width: 78px;
+    height: 30px;
+    left: 100px;
+    top: 132px;
+
+    background: rgba(246, 246, 246, 0.8);
+    border-radius: 20px;
+    }
+
+    .text_filled_3 {
+
+        
+    position: absolute;
+    width: 64px;
+    height: 24px;
+    left: 62px;
+    top: 53px;
+
+    background: rgba(246, 246, 246, 0.8);
+    border-radius: 20px;
+    }
+
+    
+    .middle_box_logo {
+        /* 제목 1 */
+
+        position: absolute;
+        width: 71px;
+        height: 48px;
+        left: 173px;
+        top: 34px;
+
+        background: url(https://molmot-s3.s3.ap-northeast-2.amazonaws.com/media/html_view/middle_box_logo.svg);
+    }
+    .title_text 
+    { 
+        position: absolute;
+        width: 139.32px;
+        height: 100px;
+        left: 55.42px;
+        top: 72px;
+    }
+
+  </style>
+  <body>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css">
+    <div>
+        <div class="back_ground">
+            <img class="back_ground"  src="https://molmot-s3.s3.ap-northeast-2.amazonaws.com/media/html_view/qr+%EB%B7%B0-2.png" alt="Logo Image">
+            <div class="middle_box">
+                <div class="middle_box_logo"> </div>
+                <div class="text_image">
+                </div>
+                <div class="text_filled_3">
+                    <div class="text_field_3">{{context_list_3}}</div>
+                </div>
+                <div class="text_filled_2">
+                    <div class="text_field_2"> {{context_list_2}} </div>
+                </div>
+                <div class="text_filled_1">
+                    <div class="text_field_1">{{context_list_1}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html> 

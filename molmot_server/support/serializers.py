@@ -81,6 +81,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
     rqutUrla=serializers.CharField(max_length=255) #submit_link
     member_id=serializers.CharField(max_length=255) 
     polyBizSecd=serializers.CharField(max_length=255) 
+    qr_code_link=serializers.SerializerMethodField()
 
     class Meta:
         model = Support
@@ -204,7 +205,7 @@ class CategorywithSupportSerializer(serializers.ModelSerializer):
         return data.get_detail_field_display()
     
     def get_job_info(self,data):
-        return data.get_detail_field_display()
+        return data.get_job_info_display()
     
     
 
@@ -285,7 +286,6 @@ class ChannelSerializer(serializers.ModelSerializer):
                     #data['member_id'].save()
                 return ch_data
             elif (data.get('organizer_id',None)==None):
-    
                 data=Channel.objects.filter(member_id__in=["2a8f72ed-1090-421a-903a-510aa1f809a3"])
                 return data
         except KeyError or ValidationError as ex:
@@ -353,7 +353,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupportBookMark
-        fields = ('uuid','support_id','d_day','member_id','title','end_date','interval_data')
+        fields = ('uuid','support_id','d_day','member_id','title','end_date','interval_data','folder')
 
     def validate(self, data):
         try:
