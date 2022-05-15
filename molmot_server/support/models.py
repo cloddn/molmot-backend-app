@@ -41,7 +41,7 @@ class Support(models.Model):
         unique=False
     )   
     detail=models.TextField(verbose_name='상세 설명',blank=True)
-    submit_link=models.URLField(blank=True,null=True,verbose_name='관련 링크',)
+    submit_link=models.TextField(verbose_name='신청 링크',null=True,blank=True)
     organizer=models.CharField(
         verbose_name='주관사',
         max_length=50,

@@ -585,9 +585,10 @@ class SmartRecommendDevelopSupportData(APIView):
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
         try:
             query['srchPolyBizSecd']=location_numbering[location]
-            print(query['srchPolyBizSecd'])
+            #print(query['srchPolyBizSecd'])
         except:
             pass
+
         result_list=[]
         #1번 검색
         if (detail_field=='1'):
@@ -633,7 +634,7 @@ class SmartRecommendDevelopSupportData(APIView):
             for i in support_dict:
                 i['member_id']=member_id
                 i['detail_field']=detail_field
-                i['job_field']=job
+                i['job_info']=job
             support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
             if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
@@ -657,6 +658,7 @@ class SmartRecommendDevelopSupportData(APIView):
             for i in support_dict:
                 i['member_id']=member_id
                 i['detail_field']=detail_field
+                i['job_info']=job
             support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
             if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
@@ -672,14 +674,15 @@ class SmartRecommendDevelopSupportData(APIView):
             pass
             return Response([])
         print(len(result_list))
-        return Response(result_list)
+        #return Response(result_list)
         random_list=random.sample(result_list, 6)
-        support_serializers=SmartOpenapiCreateSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(support_dict,list))
         if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
                 #support_serializers.save()
                 print(support_serializers.data)
         else:
                 print(support_serializers.errors)
-        #return Response(random.sample(result_list, 6))
+        return Response(support_serializers.data)
+        
         
