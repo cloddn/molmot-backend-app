@@ -1,14 +1,18 @@
+from io import BytesIO
 from parser import ParserError
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 from dateutil.parser import parse
+from media.models import SmartResultQRPhoto
+from support.helper import qrcode_selfie_num
 from support.models import Category, Channel, RecordingList, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
 from user.models import Member,MemberFCMDevice
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
 import json
 from django.utils import timezone
-
+import qrcode
+from django.core.files.base import File
 
 class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     cnsgNmor=serializers.CharField(max_length=255) #organizer
@@ -88,7 +92,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
-        'splzRlmRqisCn','rqutUrla','member_id','job_info')
+        'splzRlmRqisCn','rqutUrla','member_id','job_info','qr_code_link')
 
     def validate(self, data):
         print(data)
@@ -128,6 +132,21 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         sub_data,new=Support.objects.get_or_create(**data)
         member_id=data.pop('member_id',None)
         #Support.objects.filter(bizId=data['bizId']).delete()
+
+    def get_qr_code_link(self,data):
+        member_id=data.get('member_id',None)
+        url = 'http://ec2-3-36-93-17.ap-northeast-2.compute.amazonaws.com/user/index/'+member_id+'/'
+        qr_img = qrcode.make(url)
+        qr_img.convert('RGB') # convert mode
+
+        thumb_io = BytesIO() # create a BytesIO object
+
+        qr_img.save(thumb_io, 'JPEG', quality=100) # save image to BytesIO object
+        name=qrcode_selfie_num()+member_id+".jpg"
+        qr_file = File(thumb_io, name=name)
+        sm_obj,is_created=SmartResultQRPhoto.objects.get_or_create(member_id=Member.objects.get(pk=member_id),photo_file=qr_file)
+    
+        return sm_obj.photo_file.url
 
     ''''
     def create(self, data):

@@ -9,7 +9,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from django.core import serializers
 from support.models import Support, SupportScheduledNotification
 from support.serializers import HomeSupportSerializer, SupportSerializer,SupportNotificationSerializer,SupportNotification,HomeSupportNotificationSerializer
-from user.models import MemberFCMDevice
+from user.models import Member, MemberFCMDevice
 
 
 @authentication_classes([])
@@ -37,10 +37,15 @@ class GetHomeUIInfoView(APIView):
 
     #알람서비스 추가되면 추가 개발예정
     def get(self,request,member_id):
-        #3개가 없을 경우에 대한 에러 처리 
-        uiphotos=UIPhotoSerializer(UIPhoto.objects.all(),many=True)
-        alarm_list=HomeSupportNotificationSerializer(SupportNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=member_id)).order_by('-noti_on_time')[:3],many=True)
-        print(alarm_list.data)
-        #3개가 없을 경우에 대한 에러 처리 
         hottag=HomeSupportSerializer(Support.objects.all().order_by('-hits')[:6],many=True)
-        return Response({"hottag":hottag.data,"uiphoto":uiphotos.data,"alarm_list":alarm_list.data})
+        uiphotos=UIPhotoSerializer(UIPhoto.objects.all(),many=True)
+        obj=Member.objects.get(pk=member_id)
+        if (obj.is_smart_recommed):
+            #3개가 없을 경우에 대한 에러 처리
+            alarm_list=HomeSupportNotificationSerializer(SupportNotification.objects.filter(member_device_info=MemberFCMDevice.objects.get(user=member_id)).order_by('-noti_on_time')[:3],many=True)
+            print(alarm_list.data)
+            #3개가 없을 경우에 대한 에러 처리 
+           
+            return Response({"hottag":hottag.data,"uiphoto":uiphotos.data,"alarm_list":alarm_list.data})
+        else:
+            return Response({"hottag":hottag.data,"uiphoto":uiphotos.data})

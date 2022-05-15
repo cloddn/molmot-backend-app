@@ -14,3 +14,11 @@ class UIPhotoAdmin(admin.ModelAdmin):
         'indexnum',
         'photo_file'
     )
+
+@admin.register(models.SmartResultQRPhoto)
+class SmartResultQRPhotoAdmin(admin.ModelAdmin):
+    list_display = (
+        'uuid',
+        'member_id',
+        'photo_file'
+    )
