@@ -86,6 +86,7 @@ class Member(AbstractBaseUser):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone_number=models.CharField(verbose_name='휴대폰 번호',blank=False,null=True,max_length=11)
     date_joined = models.DateTimeField(auto_now_add=True)  
+    is_smart_recommed=models.BooleanField(('스마트 맞춤 설계 이력'),default=False) 
     is_staff=models.BooleanField(('staff status'),default=False) 
     privacy_agreement=models.BooleanField(('개인정보 동의'),default=False) 
     USERNAME_FIELD = 'email' 

@@ -21,6 +21,7 @@ class Member(admin.ModelAdmin):
      'gender',
      'date_joined',
     'last_login',
+    'is_smart_recommed',
     'is_active',
     'privacy_agreement'
      )
