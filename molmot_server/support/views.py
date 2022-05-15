@@ -225,7 +225,7 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
             supno_obj.enabled=True
             supno_obj.save()
         if (request.data.get('enabled',None)!=None):
-            bool_data=True if request.data.get('enabled',None)=="True" else False
+            bool_data=True if request.data.get('enabled',None)==True else False
             print(bool_data)
             supno_obj.enabled=bool_data
             supno_obj.save()
@@ -281,7 +281,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 
 
-    def get_queryset(self,request):
+    def get_queryset(self):
         print(self.kwargs.get('member_id',None))
         if self.kwargs.get('member_id',None)!=None:
             member_id=self.kwargs.get('member_id',None)
@@ -540,6 +540,7 @@ class SmartRecommendSupportData(APIView):
 @authentication_classes([])
 @permission_classes([]) 
 class SmartRecommendDevelopSupportData(APIView):
+    #serializers=SmartOpenapiSupportSerializer
     def post(self,request):
         query=request.data['query']
         detail_field=request.data.get('detail_field','6')
@@ -604,6 +605,7 @@ class SmartRecommendDevelopSupportData(APIView):
             for i in support_dict:
                 i['member_id']=member_id
                 i['detail_field']=detail_field
+                i['job_field']=job
             support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
             if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
@@ -615,9 +617,9 @@ class SmartRecommendDevelopSupportData(APIView):
         if (job=="학생"):
             query['query']="학생"
         elif (job=="직장인"):
-            query['query']="직장인"     
+            query['query']="직장"     
         elif (job=="프리랜서"):
-            query['query']="프리랜서"    
+            query['query']="자영업"    
  
         dict2_type=get_youth_center(query)
         support_dict=dict2_type['empsInfo']['emp']
@@ -643,5 +645,13 @@ class SmartRecommendDevelopSupportData(APIView):
             return Response([])
         print(len(result_list))
         return Response(result_list)
+        random_list=random.sample(result_list, 6)
+        support_serializers=SmartOpenapiCreateSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                #support_serializers.save()
+                print(support_serializers.data)
+        else:
+                print(support_serializers.errors)
         #return Response(random.sample(result_list, 6))
         
