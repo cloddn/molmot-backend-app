@@ -35,12 +35,24 @@ class Subscribe(admin.ModelAdmin):
      )
 
 
+@admin.register(models.Category)
+class Category(admin.ModelAdmin):
+     list_display= (
+     'id',
+     'colored',
+     'category',
+    'organizer_id',
+    'support_id'
+     )
+
+
+
 @admin.register(models.Channel)
 class Channel(admin.ModelAdmin):
      list_display= (
      'id',
     'channel_name',
-    'support_id',
+    'support_id'
      )
 
 

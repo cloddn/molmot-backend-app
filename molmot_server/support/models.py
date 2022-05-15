@@ -67,8 +67,8 @@ class Support(models.Model):
     plcyTpNm_detail=models.CharField(verbose_name='정책 유형 - 세부 필드',max_length=255,null=True,blank=True)
     qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,blank=True)
-    detail_field=models.CharField(verbose_name='분야',choices=FIELDS,max_length=6,null=True,default='1',blank=True)
-    job_info=models.CharField(verbose_name='분야',choices=JOBS,max_length=6,null=True,default='1',blank=True)
+    detail_field=models.CharField(verbose_name='스마트설계 - 분야',choices=FIELDS,max_length=6,null=True,default='1',blank=True)
+    job_info=models.CharField(verbose_name='직업',choices=JOBS,max_length=6,null=True,default='1',blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):
@@ -96,13 +96,23 @@ class Subscribe(models.Model):
     support_id=models.ForeignKey(Support,verbose_name='관련있는 제도',null=True,on_delete=models.CASCADE)
     member_id=models.OneToOneField(Member,null=True,blank=True,on_delete=models.CASCADE)
 
+
+class Category(models.Model):
+    COLORED = (    #색깔 분류
+        ('pink', 'pink'),
+        ('yellow', 'yellow ')
+    )
+    colored=models.CharField(verbose_name='카테고리',max_length=10,choices=COLORED,null=True)
+    category=models.CharField(verbose_name='카테고리',max_length=50,null=True,blank=True)
+    organizer_id=models.ForeignKey(Organization,verbose_name='관련 기관',null=True,blank=True,on_delete=models.CASCADE)
+    support_id=models.ForeignKey(Support,verbose_name='관련 제도',null=True,on_delete=models.CASCADE)
+
 #채널
 class Channel(models.Model):
-    category=models.CharField(verbose_name='카테고리',max_length=50,null=True,blank=True)
     channel_name=models.CharField(verbose_name='구독할 채널 작명',max_length=50,null=True)
     organizer_id=models.ForeignKey(Organization,verbose_name='관련 기관',null=True,blank=True,on_delete=models.CASCADE)
     support_id=models.ForeignKey(Support,verbose_name='관련 제도',null=True,on_delete=models.CASCADE)
-    member_id=models.OneToOneField(Member,null=True,blank=True,on_delete=models.CASCADE)
+    member_id=models.ManyToManyField(Member,null=True,blank=True)
 
 
 
