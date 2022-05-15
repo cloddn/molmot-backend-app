@@ -1,6 +1,4 @@
 from parser import ParserError
-from this import d
-from attr import validate
 from django.forms import DateInput, ValidationError
 from rest_framework import serializers
 from dateutil.parser import parse
