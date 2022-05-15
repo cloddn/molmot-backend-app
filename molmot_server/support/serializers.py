@@ -29,7 +29,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
-        'splzRlmRqisCn','rqutUrla','member_id')
+        'splzRlmRqisCn','rqutUrla','member_id','job_field')
 
     def validate(self, data):
         print(data)
@@ -44,7 +44,64 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'],plcyTpNm_detail="학자금 지원")
+            plcyTpNm=data['plcyTpNm'],job_field=data['job_field'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
+        #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+        #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
+            #date_list = data['rqutPrdCn'].split('~')
+            #start_time = date_list[0]
+            #end_time = date_list[1]
+            #start_time = start_time.replace(".","-").replace(" ","")
+            #end_time = end_time.replace(".","-").replace(" ","")
+            #start_time=parse(start_time)
+            #end_time=parse(end_time)
+            #KST = datetime.timezone(datetime.timedelta(hours=9))
+            #start_time=datetime.datetime(timezone.now().year,start_time.month,start_time.day,9,00,tzinfo=KST)
+            #end_time=datetime.datetime(timezone.now().year,end_time.month,end_time.day,18,00,tzinfo=KST)
+            #rqutPrdCn=start_time.strftime("%Y-%m-%d")+" ~ "+end_time.strftime("%Y-%m-%d")
+    
+        return data
+
+    
+    def create(self, data):
+        sub_data,new=Support.objects.get_or_create(**data)
+        member_id=data.pop('member_id',None)
+        #Support.objects.filter(bizId=data['bizId']).delete()
+
+class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
+    cnsgNmor=serializers.CharField(max_length=255) #organizer
+    polyBizSjnm=serializers.CharField(max_length=255) #title
+    polyItcnCn=serializers.CharField(max_length=255) #detail
+    sporCn=serializers.CharField(max_length=None)#detail
+    ageInfo=serializers.CharField(max_length=255) #qualifications
+    empmSttsCn=serializers.CharField(max_length=255)#qualifications
+    accrRqisCn=serializers.CharField(max_length=255)#qualifications
+    majrRqisCn=serializers.CharField(max_length=255)#qualifications
+    splzRlmRqisCn=serializers.CharField(max_length=255)#qualifications
+    rqutUrla=serializers.CharField(max_length=255) #submit_link
+    member_id=serializers.CharField(max_length=255) 
+    polyBizSecd=serializers.CharField(max_length=255) 
+
+    class Meta:
+        model = Support
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
+        'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
+        'empmSttsCn','accrRqisCn','majrRqisCn',
+        'splzRlmRqisCn','rqutUrla','member_id','job_field')
+
+    def validate(self, data):
+        print(data)
+        data['organizer']=data.get('cnsgNmor','').replace('\n',"%^^%")
+        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+"%^^%지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
+        data['submit_link']=data.get('rqutUrla','')
+        data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
+        data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
+        member_id=data.get('member_id',None)
+        sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
+            submit_link=data['submit_link'],
+            qualifications=data['qualifications'],
+            title=data['title'],bizId=data['bizId'],
+            rqutPrdCn=data['rqutPrdCn'],
+            plcyTpNm=data['plcyTpNm'],job_field=data['job_field'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
@@ -187,18 +244,23 @@ class ChannelSerializer(serializers.ModelSerializer):
         print(data)
         try:
             #오브젝트 형태로 전달
+            if (data.get('organizer_id',None)!=None):
             #org_obj=Organization.objects.get(pk=data['organizer_id'])
-            ch_datas=Channel.objects.filter(channel_name=data['organizer_id'])
-            for ch_data in ch_datas:
-                uuid=data['member_id'][0].uuid
-                ch_data.member_id.add(uuid)
-                data['member_id'][0].last_login=datetime.datetime.now()
-                data['member_id'][0].save()
-            return ch_data
-
-        except ValidationError as ex:
-            print(ex)
-            raise serializers.ValidationError({"success":False})
+                ch_datas=Channel.objects.filter(channel_name=data['organizer_id'])
+                for ch_data in ch_datas:
+                    uuid=data['member_id'][0]
+                    ch_data.member_id.add(uuid)
+                    ch_data.save()
+                    #data['member_id'].last_login=datetime.datetime.now()
+                    #data['member_id'].save()
+                return ch_data
+            elif (data.get('organizer_id',None)==None):
+    
+                data=Channel.objects.filter(member_id__in=["2a8f72ed-1090-421a-903a-510aa1f809a3"])
+                return data
+        except KeyError or ValidationError as ex:
+            #ch_datas=Channel.objects.filter(channel_name=data['organizer_id'])
+            return data
 
 
     def get_support_name(self,data):

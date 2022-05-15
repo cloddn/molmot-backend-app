@@ -7,7 +7,7 @@ import random
 from re import L
 import re
 from django.http import JsonResponse
-from requests import api
+from requests import api, request
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, mixins
@@ -255,9 +255,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        if self.kwargs.get('member_id',None)!=None:
-            member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id=member_id)
+        if self.kwargs.get('pk',None)!=None:
+            member_id=self.kwargs.get('pk',None)
+            return super().get_queryset().filter(member_id__in=[member_id])
         else:
             return super().get_queryset()
 
@@ -282,10 +282,11 @@ class ChannelViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        print(self.kwargs.get('member_id',None))
-        if self.kwargs.get('member_id',None)!=None:
-            member_id=self.kwargs.get('member_id',None)
-            return super().get_queryset().filter(member_id=list(member_id))
+        if self.kwargs.get('pk',None)!=None:
+            pk=self.kwargs.get('pk',None)
+            return super().get_queryset().filter(pk=pk)
+        else:
+            return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
         print(request.data)
@@ -297,6 +298,20 @@ class ChannelViewSet(viewsets.ModelViewSet):
             print(serializer.errors)
             return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
+@authentication_classes([])
+@permission_classes([]) 
+class ChannelsView(generics.ListAPIView):
+    serializer_class=ChannelSerializer
+
+    def get_queryset(self):
+        if self.kwargs.get('member_id',None)!=None:
+            member_id=self.kwargs.get('member_id',None)
+            return Channel.objects.filter(member_id__in=[member_id])
+        else:
+            return Channel.objects.all()
+        
+        
+        
 from django.db.models import Count
 
 
