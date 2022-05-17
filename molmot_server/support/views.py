@@ -361,6 +361,15 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
     queryset = SupportBookMark.objects.all()
     serializer_class = SupportBookMarkSerializer
 
+    @action(methods=['POST'], detail=False)
+    def bookmark_list_create(self,request, *args, **kwargs):
+            serializer = SupportBookMarkCreateSerializer(data=request.data, many=isinstance(request.data,list))
+            if serializer.is_valid():
+                headers = SupportBookMarkCreateSerializer(serializer.data)
+                return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                print(serializer.errors)
+                return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['GET'], detail=False)
     def bookmark_list(self,request, *args, **kwargs):
@@ -636,26 +645,39 @@ class SmartRecommendDevelopSupportData(APIView):
         elif (detail_field=='4'):
             query['query']="군인"
         elif (detail_field=='5'):
-            query['query']="다자녀"
+            query['query']="장애인"
         else:
             pass
-        '''
+        
         dict2_type=get_youth_center(query)
         print(dict2_type)
-        support_dict=dict2_type['empsInfo']['emp']
-
-        for i in support_dict:
-            i['member_id']=request.data['member_id']
-            i['detail_field']=detail_field
-        support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
-        if (support_serializers.is_valid()):
-            #불필요한 데이터 쌓임 방지
-                #support_serializers.save()
-            for i in support_serializers.data:
-                    result_list.append(i)
+        if (dict2_type['empsInfo']['totalCnt']=="1"):
+            support_dict=dict2_type['empsInfo']['emp']
+            support_dict['member_id']=member_id
+            support_dict['detail_field']=detail_field
+            support_dict['job_info']=job
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(dict2_type,list))
+            if (support_serializers.is_valid()):
+                result_list.append(support_serializers.data)
+            else:
+                print(support_serializers.errors)
+        elif (dict2_type['empsInfo']['totalCnt']=="0"):
+            pass
+        else:
+            support_dict=dict2_type['empsInfo']['emp']
+            for i in support_dict:
+                i['member_id']=member_id
+                i['detail_field']=detail_field
+                i['job_info']=job
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+            if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                    #support_serializers.save()
+                for i in support_serializers.data:
+                        result_list.append(i)
         
 
-        '''
+        
         
 
         #디테일 필드 검색 
@@ -666,18 +688,34 @@ class SmartRecommendDevelopSupportData(APIView):
             query['query']="기숙사"
             dict2_type=get_youth_center(query)
             print(dict2_type)
-            support_dict=dict2_type['empsInfo']['emp']
-            for i in support_dict:
-                i['member_id']=member_id
-                i['detail_field']=detail_field
-                i['job_info']=job
-            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
-            if (support_serializers.is_valid()):
-                #불필요한 데이터 쌓임 방지
-                    #support_serializers.save()
-                #print(support_serializers.data)
-                for i in support_serializers.data:
-                    result_list.append(i)
+
+                
+            if (dict2_type['empsInfo']['totalCnt']=="1"):
+                support_dict=dict2_type['empsInfo']['emp']
+                support_dict['member_id']=member_id
+                support_dict['detail_field']=detail_field
+                support_dict['job_info']=job
+                support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(dict2_type,list))
+                if (support_serializers.is_valid()):
+                    result_list.append(support_serializers.data)
+                    print(result_list)
+                else:
+                    print(support_serializers.errors)
+            elif (dict2_type['empsInfo']['totalCnt']=="0"):
+                pass
+            else:
+                support_dict=dict2_type['empsInfo']['emp']
+
+                for i in support_dict:
+                    i['member_id']=member_id
+                    i['detail_field']=detail_field
+                    i['job_info']=job
+                support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+                if (support_serializers.is_valid()):
+                    #불필요한 데이터 쌓임 방지
+                        #support_serializers.save()
+                    for i in support_serializers.data:
+                            result_list.append(i)
 
         if (job=="학생"):
             query['query']="학생"
@@ -687,40 +725,53 @@ class SmartRecommendDevelopSupportData(APIView):
             query['query']="자영업"    
  
         dict2_type=get_youth_center(query)
-        support_dict=dict2_type['empsInfo']['emp']
         print(dict2_type)
         print("query",query)
+        
         try:
-            for i in support_dict:
-                i['member_id']=member_id
-                i['detail_field']=detail_field
-                i['job_info']=job
-            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
-            if (support_serializers.is_valid()):
-                #불필요한 데이터 쌓임 방지
-                #support_serializers.save()
-                print(support_serializers.data)
-                for i in support_serializers.data:
-                    result_list.append(i)
-                print(result_list)
+            if (dict2_type['empsInfo']['totalCnt']=="1"):
+                support_dict=dict2_type['empsInfo']['emp']
+                support_dict['member_id']=member_id
+                support_dict['detail_field']=detail_field
+                support_dict['job_info']=job
+                support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(dict2_type,list))
+                if (support_serializers.is_valid()):
+                    result_list.append(support_serializers.data)
+                    print(result_list)
+
+            elif (dict2_type['empsInfo']['totalCnt']=="0"):
+                pass
             else:
-                print(support_serializers.errors)
+                support_dict=dict2_type['empsInfo']['emp']
+
+                for i in support_dict:
+                    i['member_id']=member_id
+                    i['detail_field']=detail_field
+                    i['job_info']=job
+                support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+                if (support_serializers.is_valid()):
+                    #불필요한 데이터 쌓임 방지
+                        #support_serializers.save()
+                    for i in support_serializers.data:
+                            result_list.append(i)
+                else:
+                    print("123")
+                    print(support_serializers.errors)
+            return Response(result_list)
         except Exception as e:
             print(e)
+            
             pass
-            return Response([])
-        print(len(result_list))
-        #return Response(result_list)
-        random_list=random.sample(result_list, 6)
-        support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(support_dict,list))
-        if (support_serializers.is_valid()):
+        #random_list=random.sample(result_list, 6)
+        #support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(support_dict,list))
+        #if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
                 #support_serializers.save()
-                print(support_serializers.data)
-        else:
-                print(support_serializers.errors)
+        #        print(support_serializers.data)
+        #else:
+        #        print(support_serializers.errors)
         #QR코드 생성 및 QR코드 return 
-        return Response(support_serializers.data)
+        #return Response(support_serializers.data)
         
         
 

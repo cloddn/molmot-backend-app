@@ -13,7 +13,6 @@ router.register('support-notification', views.SupportNotificationViewSet)
 router.register('subscribe', views.SubscribeViewSet)
 router.register('channel', views.ChannelViewSet)
 router.register('support-bookmark', views.SupportBookMarkViewSet)
-router.register("support-bookmark", views.SupportBookMarkViewSet, basename='support-bookmark')
 #router.register('support-bookmark/<str:folder>/<uuid:member_id>', views.SupportBookMarkViewSet)
 router.register('recording', views.RecordingListViewSet)
 
@@ -32,6 +31,7 @@ urlpatterns = [
     path('channels-get-list-view/<uuid:member_id>/',ChannelsView.as_view()),
     path('category-get-list-view/<str:colored>/',GetCategoryListView.as_view()),
    
+    path('support-bookmark/', views.SupportBookMarkViewSet.as_view({'post': 'bookmark_list_create'}), name='bookmark_list_create'),
     path('support-bookmark/', views.SupportBookMarkViewSet.as_view({'get': 'bookmark_list'}), name='bookmark_list'),
     path('develop-category-create/',CategorylistView.as_view()),
 ]

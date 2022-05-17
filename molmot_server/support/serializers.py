@@ -27,13 +27,14 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     rqutUrla=serializers.CharField(max_length=255) #submit_link
     member_id=serializers.CharField(max_length=255) 
     polyBizSecd=serializers.CharField(max_length=255) 
+    
 
     class Meta:
         model = Support
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
-        'splzRlmRqisCn','rqutUrla','member_id','job_info')
+        'splzRlmRqisCn','rqutUrla','member_id','job_info','detail_field')
 
     def validate(self, data):
         print(data)
@@ -48,7 +49,7 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
+            plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],detail_field=data['detail_field'],located_in=data['polyBizSecd'],plcyTpNm_detail="중소(중견)기업 취업지원")
         Support.objects.filter(title='').delete()
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
@@ -92,7 +93,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
-        'splzRlmRqisCn','rqutUrla','member_id','job_info','qr_code_link')
+        'splzRlmRqisCn','rqutUrla','member_id','job_info','qr_code_link','detail_field')
 
     def validate(self, data):
         print(data)
@@ -107,7 +108,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
+            plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],detail_field=data['detail_field'],located_in=data['polyBizSecd'],plcyTpNm_detail="심리지원")
         obj=Member.objects.get(pk=member_id)
         obj.is_smart_recommed=True
         obj.save()
@@ -376,7 +377,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
-            schedule =CrontabSchedule.objects.get_or_create(
+            schedule,is_created =CrontabSchedule.objects.get_or_create(
             minute=00,
             hour=17,
             day_of_month=datetime.datetime.today().day,
@@ -417,13 +418,60 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
             return ""
 
     def get_title(self,data):
-
-        return data.support_id.title
+        try:
+            return data.support_id.title
+        except:
+            return data.support_id
     
     
     def get_end_date(self,data):
-        return data.support_id.end_date
+        try:
+            return data.support_id.end_date
+        except:
+            return data.support_id
 
+
+class SupportBookMarkCreateSerializer(serializers.ModelSerializer):
+    interval_data=serializers.CharField(max_length=30,default="7")
+
+
+    class Meta:
+        model = SupportBookMark
+        fields = ('uuid','support_id','member_id','interval_data','folder')
+
+    def validate(self, data):
+        try:
+            schedule,is_created =CrontabSchedule.objects.get_or_create(
+            minute=00,
+            hour=17,
+            day_of_month=datetime.datetime.today().day,
+            month_of_year=datetime.datetime.today().month,
+            timezone="Asia/Seoul"
+            )
+            KST = datetime.timezone(datetime.timedelta(hours=9))
+            support_id=Support.objects.get(uuid=data['support_id'].uuid)
+            support_id.interval_time=int(data['interval_data'])
+            member_device_info=MemberFCMDevice.objects.get(user=data['member_id'])
+            support_noti_id=SupportNotification.objects.get_or_create(
+                support_id=support_id,
+                member_device_info=member_device_info,
+                noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
+                crontab=schedule,
+                start_time=timezone.now(),
+                one_off=False,
+                enabled=True,
+                name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
+                task='support.tasks.support_notification_push',
+                kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(data['member_id'])})
+                )[0]
+            print(support_noti_id)
+            support_noti_id.save()
+        except Support.DoesNotExist:
+            pass
+        except ValidationError as ex:
+            print(ex)
+            raise serializers.ValidationError({"success":False})
+        return data
 
 '''
 def create(self,validated_data):
