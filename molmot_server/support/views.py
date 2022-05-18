@@ -636,15 +636,15 @@ class SmartRecommendDevelopSupportData(APIView):
         result_list=[]
         #1번 검색
         if (detail_field=='1'):
-            query['query']="다자녀"
+            query['query']="취약"
         elif (detail_field=='2'):
-            query['query']="한부모"
+            query['query']="다자녀"
         elif (detail_field=='3'):
             query['query']="다문화"
         elif (detail_field=='4'):
-            query['query']="군인"
+            query['bizTycdSel']="군인"
         elif (detail_field=='5'):
-            query['query']="장애인"
+            query['query']="장애"
         else:
             pass
         
@@ -716,8 +716,8 @@ class SmartRecommendDevelopSupportData(APIView):
                     for i in support_serializers.data:
                             result_list.append(i)
 
-        if (job=="학생"):
-            query['query']="학생"
+        if (job=="대학생"):
+            query['query']="대학생"
         elif (job=="직장인"):
             query['query']="직장"     
         elif (job=="프리랜서"):
