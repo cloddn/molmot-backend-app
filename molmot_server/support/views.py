@@ -763,16 +763,16 @@ class SmartRecommendDevelopSupportData(APIView):
             print(e)
             
             pass
-        #random_list=random.sample(result_list, 6)
-        #support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(support_dict,list))
-        #if (support_serializers.is_valid()):
+        random_list=random.sample(result_list, 6)
+        support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(support_dict,list))
+        if (support_serializers.is_valid()):
                 #불필요한 데이터 쌓임 방지
                 #support_serializers.save()
-        #        print(support_serializers.data)
-        #else:
-        #        print(support_serializers.errors)
+                print(support_serializers.data)
+        else:
+                print(support_serializers.errors)
         #QR코드 생성 및 QR코드 return 
-        #return Response(support_serializers.data)
+        return Response(support_serializers.data)
         
         
 
