@@ -717,7 +717,7 @@ class SmartRecommendDevelopSupportData(APIView):
                             result_list.append(i)
 
         if (job=="대학생"):
-            query['query']="대학생"
+            query['query']="대학"
         elif (job=="직장인"):
             query['query']="직장"     
         elif (job=="프리랜서"):
