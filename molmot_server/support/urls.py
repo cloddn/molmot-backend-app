@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.urls import path, include
 from .views import *
@@ -36,6 +37,8 @@ urlpatterns = [
     path('develop-category-create/',CategorylistView.as_view()),
 
     path('develop-channel-list-create/',SearchSupportData.as_view()),
+
+    path('channel-support-name-list-get/<str:name>/',ChannelsandSupportListnameview.as_view()),
     ]
 
 

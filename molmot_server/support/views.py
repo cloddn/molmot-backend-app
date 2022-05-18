@@ -294,7 +294,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
         if serializer.is_valid():
             headers = self.get_success_headers(serializer.data)
-            return Response({"success":True,"data":serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+            return Response({"success":True}, status=status.HTTP_201_CREATED, headers=headers)
         else:
             print(serializer.errors)
             return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
@@ -795,3 +795,26 @@ class CategorylistView(APIView):
         except Exception as e:
             print(e)
             return Response({"success":False})
+
+
+
+
+
+@authentication_classes([])
+@permission_classes([])
+class ChannelsandSupportListnameview(APIView):
+    def get(self, *args, **kwargs):
+        if (kwargs['name']=="channel"):
+            status = Channel.objects.all()
+            status_kind = status.values('channel_name').distinct().order_by('-channel_name')
+            print(status_kind)
+            return Response(status_kind)
+        else:
+            status = Category.objects.all()
+            status_kind = status.values('category').distinct().order_by('-category')
+            print(status_kind)
+            return Response(status_kind)
+
+
+    
+
