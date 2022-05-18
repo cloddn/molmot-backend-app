@@ -491,15 +491,13 @@ class SearchSupportData(APIView):
     def post(self,request):
         query=request.data['query']
         #text_list=get_seoul_youth_list(num)
-        xml_data=get_youth_center(query)
         #Support.objects.get_or_create(title=text_list[0],start_date=parse(text_list[1]),end_date=parse(text_list[2]),organizer=text_list[4],qualifications=text_list[5])
 
-        dict_type = xmltodict.parse(xml_data)
-        json_type = json.dumps(dict_type)
-        dict2_type = json.loads(json_type)
+        dict2_type=get_youth_center(query)
+        support_dict=dict2_type['empsInfo']['emp']
     
         support_dict=dict2_type['empsInfo']['emp']
-        support_serializers=OpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        support_serializers=OpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))  
         if (support_serializers.is_valid()):
             #불필요한 데이터 쌓임 방지
             #support_serializers.save()

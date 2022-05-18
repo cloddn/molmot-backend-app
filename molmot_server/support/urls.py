@@ -34,7 +34,9 @@ urlpatterns = [
     path('support-bookmark-list-create/', views.SupportBookMarkViewSet.as_view({'post': 'bookmark_list_create'}), name='bookmark_list_create'),
     path('support-bookmark-list-view/', views.SupportBookMarkViewSet.as_view({'get': 'bookmark_list'}), name='bookmark_list'),
     path('develop-category-create/',CategorylistView.as_view()),
-]
+
+    path('develop-channel-list-create/',SearchSupportData.as_view()),
+    ]
 
 
 urlpatterns += router.urls

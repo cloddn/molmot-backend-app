@@ -1,3 +1,4 @@
+from ast import Or
 from io import BytesIO
 from parser import ParserError
 from django.forms import DateInput, ValidationError
@@ -5,7 +6,7 @@ from rest_framework import serializers
 from dateutil.parser import parse
 from media.models import SmartResultQRPhoto
 from support.helper import qrcode_selfie_num
-from support.models import Category, Channel, RecordingList, Support,Subscribe,SupportNotification,SupportScheduledNotification,SupportBookMark,Organization
+from support.models import Category, Channel, RecordingList, Support,Subscribe,SupportNotification,SupportBookMark,Organization
 from user.models import Member,MemberFCMDevice
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
@@ -174,6 +175,7 @@ class OpenapiSupportSerializer(serializers.ModelSerializer):
     polyBizSjnm=serializers.CharField(max_length=255) #title
     polyItcnCn=serializers.CharField(max_length=255) #detail
     sporCn=serializers.CharField(max_length=255)#detail
+    polyBizSecd=serializers.CharField(max_length=255)
     ageInfo=serializers.CharField(max_length=255) #qualifications
     empmSttsCn=serializers.CharField(max_length=255)#qualifications
     accrRqisCn=serializers.CharField(max_length=255)#qualifications
@@ -181,20 +183,29 @@ class OpenapiSupportSerializer(serializers.ModelSerializer):
     splzRlmRqisCn=serializers.CharField(max_length=255)#qualifications
     rqutUrla=serializers.CharField(max_length=255) #submit_link
 
+
     class Meta:
         model = Support
         fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','polyBizTy',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo',
-        'empmSttsCn','accrRqisCn','majrRqisCn',
-        'splzRlmRqisCn','rqutUrla','member_id')
+        'empmSttsCn','accrRqisCn','majrRqisCn','polyBizSecd',
+        'splzRlmRqisCn','rqutUrla')
 
     
     def validate(self, data):
-        data['organizer']=data.get('polyBizTy','').replace('\n',"%^^%")
-        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+" 지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
+        data['organizer']=data.get('cnsgNmor','').replace('\n',"%^^%")
+        data['detail']=("정책 소개: "+data.get('polyItcnCn','')+"%^^%지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
         data['submit_link']=data.get('rqutUrla','')
-        data['qualifications']=("연령: "+data.get('ageInfo','')+" 취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
+        data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
+        member_id=data.get('member_id',None)
+        sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
+            submit_link=data['submit_link'],
+            qualifications=data['qualifications'],
+            title=data['title'],bizId=data['bizId'],
+            rqutPrdCn=data['rqutPrdCn'],
+            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'],plcyTpNm_detail="문화")
+        Channel.objects.get_or_create(organizer_id=Organization.objects.get(pk="ed427564-715a-49ad-8b93-1410e6f4dbfd"),channel_name="서울 청년 혜택 모음",support_id=sub_data)
         return data
 
     def create(self, data):
@@ -301,16 +312,19 @@ class ChannelSerializer(serializers.ModelSerializer):
             #오브젝트 형태로 전달
             if (data.get('organizer_id',None)!=None):
             #org_obj=Organization.objects.get(pk=data['organizer_id'])
-                ch_datas=Channel.objects.filter(channel_name=data['organizer_id'])
+                ch_datas=Channel.objects.filter(organizer_id=data['organizer_id'])
                 for ch_data in ch_datas:
+                    print(len(ch_datas))
                     uuid=data['member_id'][0]
                     ch_data.member_id.add(uuid)
                     ch_data.save()
                     #data['member_id'].last_login=datetime.datetime.now()
                     #data['member_id'].save()
-                return ch_data
+                    return ch_data
             elif (data.get('organizer_id',None)==None):
                 data=Channel.objects.filter(member_id__in=["2a8f72ed-1090-421a-903a-510aa1f809a3"])
+                return data
+            else:
                 return data
         except KeyError or ValidationError as ex:
             #ch_datas=Channel.objects.filter(channel_name=data['organizer_id'])
