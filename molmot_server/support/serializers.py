@@ -49,7 +49,11 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
             qualifications=data['qualifications'],
             title=data['title'],bizId=data['bizId'],
             rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],job_info=data['job_info'],detail_field=data['detail_field'],located_in=data['polyBizSecd'],plcyTpNm_detail="중소(중견)기업 취업지원")
+            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'])
+        if new and (data['job_info']!=None) or (data['detail_field']!=None):
+            sub_data.job_info=data['job_info']
+            sub_data.detail_field=data['detail_field']
+            sub_data.save()
         Support.objects.filter(title='').delete()
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)

@@ -6,6 +6,7 @@ from pickletools import read_uint1
 import random
 from re import L
 import re
+from unicodedata import category
 from django.http import JsonResponse
 from requests import api, request
 from django.shortcuts import render
@@ -780,14 +781,19 @@ class SmartRecommendDevelopSupportData(APIView):
 class CategorylistView(APIView):
     def post(self,request):
         plcyTpNm=request.data['plcyTpNm']
+        category=request.data['category']
         color=request.data['color']
         supports = Support.objects.filter(plcyTpNm=plcyTpNm).distinct()
         #즐겨찾기 연결 -> 몇개 나오게 할 건지, 생각!!!!
         #SupportBookMark.objects.create
         data = list(supports.values())
-        for i in data:
-            try:
-                Category.objects.get_or_create(support_id=Support.objects.get(uuid=i['uuid']),colored=color,category=plcyTpNm)
-            except:
-                print("!23")
-        return Response({"success":True})
+        try:
+            for i in data:
+                try:
+                    Category.objects.get_or_create(support_id=Support.objects.get(uuid=i['uuid']),colored=color,category=category)
+                except:
+                    print("!23")
+            return Response({"success":True})
+        except Exception as e:
+            print(e)
+            return Response({"success":False})
