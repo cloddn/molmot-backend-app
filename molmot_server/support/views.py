@@ -1,12 +1,8 @@
-from cgitb import enable
-import csv
+
 import datetime
-from pickle import TRUE
-from pickletools import read_uint1
+
 import random
-from re import L
-import re
-from tkinter.messagebox import NO
+
 from unicodedata import category
 from django.http import JsonResponse
 from requests import api, request
