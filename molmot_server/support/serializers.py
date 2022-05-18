@@ -200,12 +200,6 @@ class OpenapiSupportSerializer(serializers.ModelSerializer):
         Channel.objects.get_or_create(organizer_id=Organization.objects.get(pk="ed427564-715a-49ad-8b93-1410e6f4dbfd"),channel_name="서울 청년 혜택 모음",support_id=sub_data)
         return data
 
-    def create(self, data):
-        sub_data,new=Support.objects.get_or_create(**data)
-      
-        #Support.objects.filter(bizId=data['bizId']).delete()
-
-
 
 class SupportSerializer(serializers.ModelSerializer):
     hits=serializers.SerializerMethodField()
@@ -500,3 +494,50 @@ def create(self,validated_data):
                            .update(**validated_data)
         return group
 '''
+
+
+class SupportInfoViewSerializers(serializers.ModelSerializer):
+    polyBizSjnm=serializers.CharField(max_length=255) #title
+    polyItcnCn=serializers.CharField(max_length=255) #detail
+    sporCn=serializers.CharField(max_length=None)#detail
+    ageInfo=serializers.CharField(max_length=255) #qualifications
+    empmSttsCn=serializers.CharField(max_length=255)#qualifications
+    accrRqisCn=serializers.CharField(max_length=255)#qualifications
+    majrRqisCn=serializers.CharField(max_length=255)#qualifications
+    splzRlmRqisCn=serializers.CharField(max_length=255)#qualifications
+    rqutUrla=serializers.CharField(max_length=255) #submit_link
+    polyBizSecd=serializers.CharField(max_length=255) 
+    
+
+    class Meta:
+        model = Support
+        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in',
+        'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
+        'empmSttsCn','accrRqisCn','majrRqisCn','qualifications',
+        'splzRlmRqisCn','rqutUrla','job_info','detail_field')
+
+    def validate(self, data):
+        data['detail']=data.get('polyItcnCn','')
+        data['submit_link']=data.get('rqutUrla','')
+        data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
+        data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
+        member_id=data.get('member_id',None)
+        located_in=data['polyBizSecd']
+        submit_link=data['submit_link']
+        bizId=data['bizId']
+        Support.objects.filter(title='').delete()
+        #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
+        #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
+            #date_list = data['rqutPrdCn'].split('~')
+            #start_time = date_list[0]
+            #end_time = date_list[1]
+            #start_time = start_time.replace(".","-").replace(" ","")
+            #end_time = end_time.replace(".","-").replace(" ","")
+            #start_time=parse(start_time)
+            #end_time=parse(end_time)
+            #KST = datetime.timezone(datetime.timedelta(hours=9))
+            #start_time=datetime.datetime(timezone.now().year,start_time.month,start_time.day,9,00,tzinfo=KST)
+            #end_time=datetime.datetime(timezone.now().year,end_time.month,end_time.day,18,00,tzinfo=KST)
+            #rqutPrdCn=start_time.strftime("%Y-%m-%d")+" ~ "+end_time.strftime("%Y-%m-%d")
+    
+        return data

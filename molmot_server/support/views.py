@@ -138,15 +138,38 @@ class SupportFilterInfoView(APIView):
 
 @authentication_classes([]) 
 @permission_classes([]) 
-class SupportInfoView(generics.ListAPIView):
-    serializer_class=SupportSerializer
+class SupportInfoView(APIView):
+    def get(self,request,*args, **kwargs):
+        try:
+            sup_obj=Support.objects.get(pk=kwargs['support_id'])
+            query={
+            "openApiVlak":"167693bf2984bec5368623af",
+            "display":15,
+            "pageIndex":1,
+            "srchPolicyId":sup_obj.bizId
+            }
+            dict2_type=get_youth_center(query)
+            support_dict=dict2_type['empsInfo']['emp']
+            support_dict['job_info']=sup_obj.job_info
+            support_dict['plcyTpNm_detail']=sup_obj.plcyTpNm_detail
+            support_dict['detail_field']=sup_obj.detail_field
+            serializers=SupportInfoViewSerializers(data=support_dict)
+            if serializers.is_valid():
+                return_data={}
+                return_data['rqutPrdCn']=serializers.data['rqutPrdCn']
+                return_data['qualifications']=serializers.data['qualifications']
+                return_data['sporCn']=serializers.data['sporCn']
+                if (serializers.data['rqutUrla']=="null"):
+                    return_data['rqutUrla']='-'
+                return_data['detail']=serializers.data['detail']
+                return_data['polyBizSjnm']=serializers.data['polyBizSjnm']
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def get_queryset(self):
-        support_id=self.kwargs['support_id']
-        return Support.objects.filter(uuid=support_id)
+                return Response({"success":return_data})
+            else: return Response({"success":False})
+        except Exception as e:
+            print(e)
+            return Response({"success":False})
+        
 
 @authentication_classes([]) 
 @permission_classes([])
