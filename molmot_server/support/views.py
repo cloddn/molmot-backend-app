@@ -756,7 +756,7 @@ class SmartRecommendDevelopSupportData(APIView):
                 else:
                     print("123")
                     print(support_serializers.errors)
-            return Response(result_list)
+            #return Response(result_list)
         except Exception as e:
             print(e)
             
