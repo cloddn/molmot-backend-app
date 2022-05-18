@@ -464,6 +464,10 @@ class SupportBookMarkCreateSerializer(serializers.ModelSerializer):
                 task='support.tasks.support_notification_push',
                 kwargs=json.dumps({'support_id':str(support_id.uuid),'member_id':str(data['member_id'])})
                 )[0]
+            try:
+                SupportBookMark.objects.get_or_create(support_id=support_id,member_id=data['member_id'],folder=data['folder'])   
+            except:
+                SupportBookMark.objects.get_or_create(support_id=support_id,member_id=data['member_id'],folder="general")   
             print(support_noti_id)
             support_noti_id.save()
         except Support.DoesNotExist:
