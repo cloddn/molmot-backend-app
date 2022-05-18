@@ -38,23 +38,15 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
         'splzRlmRqisCn','rqutUrla','member_id','job_info','detail_field')
 
     def validate(self, data):
-        print(data)
         data['organizer']=data.get('cnsgNmor','').replace('\n',"%^^%")
         data['detail']=("정책 소개: "+data.get('polyItcnCn','')+"%^^%지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
         data['submit_link']=data.get('rqutUrla','')
         data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
         member_id=data.get('member_id',None)
-        sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
-            submit_link=data['submit_link'],
-            qualifications=data['qualifications'],
-            title=data['title'],bizId=data['bizId'],
-            rqutPrdCn=data['rqutPrdCn'],
-            plcyTpNm=data['plcyTpNm'],located_in=data['polyBizSecd'])
-        if new and (data['job_info']!=None) or (data['detail_field']!=None):
-            sub_data.job_info=data['job_info']
-            sub_data.detail_field=data['detail_field']
-            sub_data.save()
+        located_in=data['polyBizSecd']
+        submit_link=data['submit_link']
+        bizId=data['bizId']
         Support.objects.filter(title='').delete()
         #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=Member.objects.get(pk=member_id))
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
@@ -72,11 +64,6 @@ class SmartOpenapiSupportSerializer(serializers.ModelSerializer):
     
         return data
 
-    
-    def create(self, data):
-        sub_data,new=Support.objects.get_or_create(**data)
-        member_id=data.pop('member_id',None)
-        #Support.objects.filter(bizId=data['bizId']).delete()
 
 class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
     cnsgNmor=serializers.CharField(max_length=255) #organizer
@@ -108,6 +95,11 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
         member_id=data.get('member_id',None)
+        if (Support.objects.filter(bizId=data['bizId']).count()>2):
+            Support.objects.filter(organizer=data['organizer'],detail=data['detail'],
+            submit_link=data['submit_link'],
+            qualifications=data['qualifications'],
+            title=data['title'],bizId=data['bizId']).delete()
         sub_data,new=Support.objects.get_or_create(organizer=data['organizer'],detail=data['detail'],
             submit_link=data['submit_link'],
             qualifications=data['qualifications'],
@@ -117,7 +109,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         obj=Member.objects.get(pk=member_id)
         obj.is_smart_recommed=True
         obj.save()
-        #SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=obj,folder="smart")
+        SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=obj,folder="smart")
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
             #date_list = data['rqutPrdCn'].split('~')
             #start_time = date_list[0]
