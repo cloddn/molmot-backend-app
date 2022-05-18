@@ -6,6 +6,7 @@ from pickletools import read_uint1
 import random
 from re import L
 import re
+from tkinter.messagebox import NO
 from unicodedata import category
 from django.http import JsonResponse
 from requests import api, request
@@ -13,10 +14,9 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, mixins
 from rest_framework import generics # generics class-based view 사용할 계획
-import xmltodict
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.decorators import action,permission_classes, authentication_classes
-
+from django.forms.models import model_to_dict
 # JWT 사용을 위해 필요
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
@@ -347,7 +347,24 @@ class ChannelsView(generics.ListAPIView,generics.ListCreateAPIView):
             print(serializer.errors)
             return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
         
-        
+@authentication_classes([])
+@permission_classes([]) 
+class ChannelsNametoListView(generics.ListAPIView):
+    serializer_class=ChannelGetListSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.query_params.get('channel_name',None)!=None:
+            channel_name=self.request.query_params.get('channel_name',None)
+            return Channel.objects.filter(channel_name=channel_name)
+        else:
+            return Channel.objects.all()
+
+    
+
+       
 
 @authentication_classes([])
 @permission_classes([]) 

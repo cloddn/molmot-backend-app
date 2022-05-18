@@ -317,10 +317,31 @@ class ChannelSerializer(serializers.ModelSerializer):
             return data
 
 
+
+
+class ChannelGetListSerializer(serializers.ModelSerializer):
+    support_name=serializers.SerializerMethodField()
+    detail_field=serializers.SerializerMethodField()
+    plcyTpNm_detail=serializers.SerializerMethodField()
+    plcyTpNm=serializers.SerializerMethodField()
+
+    class Meta:
+        model = Channel
+        fields = ('channel_name','support_id','support_name','detail_field','plcyTpNm_detail','plcyTpNm')
+
+   
+
     def get_support_name(self,data):
         return data.support_id.title
+    def get_detail_field(self,data):
+        return data.support_id.get_detail_field_display()
 
+    def get_plcyTpNm_detail(self,data):
+        return data.support_id.plcyTpNm_detail
 
+    
+    def get_plcyTpNm(self,data):
+        return data.support_id.plcyTpNm
 
 class SupportNotificationSerializer(serializers.ModelSerializer):
     interval=serializers.SerializerMethodField()
