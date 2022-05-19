@@ -6,7 +6,7 @@ import random
 from unicodedata import category
 from wsgiref.simple_server import demo_app
 from django.http import JsonResponse
-from requests import api, request
+from requests import api, delete, request
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, mixins
@@ -269,6 +269,12 @@ class SupportNotificationViewSet(viewsets.ModelViewSet):
         return Response({"success":True}, status=status.HTTP_201_CREATED)
     
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            super().destroy(request, *args, **kwargs)
+            return Response({"success":True}, status=status.HTTP_200_OK)
+        except:
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 @authentication_classes([])
 @permission_classes([]) 
