@@ -348,11 +348,12 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
     d_day=serializers.SerializerMethodField()
     title=serializers.SerializerMethodField()
     on_time=serializers.SerializerMethodField()
-    
+    plcyTpNm=serializers.SerializerMethodField()
+    job_info=serializers.SerializerMethodField()
     
     class Meta:
         model = SupportNotification
-        fields = ('id','interval','name','title','task','enabled','d_day','on_time')
+        fields = ('id','interval','name','title','plcyTpNm','job_info','task','enabled','d_day','on_time',)
 
     def get_interval(self,data):
         return str(data.interval_time)
@@ -377,6 +378,12 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
 
     def get_title(self,data):
         return str(data.support_id.title)
+    
+    def get_plcyTpNm(self,data):
+        return str(data.support_id.plcyTpNm)
+    
+    def get_job_info(self,data):
+        return str(data.support_id.job_info)
 
     def update(self, instance, validated_data):
         SupportNotification.objects.filter(pk=instance.pk)\
