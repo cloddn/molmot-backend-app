@@ -407,7 +407,7 @@ class SupportBookMarkSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
-            schedule,is_created =CrontabSchedule.objects.get_or_create(
+            schedule=CrontabSchedule.objects.create(
             minute=00,
             hour=17,
             day_of_month=datetime.datetime.today().day,
