@@ -63,7 +63,11 @@ class UserLoginSerializer(serializers.Serializer):
                 }
 
             else:
-                update_last_login(None, user)
+                if (email=="heejeong@gmail.com"):
+                    member_obj.last_login=None
+                    member_obj.save()
+                else:
+                    update_last_login(None, user)
         except Member.DoesNotExist:
             raise serializers.ValidationError(
                 'User with given username and password does not exist'

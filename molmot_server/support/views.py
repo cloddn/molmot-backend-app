@@ -668,7 +668,7 @@ class SmartRecommendDevelopSupportData(APIView):
             #print(query['srchPolyBizSecd'])
         except:
             pass
-
+        print(query)
         result_list=[]
         #1번 검색
         if (detail_field=='1'):
@@ -678,7 +678,7 @@ class SmartRecommendDevelopSupportData(APIView):
         elif (detail_field=='3'):
             query['query']="다문화"
         elif (detail_field=='4'):
-            query['bizTycdSel']="군인"
+            query['bizTycdSel']="004006"
         elif (detail_field=='5'):
             query['query']="장애"
         else:
