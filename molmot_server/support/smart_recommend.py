@@ -3,14 +3,12 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
-
-
-URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=&srchAge=&srchEdubg=012008&srchEmpStatus=006001"
 #https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=2&pageUnit=12&plcyTpOpenTy=list_004003&srchAge=&srchEdubg=012008&srchEmpStatus=006006&srchSortOrder=2&srchSpecField=007006&srchTermMm=1&srchWord=&trgtJynEmp=&trgtJynEmp=#
 #https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=2&pageUnit=12&plcyTpOpenTy=list_004003&srchAge=&srchEdubg=012008&srchEmpStatus=006006&srchSortOrder=2&srchSpecField=007006&srchTermMm=1&srchWord=&trgtJynEmp=&trgtJynEmp=#
 
-def get_today_info() :
+def get_today_info(query) :
+    
+    URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=&srchAge=&srchEdubg=012008&srchEmpStatus=006001"
     website = requests.get(URL)
     soup = BeautifulSoup(website.text,"html.parser")
    
@@ -43,32 +41,4 @@ def get_today_info() :
     
         jv_script="f_Detail('"+supports_list+"');"
         print(jv_script)
-        query={
-            "openApiVlak":"167693bf2984bec5368623af",
-            "display":1,
-            "pageIndex":1
-        }
-        query['srchPolicyId']=supports_list
-        dict2_type=get_youth_center(query)
-        support_dict=dict2_type['empsInfo']['emp']
-        support_serializers=OpenapiSupportSerializer(data=support_dict, many=isinstance(dict2_type,list))
-        print(support_serializers.data)
         #driver.execute_script(jv_script)
-    
-    
-
-    
-    #driver.execute_script("f_Detail('R2022012501406')")
-    #html = driver.page_source
-    #print(html)
-    
-    #for i in range(1, 10):
-    #    print("Current page is {0}".format(i))
-    #    driver.execute_script("f_Detail({0})".format(i))
-
-
-
-#
-
-# #srchFrm > div.sch-result-wrap.compare-result-list//*[@id="srchFrm"]/div[4]/div[2]/ul
-get_today_info()

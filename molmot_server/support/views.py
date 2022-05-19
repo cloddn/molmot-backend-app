@@ -4,6 +4,7 @@ import datetime
 import random
 
 from unicodedata import category
+from wsgiref.simple_server import demo_app
 from django.http import JsonResponse
 from requests import api, request
 from django.shortcuts import render
@@ -34,6 +35,12 @@ from rest_framework import viewsets
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from dateutil.parser import parse
+from time import sleep
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
 
 @authentication_classes([]) 
 @permission_classes([]) 
@@ -854,3 +861,191 @@ class ChannelsandSupportListnameview(APIView):
 
     
 
+
+
+@authentication_classes([])
+@permission_classes([])
+class GetSmartDetailRecommendView(APIView):
+    def post(self,request,*args, **kwargs):
+        detail_field=request.data.get('detail_field','6')
+        member_id=request.data.get('member_id','')
+        home_field=request.data.get('home_field','')
+        job=request.data.get('job','')
+        in_progress=request.data.get('in_progress','')
+        location=request.data.get('location','')
+
+        location_numbering={"서울":"003002001","부산":"003002002","대구":"003002003","인천":"003002004","광주":"003002005",
+        "대전:":"003002006","울산":"003002007","경기":"003002008","강원":"003002009","충북":"003002010","충남:":"003002011",
+        "전북":"003002012","전남":"003002013","경북":"003002014","경남":"003002015","제주":"003002016","세종":"003002017"
+
+        }
+        query=''
+    
+        query=query+"&srchRegion="+location_numbering[location]
+        print(query)
+        if (detail_field=='2'):
+             query+="&srchWord=다자녀"
+        elif (detail_field=='1'): #취약계층
+            query+="&srchSpecField=007003"
+        elif (detail_field=='3'): #군인
+            query+="&srchSpecField=007006"
+        elif (detail_field=='4'): #코로나19
+             query+="&srchPlcyTp=004006"
+        elif (detail_field=='5'): #장애우
+             query+="&srchSpecField=007004"
+        else:
+            pass
+
+        if (job=="대학생"):
+            query+="&srchEmpStatus=006003"
+        elif (job=="직장인"):
+            query+="&srchEmpStatus=006001"
+        elif (job=="프리랜서"):
+            query+="&srchEmpStatus=006006"
+        elif (job=="자영업자"):
+            query+="&srchEmpStatus=006002"
+        else:
+            pass
+    
+        if (in_progress=="재학생"):
+            query+="&srchEdubg=012005"
+        elif (in_progress=="석/박사"):
+            query+="&srchEdubg=012008"
+        else:
+            pass
+
+
+        URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=fa5d6b34-d414-4313-aa2f-96b63ed6d934&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&srchTermMm6=&frameYn=&pageIndex=1&pageUnit=24"+query
+        website = requests.get(URL)
+
+        soup = BeautifulSoup(website.text,"html.parser")
+    
+
+        chrome_options = Options()
+        chrome_options.add_argument( '--headless' )
+        chrome_options.add_argument( '--log-level=3' )
+        chrome_options.add_argument( '--disable-logging' )
+        chrome_options.add_argument( '--no-sandbox' )
+        chrome_options.add_argument( '--disable-gpu' )
+        
+        driver = webdriver.Chrome('/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
+        driver.implicitly_wait(3)
+        
+        driver.get( URL )
+        driver.execute_script("f_srch();")
+        #driver.execute_script("f_srch();")
+        #driver.execute_script("fn_move(6);")
+        driver.implicitly_wait(2)
+        html = driver.page_source
+        #print(html)
+        soup = BeautifulSoup(html,"html.parser")
+
+        notice=soup.find("div",class_="sch-result-wrap compare-result-list")
+
+        notice=soup.find("div",class_="result-list-box")
+
+        #location=soup.find("div",class_="badge").get_text()
+        try:
+            location=soup.find("span",class_="grey-label").get_text()
+        except:
+            pass
+        result_data=[]
+        for i in notice.find("ul").find_all('li'):
+            print(i.find("a")["id"])
+            supports_list=i.find("a")["id"][8:]
+        
+            jv_script="f_Detail('"+supports_list+"');"
+            print(jv_script)
+            query={
+                "openApiVlak":"167693bf2984bec5368623af",
+                "display":1,
+                "pageIndex":1
+            }
+            query['srchPolicyId']=supports_list
+            dict2_type=get_youth_center(query)
+            support_dict=dict2_type['empsInfo']['emp']
+            support_dict['member_id']=member_id
+            support_dict['detail_field']=detail_field
+            support_dict['job_info']=job
+            support_dict['in_progress']=in_progress
+            support_serializers=SmartOpenapiSupportSerializer(data=support_dict, many=isinstance(support_dict,list))
+        
+            if support_serializers.is_valid():
+                    result_data.append(support_serializers.data)
+            else:
+                print(support_serializers.errors)
+                pass
+        print(URL)
+        random_list=random.sample(result_data, 6)
+        print(random_list[0])
+        support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(random_list,list))
+        if (support_serializers.is_valid()):
+                #불필요한 데이터 쌓임 방지
+                #support_serializers.save()
+                print(support_serializers.data)
+        else:
+                print(support_serializers.errors)
+        #QR코드 생성 및 QR코드 return 
+        return Response(support_serializers.data)
+        
+        
+    def get(self,*args, **kwargs):
+        #URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=&srchAge=&srchEdubg=012008&srchEmpStatus=006001"
+        
+        URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=fa5d6b34-d414-4313-aa2f-96b63ed6d934&srchRegion=003002001&srchEmpStatus=006005&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&srchTermMm6=&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=list_004004&srchEdubg=012008"
+        website = requests.get(URL)
+
+        soup = BeautifulSoup(website.text,"html.parser")
+    
+
+        chrome_options = Options()
+        chrome_options.add_argument( '--headless' )
+        chrome_options.add_argument( '--log-level=3' )
+        chrome_options.add_argument( '--disable-logging' )
+        chrome_options.add_argument( '--no-sandbox' )
+        chrome_options.add_argument( '--disable-gpu' )
+        
+        driver = webdriver.Chrome('/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
+        driver.implicitly_wait(3)
+        driver.get( URL )
+        driver.execute_script("f_srch();")
+        #driver.execute_script("f_srch();")
+        #driver.execute_script("fn_move(6);")
+        driver.implicitly_wait(2)
+        html = driver.page_source
+        #print(html)
+        soup = BeautifulSoup(html,"html.parser")
+
+        notice=soup.find("div",class_="sch-result-wrap compare-result-list")
+        print(notice)
+        notice=soup.find("div",class_="result-list-box")
+        print(notice)
+        #location=soup.find("div",class_="badge").get_text()
+        try:
+            location=soup.find("span",class_="grey-label").get_text()
+        except:
+            pass
+        result_data=[]
+        for i in notice.find("ul").find_all('li'):
+            print(i.find("a")["id"])
+            supports_list=i.find("a")["id"][8:]
+        
+            jv_script="f_Detail('"+supports_list+"');"
+            print(jv_script)
+            query={
+                "openApiVlak":"167693bf2984bec5368623af",
+                "display":1,
+                "pageIndex":1
+            }
+            query['srchPolicyId']=supports_list
+            dict2_type=get_youth_center(query)
+            support_dict=dict2_type['empsInfo']['emp']
+            support_serializers=OpenapiSupportSerializer(data=support_dict, many=isinstance(dict2_type,list))
+        
+            if support_serializers.is_valid():
+                    result_data.append(support_serializers.data)
+            else:
+                pass
+        
+        return Response({"success":result_data,"len": len(notice.find("ul").find_all('li'))})
+        

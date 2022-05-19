@@ -40,6 +40,8 @@ urlpatterns = [
     path('develop-channel-list-create/',SearchSupportData.as_view()),
 
     path('channel-support-name-list-get/<str:name>/',ChannelsandSupportListnameview.as_view()),
+
+    path('get-smart-detail-recommend/',GetSmartDetailRecommendView.as_view()),
     ]
 
 

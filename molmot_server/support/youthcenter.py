@@ -5,8 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
-
-URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=&srchAge=&srchEdubg=012008&srchEmpStatus=006001"
+URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=2&pageUnit=12&plcyTpOpenTy=&srchAge=&srchEdubg=012008&srchEmpStatus=006001&srchPlcyTp=004006001"
 #https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=2&pageUnit=12&plcyTpOpenTy=list_004003&srchAge=&srchEdubg=012008&srchEmpStatus=006006&srchSortOrder=2&srchSpecField=007006&srchTermMm=1&srchWord=&trgtJynEmp=&trgtJynEmp=#
 #https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=2&pageUnit=12&plcyTpOpenTy=list_004003&srchAge=&srchEdubg=012008&srchEmpStatus=006006&srchSortOrder=2&srchSpecField=007006&srchTermMm=1&srchWord=&trgtJynEmp=&trgtJynEmp=#
 
@@ -31,30 +30,39 @@ def get_today_info() :
     html = driver.page_source
     soup = BeautifulSoup(html,"html.parser")
     notice=soup.find("div",class_="sch-result-wrap compare-result-list")
-    print(notice)
     notice=notice.find("div",class_="result-list-box")
     location=soup.find("div",class_="badge").get_text()
     try:
         location=soup.find("span",class_="grey-label").get_text()
     except:
         pass
+    print(location)
     for i in notice.find("ul").find_all('li'):
         supports_list=i.find("a")["id"][8:]
     
         jv_script="f_Detail('"+supports_list+"');"
         print(jv_script)
-        query={
-            "openApiVlak":"167693bf2984bec5368623af",
-            "display":1,
-            "pageIndex":1
-        }
-        query['srchPolicyId']=supports_list
-        dict2_type=get_youth_center(query)
-        support_dict=dict2_type['empsInfo']['emp']
-        support_serializers=OpenapiSupportSerializer(data=support_dict, many=isinstance(dict2_type,list))
-        print(support_serializers.data)
         #driver.execute_script(jv_script)
-    
+        driver = webdriver.Chrome('/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
+        driver.implicitly_wait(2)
+        #driver.get('http://www.google.com/xhtml');
+        #driver = webdriver.Chrome( ChromeDriverManager().install(),chrome_options=chrome_options )
+        driver.get( URL )
+        driver.execute_script(jv_script)
+        driver.implicitly_wait(1)
+        html = driver.page_source
+        soup = BeautifulSoup(html,"html.parser")
+        #print(soup.find("div",class_="content"))
+        notice_detail=soup.find("div",class_="content").get_text()
+        title=soup.find("div",class_="plcy-left").get_text()
+
+        detail=soup.find("h4",class_="bullet-arrow1").get_text()
+        info_list=soup.find("div",class_="view-txt").find_all("div")
+        #for i in info_list:
+        #    print(i.text.strip())
+        print(title.strip())
+        print(detail.strip())
+        
     
 
     
@@ -69,6 +77,6 @@ def get_today_info() :
 
 
 #
-
+# 
 # #srchFrm > div.sch-result-wrap.compare-result-list//*[@id="srchFrm"]/div[4]/div[2]/ul
 get_today_info()

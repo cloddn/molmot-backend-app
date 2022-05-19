@@ -47,9 +47,9 @@ class Support(models.Model):
         null=True
     )
     FIELDS=(
-        ('1','취약 계층'),
+        ('1','저소득층'),
         ('2','다자녀 가정'),
-        ('3','다문화 가정'),
+        ('3','군인'),
         ('4','코로나 19 지원 대상'),
         ('5','장애인, 장애우'),
         ('6','해당 없음'),
@@ -58,6 +58,11 @@ class Support(models.Model):
         ('학생','학생'),
         ('직장인','직장인'),
         ('프리랜서','프리랜서'),
+        ('자영업자','자영업자'),
+    )
+    PROGRESS=(
+        ('재학생','재학생'),
+        ('석/박사','석/박사'),
     )
     start_date=models.DateTimeField(verbose_name='시작 날짜',null=True,blank=True)
     end_date=models.DateTimeField(verbose_name='마감 날짜',null=True,blank=True)
@@ -66,7 +71,9 @@ class Support(models.Model):
     plcyTpNm_detail=models.CharField(verbose_name='정책 유형 - 세부 필드',max_length=255,null=True,blank=True)
     qualifications=models.TextField(verbose_name='신청 대상',null=True,blank=True)
     located_in=models.CharField(verbose_name='지역',max_length=50,null=True,blank=True)
+    
     detail_field=models.CharField(verbose_name='스마트설계 - 분야',choices=FIELDS,max_length=6,null=True,default='6',blank=True)
+    in_progress=models.CharField(verbose_name='스마트설계 - 대학 과정',choices=PROGRESS,max_length=6,null=True,default='재학생',blank=True)
     job_info=models.CharField(verbose_name='직업',choices=JOBS,max_length=6,null=True,default='학생',blank=True)
     hits = models.PositiveIntegerField(default = 0)
 

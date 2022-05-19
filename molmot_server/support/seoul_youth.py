@@ -23,7 +23,6 @@ def get_seoul_youth_list(num):
     chrome_options.add_argument( '--disable-gpu' )
 
 
-
     driver = webdriver.Chrome('/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
     #driver.get('http://www.google.com/xhtml');
     #driver = webdriver.Chrome( ChromeDriverManager().install(),chrome_options=chrome_options )
