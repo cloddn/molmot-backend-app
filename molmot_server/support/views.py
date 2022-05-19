@@ -928,7 +928,7 @@ class GetSmartDetailRecommendView(APIView):
         chrome_options.add_argument( '--no-sandbox' )
         chrome_options.add_argument( '--disable-gpu' )
         
-        driver = webdriver.Chrome('/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
+        driver = webdriver.Chrome('/home/ubuntu/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
         driver.implicitly_wait(3)
         
         driver.get( URL )
@@ -1005,7 +1005,7 @@ class GetSmartDetailRecommendView(APIView):
         chrome_options.add_argument( '--no-sandbox' )
         chrome_options.add_argument( '--disable-gpu' )
         
-        driver = webdriver.Chrome('/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
+        driver = webdriver.Chrome('/home/ubuntu/molmot-backend-app/molmot_server/chromedriver',chrome_options=chrome_options)
         driver.implicitly_wait(3)
         driver.get( URL )
         driver.execute_script("f_srch();")
