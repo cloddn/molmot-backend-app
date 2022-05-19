@@ -8,7 +8,7 @@ import json
 import datetime
 from django_celery_beat.models import CrontabSchedule, PeriodicTask,IntervalSchedule
 from django.utils import timezone
-from user.models import MemberFCMDevice
+from user.models import Member, MemberFCMDevice
 
 #@receiver(signals.post_save, sender=Support) #Support 정보 수정하면 -> SupportNotification 수정하기.
 #def run_task_on_Support_save(sender, instance, created, **kwargs):
@@ -61,9 +61,9 @@ def run_task_on_SupportBookMark_deleted_save(sender, instance, **kwargs):
             #신청 날짜 지나면 마감 하루 일자 하루전 , 안지났으면 시작 일자 7일 동안 울리게 
             #기기 토큰 1개만 가지고 있을 수 있도록...?
             support_id=Support.objects.get(uuid=instance.support_id.pk)
-            member_device_info=MemberFCMDevice.objects.get(user=instance.member_id)
+            member_info=Member.objects.get(email=instance.member_id)
             SupportNotification.objects.filter(
-                name=str(member_device_info.user)+"의 지원금"+support_id.title+"알림",          
+                name=str(member_info)+"의 지원금"+support_id.title+"알림",          
                 task='support.tasks.support_notification_push').delete()
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
             pass
