@@ -24,7 +24,6 @@ from user.models import MemberFCMDevice
 
 
 #즐겨찾기 수정됐을때가 있나....?즐겨찾기 삭제될경우 -> 없어져야함.
-'''
 @receiver(signals.post_save, sender=SupportBookMark) #즐겨찾기한 지원금 제도에 한정해서 추가되도록 
 def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
     if (created):
@@ -55,7 +54,6 @@ def run_task_on_SupportBookMark_save(sender, instance, created, **kwargs):
         except Support.DoesNotExist or MemberFCMDevice.DoesNotExist:
             pass
    
-'''
 
 @receiver(signals.post_delete, sender=SupportBookMark) #즐겨찾기한 지원금 제도에 한정해서 추가되도록 
 def run_task_on_SupportBookMark_deleted_save(sender, instance, **kwargs):

@@ -1,5 +1,6 @@
 
 import datetime
+from pymysql import NULL
 from webdriver_manager.chrome import ChromeDriverManager
 import random
 
@@ -162,10 +163,16 @@ class SupportInfoView(APIView):
                 return_data['rqutPrdCn']=serializers.data['rqutPrdCn']
                 return_data['qualifications']=serializers.data['qualifications']
                 return_data['sporCn']=serializers.data['sporCn']
-                if (serializers.data['rqutUrla']=="null"):
+                if (serializers.data['rqutUrla']=="null"or serializers.data['rqutUrla']==None):
                     return_data['rqutUrla']='-'
+                return_data['title']=serializers.data['title']
                 return_data['detail']=serializers.data['detail']
-                return_data['polyBizSjnm']=serializers.data['polyBizSjnm']
+                return_data['submit_link']=return_data['rqutUrla']
+                return_data['job_info']=serializers.data['job_info']
+                return_data['organizer']=serializers.data['organizer']
+                if (serializers.data['organizer']=="null" or serializers.data['organizer']==None):
+                    return_data['organizer']='-'
+                return_data['polyItcnCn']=serializers.data['polyItcnCn']
 
                 return Response({"success":return_data})
             else: return Response({"success":False})
@@ -939,7 +946,7 @@ class GetSmartDetailRecommendView(APIView):
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         #chrome_options.headless = True
-        driver = webdriver.Chrome(executable_path="/home/ubuntu/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
+        driver = webdriver.Chrome(executable_path="/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
         #driver = webdriver.Chrome(executable_path="/home/ubuntu/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
         driver.implicitly_wait(3)
         
