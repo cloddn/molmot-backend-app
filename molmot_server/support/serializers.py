@@ -365,7 +365,12 @@ class SupportNotificationSerializer(serializers.ModelSerializer):
             return ""
     def get_on_time(self,data):
         try:
-            on_time=str(data.crontab.hour)+":"+str(data.crontab.minute)
+            if (len(str(data.crontab.minute))==1):
+                on_time=str(data.crontab.hour)+":"+str(data.crontab.minute)+"0"
+            elif (len(str(data.crontab.hour))==1):
+                on_time="0"+str(data.crontab.hour)+":"+str(data.crontab.minute)
+            elif (len(str(data.crontab.hour))==1 )and (len(str(data.crontab.minute))==1):
+                on_time="0"+str(data.crontab.hour)+":"+str(data.crontab.minute)+"0"
             return on_time
         except:
             return ""
