@@ -895,16 +895,19 @@ class GetSmartDetailRecommendView(APIView):
         query=''
     
         query=query+"&srchRegion="+location_numbering[location]
-        print(query)
+
         if (detail_field=='2'):
              query+="&srchWord=다자녀"
         elif (detail_field=='1'): #취약계층
             query+="&srchSpecField=007003"
         elif (detail_field=='3'): #군인
+            query+="&srchWord=군인"
             query+="&srchSpecField=007006"
+            
         elif (detail_field=='4'): #코로나19
              query+="&srchPlcyTp=004006"
         elif (detail_field=='5'): #장애우
+             query+="&srchWord=장애"
              query+="&srchSpecField=007004"
         else:
             pass
@@ -969,6 +972,10 @@ class GetSmartDetailRecommendView(APIView):
         except:
             pass
         result_data=[]
+        try:
+            notice.find("ul").find_all('li')
+        except AttributeError: 
+            return Response([])
         for i in notice.find("ul").find_all('li'):
             #print(i.find("a")["id"])
             supports_list=i.find("a")["id"][8:]
