@@ -8,8 +8,8 @@ class UIPhoto(models.Model):
         ('banner', 'banner'), #현재 사용
         ('notice', 'notice '), #사용 X
     )
-    title=models.CharField(max_length=255,null=True)
-    body=models.CharField(max_length=255,null=True)
+    title=models.TextField(null=True)
+    body=models.TextField(null=True)
     field=models.CharField(verbose_name='field',max_length=10,choices=FIELD,null=True)
     indexnum=models.IntegerField(unique=True,null=True) #index 1만 쓰고 있음
     uuid=models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
