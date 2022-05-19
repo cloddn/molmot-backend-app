@@ -43,7 +43,7 @@ class Support(models.Model):
     submit_link=models.TextField(verbose_name='신청 링크',null=True,blank=True)
     organizer=models.CharField(
         verbose_name='주관사',
-        max_length=50,
+        max_length=255,
         null=True
     )
     FIELDS=(
@@ -75,7 +75,7 @@ class Support(models.Model):
     
     detail_field=models.CharField(verbose_name='스마트설계 - 분야',choices=FIELDS,max_length=6,null=True,default='6',blank=True)
     in_progress=models.CharField(verbose_name='스마트설계 - 대학 과정',choices=PROGRESS,max_length=6,null=True,default='재학생',blank=True)
-    job_info=models.CharField(verbose_name='직업',choices=JOBS,max_length=6,null=True,default='학생',blank=True)
+    job_info=models.CharField(verbose_name='직업',choices=JOBS,max_length=6,null=True,default='해당없음',blank=True)
     hits = models.PositiveIntegerField(default = 0)
 
     def __str__(self):

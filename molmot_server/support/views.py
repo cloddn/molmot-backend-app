@@ -970,7 +970,7 @@ class GetSmartDetailRecommendView(APIView):
             pass
         result_data=[]
         for i in notice.find("ul").find_all('li'):
-            print(i.find("a")["id"])
+            #print(i.find("a")["id"])
             supports_list=i.find("a")["id"][8:]
         
             jv_script="f_Detail('"+supports_list+"');"
@@ -995,17 +995,28 @@ class GetSmartDetailRecommendView(APIView):
                 print(support_serializers.errors)
                 pass
         print(URL)
-        random_list=random.sample(result_data, 6)
-        print(random_list[0])
-        support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(random_list,list))
-        if (support_serializers.is_valid()):
-                #불필요한 데이터 쌓임 방지
-                #support_serializers.save()
-                print(support_serializers.data)
-        else:
-                print(support_serializers.errors)
-        #QR코드 생성 및 QR코드 return 
-        return Response(support_serializers.data)
+        try:
+            random_list=random.sample(result_data, 6)
+            support_serializers=SmartOpenapiCreateSupportSerializer(data=random_list, many=isinstance(random_list,list))
+            if (support_serializers.is_valid()):
+                    #불필요한 데이터 쌓임 방지
+                    #support_serializers.save()
+                    #print(support_serializers.data)
+                    pass
+            else:
+                    print(support_serializers.errors)
+            #QR코드 생성 및 QR코드 return 
+            return Response(support_serializers.data)
+        except:
+            support_serializers=SmartOpenapiCreateSupportSerializer(data=result_data, many=isinstance(result_data,list))
+            if (support_serializers.is_valid()):
+                    pass
+                    #불필요한 데이터 쌓임 방지
+                    #support_serializers.save()
+                    #print(support_serializers.data)
+            else:
+                    print(support_serializers.errors)
+            return Response(support_serializers.data)
         
         
     def get(self,*args, **kwargs):

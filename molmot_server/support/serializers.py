@@ -109,8 +109,34 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         obj=Member.objects.get(pk=member_id)
         obj.is_smart_recommed=True
         obj.save()
+        try:
+            schedule,is_created =CrontabSchedule.objects.get_or_create(
+            minute=00,
+            hour=17,
+            day_of_month=datetime.datetime.today().day,
+            month_of_year=datetime.datetime.today().month,
+            timezone="Asia/Seoul"
+            )
+            KST = datetime.timezone(datetime.timedelta(hours=9))
+            member_device_info=MemberFCMDevice.objects.get(user=obj)
+            support_noti_id=SupportNotification.objects.get_or_create(
+                support_id=sub_data,
+                member_device_info=member_device_info,
+                noti_on_time=datetime.datetime(datetime.datetime.today().year,datetime.datetime.today().month,datetime.datetime.today().day,17,00),
+                crontab=schedule,
+                start_time=timezone.now(),
+                one_off=False,
+                enabled=True,
+                name=str(member_device_info.user)+"의 지원금"+sub_data.title+"알림",          
+                task='support.tasks.support_notification_push',
+                kwargs=json.dumps({'support_id':str(sub_data.uuid),'member_id':str(obj.uuid)})
+                )[0]
+        except:
+            pass
         SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=obj,folder="smart")
+
         #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
+
             #date_list = data['rqutPrdCn'].split('~')
             #start_time = date_list[0]
             #end_time = date_list[1]
