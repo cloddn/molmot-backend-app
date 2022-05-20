@@ -110,7 +110,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         obj.is_smart_recommed=True
         obj.save()
         data['uuid']=str(sub_data.uuid)
-        try:
+            schedule,is_created =CrontabSchedule.objects.create(
             schedule,is_created =CrontabSchedule.objects.get_or_create(
             minute=00,
             hour=17,
