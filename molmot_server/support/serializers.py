@@ -110,8 +110,8 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         obj.is_smart_recommed=True
         obj.save()
         data['uuid']=str(sub_data.uuid)
+        try:
             schedule=CrontabSchedule.objects.create(
-            schedule,is_created =CrontabSchedule.objects.get_or_create(
             minute=00,
             hour=17,
             day_of_month=datetime.datetime.today().day,
@@ -136,20 +136,20 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
             pass
         SupportBookMark.objects.get_or_create(support_id=sub_data,member_id=obj,folder="smart")
 
-        #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
+            #Channel.objects.get_or_create(channel_name="For. 경기도인 대학생",support_id=sub_data)
 
-            #date_list = data['rqutPrdCn'].split('~')
-            #start_time = date_list[0]
-            #end_time = date_list[1]
-            #start_time = start_time.replace(".","-").replace(" ","")
-            #end_time = end_time.replace(".","-").replace(" ","")
-            #start_time=parse(start_time)
-            #end_time=parse(end_time)
-            #KST = datetime.timezone(datetime.timedelta(hours=9))
-            #start_time=datetime.datetime(timezone.now().year,start_time.month,start_time.day,9,00,tzinfo=KST)
-            #end_time=datetime.datetime(timezone.now().year,end_time.month,end_time.day,18,00,tzinfo=KST)
-            #rqutPrdCn=start_time.strftime("%Y-%m-%d")+" ~ "+end_time.strftime("%Y-%m-%d")
-    
+                #date_list = data['rqutPrdCn'].split('~')
+                #start_time = date_list[0]
+                #end_time = date_list[1]
+                #start_time = start_time.replace(".","-").replace(" ","")
+                #end_time = end_time.replace(".","-").replace(" ","")
+                #start_time=parse(start_time)
+                #end_time=parse(end_time)
+                #KST = datetime.timezone(datetime.timedelta(hours=9))
+                #start_time=datetime.datetime(timezone.now().year,start_time.month,start_time.day,9,00,tzinfo=KST)
+                #end_time=datetime.datetime(timezone.now().year,end_time.month,end_time.day,18,00,tzinfo=KST)
+                #rqutPrdCn=start_time.strftime("%Y-%m-%d")+" ~ "+end_time.strftime("%Y-%m-%d")
+        
         return data
 
     
