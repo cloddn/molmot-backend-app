@@ -456,6 +456,12 @@ class SupportBookMarkViewSet(viewsets.ModelViewSet):
                 print(serializer.errors)
                 return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            super().destroy(request, *args, **kwargs)
+            return Response({"success":True}, status=status.HTTP_200_OK)
+        except:
+            return Response({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 @authentication_classes([])
 @permission_classes([]) 
