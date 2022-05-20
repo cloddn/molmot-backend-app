@@ -88,7 +88,6 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         'splzRlmRqisCn','rqutUrla','member_id','job_info','qr_code_link','detail_field')
 
     def validate(self, data):
-        print(data)
         data['organizer']=data.get('cnsgNmor','').replace('\n',"%^^%")
         data['detail']=("정책 소개: "+data.get('polyItcnCn','')+"%^^%지원 내용: "+data.get('sporCn','')).replace('\n',"%^^%")
         data['submit_link']=data.get('rqutUrla','')
@@ -168,7 +167,9 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         qr_img.save(thumb_io, 'JPEG', quality=100) # save image to BytesIO object
         name=qrcode_selfie_num()+member_id+".jpg"
         qr_file = File(thumb_io, name=name)
-        sm_obj,is_created=SmartResultQRPhoto.objects.get_or_create(member_id=Member.objects.get(pk=member_id),photo_file=qr_file)
+        sm_obj,is_created=SmartResultQRPhoto.objects.get_or_create(member_id=Member.objects.get(pk=member_id))
+        sm_obj.photo_file=qr_file
+        sm_obj.save()
     
         return sm_obj.photo_file.url
 
