@@ -173,6 +173,7 @@ class SupportInfoView(APIView):
                 if (serializers.data['organizer']=="null" or serializers.data['organizer']==None):
                     return_data['organizer']='-'
                 return_data['polyItcnCn']=serializers.data['polyItcnCn']
+                return_data['plcyTpNm']=serializers.data['plcyTpNm']
 
                 return Response({"success":return_data})
             else: return Response({"success":False})
