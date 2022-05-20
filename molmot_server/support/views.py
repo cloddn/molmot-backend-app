@@ -160,20 +160,23 @@ class SupportInfoView(APIView):
             serializers=SupportInfoViewSerializers(data=support_dict)
             if serializers.is_valid():
                 return_data={}
-                return_data['rqutPrdCn']=serializers.data['rqutPrdCn']
-                return_data['qualifications']=serializers.data['qualifications']
-                return_data['sporCn']=serializers.data['sporCn']
-                if (serializers.data['rqutUrla']=="null"or serializers.data['rqutUrla']==None):
-                    return_data['rqutUrla']='-'
-                return_data['title']=serializers.data['title']
-                return_data['detail']=serializers.data['detail']
+                return_data['rqutPrdCn']=serializers.data.get('rqutPrdCn',"-")
+                return_data['qualifications']=serializers.data.get('qualifications',"-")
+                return_data['sporCn']=serializers.data.get('sporCn',"-")
+                return_data['rqutUrla']=serializers.data.get('rqutUrla',"-")
+                if return_data['rqutUrla']=="null" or return_data['rqutUrla']==NULL:
+                    return_data['rqutUrla']="-"
+                
+                return_data['title']=serializers.data.get('title',"-")
+                return_data['detail']=serializers.data.get('detail',"-")
                 return_data['submit_link']=return_data['rqutUrla']
-                return_data['job_info']=serializers.data['job_info']
-                return_data['organizer']=serializers.data['organizer']
-                if (serializers.data['organizer']=="null" or serializers.data['organizer']==None):
-                    return_data['organizer']='-'
-                return_data['polyItcnCn']=serializers.data['polyItcnCn']
-                return_data['plcyTpNm']=serializers.data['plcyTpNm']
+                return_data['job_info']=serializers.data.get('job_info',"-")
+                return_data['organizer']=serializers.data.get('organizer',"-")
+                if return_data['organizer']=="null" or return_data['organizer']==NULL:
+                    return_data['organizer']="-"
+
+                return_data['polyItcnCn']=serializers.data.get('polyItcnCn',"-")
+                return_data['plcyTpNm']=serializers.data.get('plcyTpNm',"-")
 
                 return Response({"success":return_data})
             else: return Response({"success":False})
