@@ -234,8 +234,8 @@ def index(request,member_id):
     context_list=[]
     template = loader.get_template('smart_qr_view.html')
     for i in support_querys:
-        if (len(i.support_id.title)>10):
-            context_list.append(i.support_id.title[:9]+"...")
+        if (len(i.support_id.title)>12):
+            context_list.append(i.support_id.title[:11]+"...")
         else:
             context_list.append(i.support_id.title)
 
