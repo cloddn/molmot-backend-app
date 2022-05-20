@@ -63,8 +63,7 @@ class Member(AbstractBaseUser):
     nickname=models.CharField(
         max_length=50,
         null=True,
-        blank=True,
-        unique=True
+        blank=True
     )   
     #생년월일에 맞춰서 자동기입
     age = models.IntegerField(
