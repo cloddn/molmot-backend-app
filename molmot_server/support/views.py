@@ -164,7 +164,7 @@ class SupportInfoView(APIView):
                 return_data['qualifications']=serializers.data.get('qualifications',"-")
                 return_data['sporCn']=serializers.data.get('sporCn',"-")
                 return_data['rqutUrla']=serializers.data.get('rqutUrla',"-")
-                if return_data['rqutUrla']=="null" or return_data['rqutUrla']==NULL:
+                if return_data['rqutUrla']=="null" or return_data['rqutUrla']==None:
                     return_data['rqutUrla']="-"
                 
                 return_data['title']=serializers.data.get('title',"-")
@@ -172,7 +172,7 @@ class SupportInfoView(APIView):
                 return_data['submit_link']=return_data['rqutUrla']
                 return_data['job_info']=serializers.data.get('job_info',"-")
                 return_data['organizer']=serializers.data.get('organizer',"-")
-                if return_data['organizer']=="null" or return_data['organizer']==NULL:
+                if return_data['organizer']=="null" or return_data['organizer']==None:
                     return_data['organizer']="-"
 
                 return_data['polyItcnCn']=serializers.data.get('polyItcnCn',"-")
@@ -959,8 +959,8 @@ class GetSmartDetailRecommendView(APIView):
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         #chrome_options.headless = True
-        #driver = webdriver.Chrome(executable_path="/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
-        driver = webdriver.Chrome(executable_path="/home/ubuntu/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
+        driver = webdriver.Chrome(executable_path="/Users/heejeong/gitkraken/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
+        #driver = webdriver.Chrome(executable_path="/home/ubuntu/molmot-backend-app/molmot_server/chromedriver",chrome_options=chrome_options)
         driver.implicitly_wait(3)
         
         driver.get( URL )
@@ -1039,8 +1039,9 @@ class GetSmartDetailRecommendView(APIView):
     def get(self,*args, **kwargs):
         #URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=d852c94c-4a08-449a-925f-fc961f296287&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=&srchAge=&srchEdubg=012008&srchEmpStatus=006001"
         
-        URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=fa5d6b34-d414-4313-aa2f-96b63ed6d934&srchRegion=003002001&srchEmpStatus=006005&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&srchTermMm6=&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=list_004004&srchEdubg=012008"
+        URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_&srchRegion=003002001&srchEmpStatus=006005&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&srchTermMm6=&frameYn=&pageIndex=1&pageUnit=12&plcyTpOpenTy=list_004004&srchEdubg=012008"
         website = requests.get(URL)
+
 
         soup = BeautifulSoup(website.text,"html.parser")
     
