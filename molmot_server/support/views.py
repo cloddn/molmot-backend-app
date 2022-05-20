@@ -938,7 +938,7 @@ class GetSmartDetailRecommendView(APIView):
             pass
 
 
-        URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?_csrf=fa5d6b34-d414-4313-aa2f-96b63ed6d934&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&srchTermMm6=&frameYn=&pageIndex=1&pageUnit=24"+query
+        URL = f"https://www.youthcenter.go.kr/youngPlcyUnif/youngPlcyUnifList.do?&bizId=&chargerOrgCdAll=&dtlOpenYn=Y&srchTermMm6=&frameYn=&pageIndex=1&pageUnit=24"+query
         website = requests.get(URL)
 
         soup = BeautifulSoup(website.text,"html.parser")
