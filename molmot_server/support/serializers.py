@@ -82,7 +82,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Support
-        fields = ('title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
+        fields = ('uuid','title','detail','submit_link','organizer','bizId','rqutPrdCn','located_in','cnsgNmor',
         'polyBizSjnm','polyItcnCn','plcyTpNm','sporCn','ageInfo','polyBizSecd',
         'empmSttsCn','accrRqisCn','majrRqisCn',
         'splzRlmRqisCn','rqutUrla','member_id','job_info','qr_code_link','detail_field')
@@ -93,6 +93,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         data['submit_link']=data.get('rqutUrla','')
         data['qualifications']=("연령: "+data.get('ageInfo','')+"%^^%취업 상태: "+data.get('empmSttsCn','')+" 학력: "+data.get('accrRqisCn','')+" 전공: "+data.get('majrRqisCn','')+" 특화 분야: "+data.get('splzRlmRqisCn','')).replace('\n',"%^^%")  
         data['title']=data.get('polyBizSjnm','').replace('\n',"%^^%")
+    
         member_id=data.get('member_id',None)
         if (Support.objects.filter(bizId=data['bizId']).count()>2):
             Support.objects.filter(organizer=data['organizer'],detail=data['detail'],
@@ -108,6 +109,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         obj=Member.objects.get(pk=member_id)
         obj.is_smart_recommed=True
         obj.save()
+        data['uuid']=str(sub_data.uuid)
         try:
             schedule,is_created =CrontabSchedule.objects.get_or_create(
             minute=00,
@@ -170,6 +172,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
         sm_obj,is_created=SmartResultQRPhoto.objects.get_or_create(member_id=Member.objects.get(pk=member_id))
         sm_obj.photo_file=qr_file
         sm_obj.save()
+    
     
         return sm_obj.photo_file.url
 
