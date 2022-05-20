@@ -160,7 +160,7 @@ class SmartOpenapiCreateSupportSerializer(serializers.ModelSerializer):
 
     def get_qr_code_link(self,data):
         member_id=data.get('member_id',None)
-        url = 'http://ec2-3-36-93-17.ap-northeast-2.compute.amazonaws.com/user/index/'+member_id+'/'
+        url = 'http://ec2-13-209-233-221.ap-northeast-2.compute.amazonaws.com/user/index/'+member_id+'/'
         qr_img = qrcode.make(url)
         qr_img.convert('RGB') # convert mode
 
