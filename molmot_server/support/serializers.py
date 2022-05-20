@@ -347,6 +347,30 @@ class ChannelSerializer(serializers.ModelSerializer):
             return data
 
 
+    def get_support_name(self,data):
+        try:
+            return data.support_id.title
+        except:
+            return ""
+        
+    def get_detail_field(self,data):
+        try:
+            return data.support_id.get_detail_field_display()
+        except:
+            return ""
+
+    def get_plcyTpNm_detail(self,data):
+        try:
+            return data.support_id.plcyTpNm_detail
+        except:
+            return ""
+
+    
+    def get_plcyTpNm(self,data):
+        try:
+            return data.support_id.plcyTpNm
+        except:
+            return ""
 
 
 class ChannelGetListSerializer(serializers.ModelSerializer):
@@ -363,6 +387,7 @@ class ChannelGetListSerializer(serializers.ModelSerializer):
 
     def get_support_name(self,data):
         return data.support_id.title
+
     def get_detail_field(self,data):
         return data.support_id.get_detail_field_display()
 

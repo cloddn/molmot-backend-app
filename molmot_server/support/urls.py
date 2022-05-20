@@ -30,11 +30,13 @@ urlpatterns = [
     
     path('channels-get-list-view-with-channel-name/',ChannelsNametoListView.as_view()),
 
+    path('channels-get-list-view/',ChannelsView.as_view()),
     path('channels-get-list-view/<uuid:member_id>/',ChannelsView.as_view()),
     path('category-get-list-view/<str:colored>/',GetCategoryListView.as_view()),
    
     path('support-bookmark-list-create/', views.SupportBookMarkViewSet.as_view({'post': 'bookmark_list_create'}), name='bookmark_list_create'),
     path('support-bookmark-list-view/', views.SupportBookMarkViewSet.as_view({'get': 'bookmark_list'}), name='bookmark_list'),
+     
     path('develop-category-create/',CategorylistView.as_view()),
 
     path('develop-channel-list-create/',SearchSupportData.as_view()),
