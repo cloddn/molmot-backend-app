@@ -922,6 +922,11 @@ class GetSmartDetailRecommendView(APIView):
         else:
             pass
 
+        if (home_field=="1"):
+            pass
+        elif (home_field=="2"):
+            query+="&srchWord=기숙사"
+
         if (job=="대학생"):
             query+="&srchEmpStatus=006003"
         elif (job=="직장인"):
